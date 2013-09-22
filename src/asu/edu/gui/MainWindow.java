@@ -4,16 +4,44 @@
  */
 package asu.edu.gui;
 
+import asu.edu.loggers.MyLogger;
+import asu.edu.matlab.MatlabObject;
+import asu.edu.setup.SetupSystem;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import matlabcontrol.MatlabConnectionException;
+import matlabcontrol.MatlabInvocationException;
+import matlabcontrol.MatlabProxy;
+
 /**
  *
  * @author paddy
  */
 public class MainWindow extends javax.swing.JFrame {
+    
+    //For Task1
+    
+    private String inputDirectoryPath = null;
+    private FilePicker dialog = null;
+    private Double bandValue  = null; //r
+    private Double mean = null; //
+    private Double standardDeviation = null; //
+    private Double wordLength = null; // 
+    private Double shiftLength = null; //
+    
+    private static MatlabProxy proxy;
+    private static Logger logger = new MyLogger().getupLogger();
+    
 
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
+        this.setTitle("MWDB: Phase I"); 
         initComponents();
     }
 
@@ -86,6 +114,11 @@ public class MainWindow extends javax.swing.JFrame {
                 jButton1MouseClicked(evt);
             }
         });
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Select Input File");
 
@@ -97,35 +130,30 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel6.setText("Enter Standard Deviation");
 
-        jTextField1.setText("jTextField1");
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
             }
         });
 
-        jTextField2.setText("jTextField1");
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField2ActionPerformed(evt);
             }
         });
 
-        jTextField3.setText("jTextField1");
         jTextField3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField3ActionPerformed(evt);
             }
         });
 
-        jTextField4.setText("jTextField1");
         jTextField4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField4ActionPerformed(evt);
             }
         });
 
-        jTextField5.setText("jTextField1");
         jTextField5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField5ActionPerformed(evt);
@@ -135,6 +163,11 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel7.setText("2r Bands ");
 
         jButton2.setText("Build Dictionary");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -307,11 +340,76 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        //Check all input values
+        if(dialog!=null)
+        {  
+            inputDirectoryPath = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
+        }else
+        {
+            JOptionPane.showMessageDialog(getParent(),"Please Select Input Directory ");
+            return;
+        }
+        
+        try{
+        bandValue = Double.parseDouble(jTextField1.getText());
+        mean = Double.parseDouble(jTextField4.getText());
+        wordLength = Double.parseDouble(jTextField3.getText());
+        shiftLength = Double.parseDouble(jTextField2.getText());
+        standardDeviation = Double.parseDouble(jTextField5.getText());
+        }catch(Exception exception){
+            JOptionPane.showMessageDialog(getParent(),"Please Enter Valid Inputs"+exception.getMessage());
+            return;
+        }
+     //all good 
+      
+       JProgressBar progressBar = new JProgressBar();
+       progressBar.setIndeterminate(true);
+      
+       
+       MatlabObject matlabObject = new MatlabObject();
+        try {
+            proxy = matlabObject.getMatlabProxy();
+        } catch (MatlabConnectionException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // Setup the file system
+        SetupSystem ss = null;
+        try {
+            ss = new SetupSystem();
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+	String path = "cd(\'" + ss.matlabScriptLoc + "')";
+        try {
+            proxy.eval(path);
+        } catch (MatlabInvocationException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+       
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+       dialog = new FilePicker(this, true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+               });
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2MouseClicked
 
     /**
      * @param args the command line arguments
@@ -324,7 +422,7 @@ public class MainWindow extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }

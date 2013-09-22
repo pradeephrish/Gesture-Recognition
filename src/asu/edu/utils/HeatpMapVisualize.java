@@ -20,7 +20,16 @@ import java.awt.Image;
 public class HeatpMapVisualize {
 
 	private static Logger logger = new MyLogger().getupLogger();
+        private static Integer[][] boundry = new Integer[10][3];
 
+    public static Integer[][] getBoundry() {
+        return boundry;
+    }
+
+    public static void setBoundry(Integer[][] boundry) {
+        HeatpMapVisualize.boundry = boundry;
+    }
+        
 	public static Image drawHeatMap(String normalizeFileName,
 			String task2FileName, String letterFileName, int w, int s, String type) throws IOException {
 		CSVReader csvReader = new CSVReader(new FileReader(normalizeFileName));
@@ -73,6 +82,9 @@ public class HeatpMapVisualize {
 			System.out.println("Word : " + temp2[0] + " " + type + " value :"
 					+ temp2[1] + " senor number : " + temp2[2]);
 			int t[] = getRangeFromMatrix(letterFileName, w, s, temp2[0],lineNum);
+                        boundry[i][0]=t[0];
+                        boundry[i][1]=t[1];
+                        boundry[i][2]=lineNum;
 			int index = t[0];
 			int len = t[1] - t[0] + 1;
 			for (int j = 0; j < len; j++) {

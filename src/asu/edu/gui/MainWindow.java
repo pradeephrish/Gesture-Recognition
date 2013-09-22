@@ -29,6 +29,8 @@ import asu.edu.math.Task3FindSimilarData.DistanceFunction;
 import asu.edu.math.Task3FindSimilarData.Entity;
 import asu.edu.utils.ConstructGestureVectors;
 import asu.edu.utils.HeatpMapVisualize;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.io.File;
@@ -87,6 +89,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         jComboBox4 = new javax.swing.JComboBox();
         jPanel4 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
         jToggleButton3 = new javax.swing.JToggleButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -155,11 +158,11 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 790, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 461, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
         );
 
         jToggleButton3.setSelected(true);
@@ -855,10 +858,17 @@ public class MainWindow extends javax.swing.JFrame {
          HeatpMapVisualize heatMapVisualize = new HeatpMapVisualize();
         try {
             Image image = heatMapVisualize.drawHeatMap(normalizedFileName,task2FilePath,letterFileName,wordLength==null?3:wordLength.intValue(),shiftLength==null?2:shiftLength.intValue(),userChoice);
-            jPanel4.getGraphics().drawImage(image, 0, 0,jPanel4.getWidth(),jPanel4.getHeight(), jPanel4.getParent());
-            
-            
-            jPanel4.getGraphics().drawRect(0, 0, 100, 100);
+             Integer[][] boundry = heatMapVisualize.getBoundry();
+             for (int i = 0; i < boundry.length; i++) {
+               image.getGraphics().setColor(Color.green);
+                 
+                int startx = boundry[i][2]*20+98;
+                int starty = ((boundry[i][1]-boundry[i][0])*20)+40;
+                 
+                image.getGraphics().drawRect(startx, starty, 60, 20);  //drawing on image   
+                 
+            }
+            jScrollPane3.getGraphics().drawImage(image, 0, 0, null); 
         } catch (IOException ex) {
             
             JOptionPane.showMessageDialog(null, "Something wrong with heatmap generation");
@@ -941,6 +951,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;

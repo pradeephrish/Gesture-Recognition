@@ -35,6 +35,9 @@ public class CosineSimilarity {
 
 		}
 		hash2Length = (float) Math.sqrt(hash2Length);
+                
+                if(hashLength == 0 || hash2Length == 0)
+			return 0;
 
 		return (float) (ans / (hash2Length * hashLength));
 	}

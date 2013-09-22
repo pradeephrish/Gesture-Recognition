@@ -30,7 +30,7 @@ public class ConstructGestureWords {
 	private  List<Double> setOfIDF2 = new ArrayList<Double>();
 	
 	
-	public void getAllGestureFile(int w,int s,String sampleDataLoc) throws IOException{
+	/*public void getAllGestureFile(int w,int s,String sampleDataLoc) throws IOException{
 		
 		ConstructGestureWords constructGestureWordsX = new ConstructGestureWords();
 		ConstructGestureWords constructGestureWordsY = new ConstructGestureWords();
@@ -46,7 +46,7 @@ public class ConstructGestureWords {
 //		logger.info("Gesture files ready with Y axis");
 //		constructGestureWordsZ.constructGestureWords(w, s, sampleDataLoc+"\\letter\\Z", sampleDataLoc+"\\task1\\Z",sampleDataLoc+"\\task2\\Z");
 //		logger.info("Gesture files ready with Z axis");
-	}
+	}*/
 	public void constructGestureWords( int wordLength, int shiftLength, String seriesInputFolder) throws IOException{
 		//read File
 		File directory = new File(seriesInputFolder);  

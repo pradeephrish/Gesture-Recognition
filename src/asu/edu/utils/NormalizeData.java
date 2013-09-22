@@ -17,6 +17,9 @@ public class NormalizeData {
 		logger.info("Starting Normalization");
 
 		String axisW = sampleDataLoc + "/W";
+                
+                System.out.println("Location is "+axisW);
+                
 		File fileW = new File(axisW);
 		String[] directoriesW = fileW.list();
 		for (int i = 0; i < directoriesW.length; i++) {

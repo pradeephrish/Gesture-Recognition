@@ -12,15 +12,12 @@ public class SetupSystem {
 
 	public String sampleDataLoc;
 	public String matlabScriptLoc;
-	public String r;
-	public String w;
-	public String s;
-	public String mean;
-	public String standardDeviation;
 	private Logger logger = new MyLogger().getupLogger();
-
-	public SetupSystem() throws IOException {
-
+        
+        
+     
+	public SetupSystem(String fileLocation) throws IOException {
+                this.sampleDataLoc = fileLocation;
 		setFileLoc();
 
 		logger.info("Sample data Loc : " + sampleDataLoc);
@@ -117,13 +114,9 @@ public class SetupSystem {
 			prop.load(new FileInputStream(".\\config\\config.properties"));
 
 			// get the property value and print it out
-			sampleDataLoc = prop.getProperty("SampleDataLoc");
+//			sampleDataLoc = prop.getProperty("SampleDataLoc");   // Passed By UI
+                        
 			matlabScriptLoc = prop.getProperty("MatlabScriptLoc");
-			r = prop.getProperty("r");
-			w = prop.getProperty("w");
-			s = prop.getProperty("s");
-			mean = prop.getProperty("Mean");
-			standardDeviation = prop.getProperty("StandardDeviation");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

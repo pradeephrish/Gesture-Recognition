@@ -14,7 +14,6 @@ public class MyLogger {
 		FileHandler fh;
 
 		try {
-
 			// This block configure the logger with handler and formatter
 			fh = new FileHandler(".\\logs\\mwdb.log", true);
 			logger.addHandler(fh);

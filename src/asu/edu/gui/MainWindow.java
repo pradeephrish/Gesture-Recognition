@@ -5,14 +5,21 @@
 package asu.edu.gui;
 
 import asu.edu.loggers.MyLogger;
+import asu.edu.math.ConstructGestureWords;
+import asu.edu.math.GaussianBands;
 import asu.edu.matlab.MatlabObject;
 import asu.edu.setup.SetupSystem;
+import asu.edu.utils.LetterRange;
+import asu.edu.utils.NormalizeData;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.table.DefaultTableModel;
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
@@ -339,55 +346,99 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField5ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        //Check all input values
-        if(dialog!=null)
-        {  
-            inputDirectoryPath = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
-        }else
-        {
-            JOptionPane.showMessageDialog(getParent(),"Please Select Input Directory ");
-            return;
-        }
+        JProgressBar progressBar = new JProgressBar();
         
-        try{
-        bandValue = Double.parseDouble(jTextField1.getText());
-        mean = Double.parseDouble(jTextField4.getText());
-        wordLength = Double.parseDouble(jTextField3.getText());
-        shiftLength = Double.parseDouble(jTextField2.getText());
-        standardDeviation = Double.parseDouble(jTextField5.getText());
-        }catch(Exception exception){
-            JOptionPane.showMessageDialog(getParent(),"Please Enter Valid Inputs"+exception.getMessage());
-            return;
-        }
-     //all good 
-      
-       JProgressBar progressBar = new JProgressBar();
-       progressBar.setIndeterminate(true);
-      
-       
-       MatlabObject matlabObject = new MatlabObject();
         try {
-            proxy = matlabObject.getMatlabProxy();
-        } catch (MatlabConnectionException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            // TODO add your handling code here:
+            //Check all input values
+            if(dialog!=null)
+            {
+                inputDirectoryPath = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
+            }else
+            {
+                JOptionPane.showMessageDialog(getParent(),"Please Select Input Directory ");
+                return;
+            }
+            
+            try{
+            bandValue = Double.parseDouble(jTextField1.getText());
+            mean = Double.parseDouble(jTextField4.getText());
+            wordLength = Double.parseDouble(jTextField3.getText());
+            shiftLength = Double.parseDouble(jTextField2.getText());
+            standardDeviation = Double.parseDouble(jTextField5.getText());
+            }catch(Exception exception){
+                JOptionPane.showMessageDialog(getParent(),"Please Enter Valid Inputs"+exception.getMessage());
+                return;
+            }
+         //all good  
+           progressBar.setIndeterminate(true);
+           progressBar.setVisible(true);
+           
+           MatlabObject matlabObject = new MatlabObject();
+           proxy = matlabObject.getMatlabProxy();
+           
 
-        // Setup the file system
-        SetupSystem ss = null;
-        try {
-            ss = new SetupSystem();
+            // Setup the file system
+            SetupSystem ss = null;
+            double rBandValueRange[][] = null;
+            ss = new SetupSystem(inputDirectoryPath);
+
+            String path = "cd(\'" + ss.matlabScriptLoc + "')";
+             proxy.eval(path);
+                   
+            new NormalizeData(proxy, ss.matlabScriptLoc, ss.sampleDataLoc);
+
+            GaussianBands gb = new GaussianBands();
+             
+            
+            rBandValueRange = gb.getGaussianBands(ss.sampleDataLoc,
+                     bandValue, mean,
+                     standardDeviation);
+            
+
+                    LetterRange.assignToGaussianCurve(proxy, ss.matlabScriptLoc,
+                                    ss.sampleDataLoc,rBandValueRange);
+                    
+            
+            Object object[][] = new Object[rBandValueRange.length][rBandValueRange[0].length];
+            for (int i = 0; i < rBandValueRange.length; i++) {
+                for (int j = 0; j < rBandValueRange[i].length; j++) {
+                    object[i][j]=(Object)rBandValueRange[i][j];
+                }
+            }
+                    
+             
+            Object header[] = {"Lower","Higher"};
+          DefaultTableModel defaultTablePanel = new DefaultTableModel(object, header);
+          jTable1.setModel(defaultTablePanel);
+          defaultTablePanel.fireTableDataChanged();
+          
+            ConstructGestureWords constructGestureWordsX = new ConstructGestureWords();
+            constructGestureWordsX.constructGestureWords(wordLength.intValue(), shiftLength.intValue(), inputDirectoryPath+"\\letter\\X");
+		
+             
+             /*ConstructGestureWords constructGestureWordsY = new ConstructGestureWords();
+             ConstructGestureWords constructGestureWordsZ = new ConstructGestureWords();
+	     ConstructGestureWords constructGestureWordsW = new ConstructGestureWords();*/
+
+//		
+//		logger.info("Gesture files ready with W angle");
+//		constructGestureWordsX.constructGestureWords(w, s, sampleDataLoc+"\\letter\\X", sampleDataLoc+"\\task1\\X",sampleDataLoc+"\\task2\\X");
+//		logger.info("Gesture files ready with X axis");
+//		constructGestureWordsY.constructGestureWords(w, s, sampleDataLoc+"\\letter\\Y", sampleDataLoc+"\\task1\\Y",sampleDataLoc+"\\task2\\Y");
+//		logger.info("Gesture files ready with Y axis");
+//		constructGestureWordsZ.constructGestureWords(w, s, sampleDataLoc+"\\letter\\Z", sampleDataLoc+"\\task1\\Z",sampleDataLoc+"\\task2\\Z");
+//		logger.info("Gesture files ready with Z axis");
+              
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-	String path = "cd(\'" + ss.matlabScriptLoc + "')";
-        try {
-            proxy.eval(path);
         } catch (MatlabInvocationException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (MatlabConnectionException ex) {
+                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            progressBar.setVisible(false);
         }
-       
        
         
     }//GEN-LAST:event_jButton2ActionPerformed

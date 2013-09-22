@@ -438,8 +438,16 @@ public class MainWindow extends javax.swing.JFrame {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             progressBar.setVisible(false);
+            try {
+                // Disconnect the proxy from MATLAB
+                proxy.exit();
+            } catch (MatlabInvocationException ex) {
+                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            proxy.disconnect();
         }
        
+        
         
     }//GEN-LAST:event_jButton2ActionPerformed
 

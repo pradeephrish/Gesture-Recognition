@@ -18,7 +18,7 @@ public class FilePicker extends javax.swing.JDialog {
     /**
      * Creates new form FilePicker
      */
-    public FilePicker(java.awt.Frame parent, boolean modal) {
+    public FilePicker(java.awt.Frame parent, boolean modal,int mode ) {
         super(parent, modal);
         this.setLocationRelativeTo(null);
         initComponents();
@@ -42,7 +42,11 @@ public class FilePicker extends javax.swing.JDialog {
             
         });
        
-       
+        if(mode == 1)
+            jFileChooser1.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        else
+            jFileChooser1.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        
         setVisible(true);
     }
     /**
@@ -110,7 +114,7 @@ public class FilePicker extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                FilePicker dialog = new FilePicker(new javax.swing.JFrame(), true);
+                FilePicker dialog = new FilePicker(new javax.swing.JFrame(), true,JFileChooser.DIRECTORIES_ONLY);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

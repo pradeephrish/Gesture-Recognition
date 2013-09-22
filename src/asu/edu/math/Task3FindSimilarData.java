@@ -30,13 +30,16 @@ public class Task3FindSimilarData {
 	private static Logger logger = new MyLogger().getupLogger();
 	private ConstructGestureWords constructGestureWords;
 	private Double maxTF;
-	
-	enum DistanceFunction{
+	private DistanceFunction distanceFunction;
+        private Entity entity;
+        private HashMap<Integer,Double> similarityThread;
+        
+	public enum DistanceFunction{
 		CosineFunction,
 		Mahanolobis;
 	}
 	
-	enum Entity{
+	public enum Entity{
 		TF,
 		IDF,
 		IDF2,
@@ -46,7 +49,9 @@ public class Task3FindSimilarData {
 	
 	
 	
-	public Task3FindSimilarData(Map<String,Integer> tfGlobalMap,List<List<Map<String,List<Double>>>> dictionary,List<Map<String,Double>> dictionaryPerDocument,Integer wordLength,Integer shiftLength,String inputDirectory,ConstructGestureWords constructGestureWords) throws IOException{
+	public Task3FindSimilarData(Map<String,Integer> tfGlobalMap,List<List<Map<String,List<Double>>>> dictionary,List<Map<String,Double>> dictionaryPerDocument,Integer wordLength,Integer shiftLength,String inputDirectory,ConstructGestureWords constructGestureWords,DistanceFunction distanceFunction,Entity entity) throws IOException{
+                this.distanceFunction=distanceFunction;
+                this.entity=entity;
 		this.tfGlobalMap = tfGlobalMap;
 		this.dictionary=dictionary;
 		this.inputDictionary = new ArrayList<List<Map<String,List<Double>>>>();
@@ -60,20 +65,24 @@ public class Task3FindSimilarData {
 		//we can directly process these two dictionaries instead of again reading from file
 	
 		//perform on TF
-		HashMap<Integer, Double> tfSimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TF);
-		HashMap<Integer, Double> tfidfSimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TFIDF);
-		HashMap<Integer, Double> tfidf2SimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TFIDF2);
+	//	HashMap<Integer, Double> tfSimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TF);
+	//	HashMap<Integer, Double> tfidfSimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TFIDF);
+	//	HashMap<Integer, Double> tfidf2SimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TFIDF2);
 		
-		logger.info("Top 10 TF Matching series");
-		showLinkedHashMap(tfSimilarScores,10);
-		logger.info("Top 10 TFIDF Matching series");
-		showLinkedHashMap(tfidfSimilarScores, 10);
-		logger.info("Top 10 TFIDF2 Matching series");
-		showLinkedHashMap(tfidf2SimilarScores, 10);
+	//	logger.info("Top 10 TF Matching series");
+	//	showLinkedHashMap(tfSimilarScores,10);
+	//	logger.info("Top 10 TFIDF Matching series");
+	//	showLinkedHashMap(tfidfSimilarScores, 10);
+	//	logger.info("Top 10 TFIDF2 Matching series");
+	//	showLinkedHashMap(tfidf2SimilarScores, 10);
 		
 		
 	}
 
+        public HashMap<Integer,Double> getSimilarityScore(){
+            return computeSimilarilty(inputDictionary, dictionary, distanceFunction, entity);
+        }
+                
 	private void showLinkedHashMap(HashMap<Integer, Double> tfidfSimilarScores,
 			int i) {
 		// TODO Auto-generated method stub
@@ -90,7 +99,7 @@ public class Task3FindSimilarData {
 	private void init(Integer wordLength,Integer shiftLength, String inputDirectory) throws IOException { 
 		// TODO Auto-generated method stub
 		File file = new File(inputDirectory);
-		File listFiles[] = file.listFiles();
+		File listFiles[] = {file}; 
 		for (File file2 : listFiles) {
 			BufferedReader in = new BufferedReader(new FileReader(file2));
 			
@@ -428,7 +437,7 @@ public class Task3FindSimilarData {
 		ConstructGestureWords constructGestureWords  = new ConstructGestureWords();
 		constructGestureWords.constructGestureWords(3, 2, "data//sampledata//letter//X");
 	
-		Task3FindSimilarData task3FindSimilarData =  new Task3FindSimilarData(constructGestureWords.getTfIDFMapGlobal(),constructGestureWords.getTfMapArrayIDF(),constructGestureWords.getTfMapArrayIDF2(),3,2,"data//sampledata//input",constructGestureWords);
+//		Task3FindSimilarData task3FindSimilarData =  new Task3FindSimilarData(constructGestureWords.getTfIDFMapGlobal(),constructGestureWords.getTfMapArrayIDF(),constructGestureWords.getTfMapArrayIDF2(),3,2,"data//sampledata//input",constructGestureWords);
 		
 		
 		} catch (IOException e) {

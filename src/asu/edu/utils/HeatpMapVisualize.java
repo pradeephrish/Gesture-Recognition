@@ -15,14 +15,14 @@ import org.tc33.jheatchart.HeatChart;
 
 import asu.edu.loggers.MyLogger;
 import au.com.bytecode.opencsv.CSVReader;
+import java.awt.Image;
 
 public class HeatpMapVisualize {
 
 	private static Logger logger = new MyLogger().getupLogger();
 
-	public static void drawHeatMap(String normalizeFileName,
-			String task2FileName, String letterFileName, int w, int s,
-			String outFileName, String type) throws IOException {
+	public static Image drawHeatMap(String normalizeFileName,
+			String task2FileName, String letterFileName, int w, int s, String type) throws IOException {
 		CSVReader csvReader = new CSVReader(new FileReader(normalizeFileName));
 		List<String[]> matrixStr = csvReader.readAll();
 		csvReader.close();
@@ -104,7 +104,9 @@ public class HeatpMapVisualize {
 		map.setYValues(yAxisLabels);
 
 		// Step 3: Output the chart to a file.
-		map.saveToFile(new File(outFileName));
+//		map.saveToFile(new File(outFileName));
+                
+                return map.getChartImage();
 	}
 
 	public static List<String[]> parseTask2File(String inFileName, String type)

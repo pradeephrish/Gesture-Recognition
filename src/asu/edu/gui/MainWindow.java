@@ -42,14 +42,16 @@ public class MainWindow extends javax.swing.JFrame {
     
     private static MatlabProxy proxy;
     private static Logger logger = new MyLogger().getupLogger();
-    
-
+    private ProgressBarUpdator progressBar;
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
         this.setTitle("MWDB: Phase I"); 
         initComponents();
+        progressBar = new ProgressBarUpdator(jProgressBar1);
+        new Thread(progressBar).start();
+        progressBar.setValue(0);
     }
 
     /**
@@ -82,7 +84,7 @@ public class MainWindow extends javax.swing.JFrame {
         jToggleButton1 = new javax.swing.JToggleButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel4 = new javax.swing.JPanel();
+        jProgressBar1 = new javax.swing.JProgressBar();
         jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -183,6 +185,11 @@ public class MainWindow extends javax.swing.JFrame {
 
         jToggleButton1.setText("Open Output Folder");
         jToggleButton1.setEnabled(false);
+        jToggleButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jToggleButton1MouseClicked(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -197,27 +204,8 @@ public class MainWindow extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(jTable1);
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("Dictionary Build Done !!");
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(53, Short.MAX_VALUE))
-        );
+        jLabel8.setText("Progress");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -231,9 +219,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGap(29, 29, 29)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton2)
-                            .addComponent(jToggleButton1))
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jToggleButton1)
+                            .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(49, 49, 49)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -253,7 +241,7 @@ public class MainWindow extends javax.swing.JFrame {
                                     .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                                     .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                                     .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))))))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(43, 43, 43)
@@ -292,9 +280,12 @@ public class MainWindow extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton2)
                         .addGap(45, 45, 45)
-                        .addComponent(jToggleButton1))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jToggleButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(32, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -346,7 +337,8 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField5ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        JProgressBar progressBar = new JProgressBar();
+        
+        jToggleButton1.setEnabled(false);
         
         try {
             // TODO add your handling code here:
@@ -371,8 +363,9 @@ public class MainWindow extends javax.swing.JFrame {
                 return;
             }
          //all good  
-           progressBar.setIndeterminate(true);
-           progressBar.setVisible(true);
+           
+
+           progressBar.setValue(10);
            
            MatlabObject matlabObject = new MatlabObject();
            proxy = matlabObject.getMatlabProxy();
@@ -396,9 +389,11 @@ public class MainWindow extends javax.swing.JFrame {
                      standardDeviation);
             
 
-                    LetterRange.assignToGaussianCurve(proxy, ss.matlabScriptLoc,
+            LetterRange.assignToGaussianCurve(proxy, ss.matlabScriptLoc,
                                     ss.sampleDataLoc,rBandValueRange);
-                    
+            
+            
+            progressBar.setValue(75);
             
             Object object[][] = new Object[rBandValueRange.length][rBandValueRange[0].length];
             for (int i = 0; i < rBandValueRange.length; i++) {
@@ -406,7 +401,9 @@ public class MainWindow extends javax.swing.JFrame {
                     object[i][j]=(Object)rBandValueRange[i][j];
                 }
             }
-                    
+           
+            progressBar.setValue(90);
+            
              
             Object header[] = {"Lower","Higher"};
           DefaultTableModel defaultTablePanel = new DefaultTableModel(object, header);
@@ -429,7 +426,13 @@ public class MainWindow extends javax.swing.JFrame {
 //		logger.info("Gesture files ready with Y axis");
 //		constructGestureWordsZ.constructGestureWords(w, s, sampleDataLoc+"\\letter\\Z", sampleDataLoc+"\\task1\\Z",sampleDataLoc+"\\task2\\Z");
 //		logger.info("Gesture files ready with Z axis");
-              
+            
+            
+            progressBar.setValue(100);
+            JOptionPane.showMessageDialog(getParent(),"Processing Complete! Click on Open Output Directory ");
+            progressBar.setValue(0); 
+            jToggleButton1.setEnabled(true);
+            
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MatlabInvocationException ex) {
@@ -437,7 +440,7 @@ public class MainWindow extends javax.swing.JFrame {
         }catch (MatlabConnectionException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
-            progressBar.setVisible(false);
+            progressBar.setValue(0);
             try {
                 // Disconnect the proxy from MATLAB
                 proxy.exit();
@@ -470,6 +473,16 @@ public class MainWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2MouseClicked
 
+    private void jToggleButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseClicked
+        try {
+            // TODO add your handling code here:
+            Runtime.getRuntime().exec("explorer.exe   "+inputDirectoryPath);
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(null, "Problem with Explorer, Please check manually");
+        }
+    }//GEN-LAST:event_jToggleButton1MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -500,7 +513,9 @@ public class MainWindow extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainWindow().setVisible(true);
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.setLocationRelativeTo(null);
+                mainWindow.setVisible(true);
             }
         });
     }
@@ -518,7 +533,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTable jTable1;

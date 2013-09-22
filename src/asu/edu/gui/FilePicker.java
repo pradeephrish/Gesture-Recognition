@@ -20,6 +20,7 @@ public class FilePicker extends javax.swing.JDialog {
      */
     public FilePicker(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        this.setLocationRelativeTo(null);
         initComponents();
         
         jFileChooser1.addActionListener(new ActionListener(){

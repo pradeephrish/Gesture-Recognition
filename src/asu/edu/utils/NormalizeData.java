@@ -1,5 +1,6 @@
 package asu.edu.utils;
 
+import asu.edu.gui.MainWindow;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -31,6 +32,8 @@ public class NormalizeData {
 						+ "')");
 			}
 		}
+                
+
 
 		String axisX = sampleDataLoc + "/X";
 		File fileX = new File(axisX);
@@ -45,6 +48,9 @@ public class NormalizeData {
 			}
 		}
 
+                
+
+                
 		String axisY = sampleDataLoc + "/Y";
 		File fileY = new File(axisY);
 		String[] directoriesY = fileY.list();
@@ -57,6 +63,7 @@ public class NormalizeData {
 						+ "')");
 			}
 		}
+                
 
 		String axisZ = sampleDataLoc + "/Z";
 		File fileZ = new File(axisZ);
@@ -71,6 +78,9 @@ public class NormalizeData {
 			}
 		}
 		logger.info("Normalization Done !");
+
 	}
+        
+        
 
 }

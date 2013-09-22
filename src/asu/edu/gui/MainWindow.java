@@ -62,6 +62,7 @@ public class MainWindow extends javax.swing.JFrame {
         progressBar = new ProgressBarUpdator(jProgressBar1);
         new Thread(progressBar).start();
         progressBar.setValue(0);
+        this.setAlwaysOnTop(true);
     }
 
     /**
@@ -121,7 +122,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGap(0, 564, Short.MAX_VALUE)
         );
 
-        jTabbedPane2.addTab("tab2", jPanel2);
+        jTabbedPane2.addTab("Task 2", jPanel2);
 
         jLabel10.setText("Select Input File");
 
@@ -241,7 +242,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("Select Input File");
+        jLabel2.setText("Select Input Directory");
 
         jLabel3.setText("Enter Band Value (r)");
 
@@ -251,30 +252,35 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel6.setText("Enter Standard Deviation");
 
+        jTextField1.setText("10");
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
             }
         });
 
+        jTextField2.setText("2");
         jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField2ActionPerformed(evt);
             }
         });
 
+        jTextField3.setText("3");
         jTextField3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField3ActionPerformed(evt);
             }
         });
 
+        jTextField4.setText("0");
         jTextField4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField4ActionPerformed(evt);
             }
         });
 
+        jTextField5.setText("0.25");
         jTextField5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField5ActionPerformed(evt);
@@ -574,7 +580,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+       // TODO add your handling code here:
        dialog = new FilePicker(this, true, JFileChooser.DIRECTORIES_ONLY);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override

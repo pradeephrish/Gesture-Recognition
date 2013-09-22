@@ -644,3 +644,25 @@ Sep 22, 2013 1:27:39 AM asu.edu.utils.LetterRange assignToGaussianCurve
 INFO:  Done with Y folder ...
 Sep 22, 2013 1:27:42 AM asu.edu.utils.LetterRange assignToGaussianCurve
 INFO:  Done with Z folder ...
+Sep 22, 2013 2:13:15 AM asu.edu.setup.SetupSystem <init>
+INFO: Sample data Loc : C:\Users\paddy\Desktop\data\sampledata
+Sep 22, 2013 2:13:15 AM asu.edu.setup.SetupSystem <init>
+INFO: Normalize directory is not empty, deleting it.
+Sep 22, 2013 2:13:19 AM asu.edu.setup.SetupSystem <init>
+INFO: Normalize directory is not empty, deleting it.
+Sep 22, 2013 2:13:24 AM asu.edu.setup.SetupSystem <init>
+INFO: Task1 directory is not empty, deleting it.
+Sep 22, 2013 2:13:24 AM asu.edu.setup.SetupSystem <init>
+INFO: Task2 directory is not empty, deleting it.
+Sep 22, 2013 2:13:24 AM asu.edu.utils.NormalizeData <init>
+INFO: Starting Normalization
+Sep 22, 2013 2:13:35 AM asu.edu.utils.NormalizeData <init>
+INFO: Normalization Done !
+Sep 22, 2013 2:13:36 AM asu.edu.utils.LetterRange assignToGaussianCurve
+INFO:  Done with W folder ...
+Sep 22, 2013 2:13:38 AM asu.edu.utils.LetterRange assignToGaussianCurve
+INFO:  Done with X folder ...
+Sep 22, 2013 2:13:39 AM asu.edu.utils.LetterRange assignToGaussianCurve
+INFO:  Done with Y folder ...
+Sep 22, 2013 2:13:40 AM asu.edu.utils.LetterRange assignToGaussianCurve
+INFO:  Done with Z folder ...

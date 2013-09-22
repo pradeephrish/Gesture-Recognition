@@ -72,8 +72,7 @@ public class HeatpMapVisualize {
 			int lineNum = Integer.parseInt(temp2[2]);
 			System.out.println("Word : " + temp2[0] + " " + type + " value :"
 					+ temp2[1] + " senor number : " + temp2[2]);
-			int t[] = getRangeFromMatrix(letterFileName, w, s, temp2[0],
-					lineNum);
+			int t[] = getRangeFromMatrix(letterFileName, w, s, temp2[0],lineNum);
 			int index = t[0];
 			int len = t[1] - t[0] + 1;
 			for (int j = 0; j < len; j++) {
@@ -188,7 +187,7 @@ public class HeatpMapVisualize {
 		int end = 0;
 		int flag = 0;
 		int count = 0;
-		for (int i = 0; i < letter.length; i++) {
+		for (int i = 0; i < letter.length-w+1; i=i+s) {
 			count = 0;
 			if (letter[i].equals("d" + context[count])) {
 				int j = i + 1;
@@ -196,8 +195,7 @@ public class HeatpMapVisualize {
 					count++;
 					start = i;
 
-					while ((count < w)
-							&& (letter[j].equals("d" + context[count]))) {
+					while ((count < w) && (letter[j].equals("d" + context[count]))) {
 						j++;
 						count++;
 

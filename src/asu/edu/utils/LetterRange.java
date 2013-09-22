@@ -29,10 +29,32 @@ public class LetterRange {
 	 */
 	public static void assignToGaussianCurve(MatlabProxy proxy,
 			String matlabScriptLoc, String sampleDataLoc,
-			double rBandValueRange[][]) throws MatlabInvocationException,
+			double rBandValueRange[][],List<File> directory) throws MatlabInvocationException,
 			IOException {
+            
+                for (int j = 0; j < directory.size(); j++) {
+                    String axisW = sampleDataLoc + File.separator + "normalize"
+				+ File.separator + directory.get(j).getName();
+		File fileW = new File(axisW);
+		String[] directoriesW = fileW.list();
+		for (int i = 0; i < directoriesW.length; i++) {
+			if (directoriesW[i].contains("csv")) {
+//				String bandRangeFile = sampleDataLoc + File.separator+ "rangeBandFile.csv";
+				String letterAxisWFile = sampleDataLoc + File.separator
+						+ "letter" + File.separator + directory.get(j).getName() + File.separator
+						+ directoriesW[i];
+				String normalAxisWFile = sampleDataLoc + "/normalize/"+directory.get(j).getName() + "/"
+						+ directoriesW[i];
+				assignLetter(normalAxisWFile, letterAxisWFile, rBandValueRange);
+//				proxy.eval("letterrange('" + normalAxisWFile + "','"
+//						+ letterAxisWFile + "','" + bandRangeFile + "')");
+			}
+		}
+		logger.info(" Done with "+directory.get(j).getName()+" folder ...");
+                }
+            
 
-		String axisW = sampleDataLoc + File.separator + "normalize"
+		/*String axisW = sampleDataLoc + File.separator + "normalize"
 				+ File.separator + "W";
 		File fileW = new File(axisW);
 		String[] directoriesW = fileW.list();
@@ -108,7 +130,7 @@ public class LetterRange {
 //						+ letterAxisZFile + "','" + bandRangeFile + "')");
 			}
 		}
-		logger.info(" Done with Z folder ...");
+		logger.info(" Done with Z folder ...");*/
 	}
 
 	public static void assignLetter(String normalAxisWFile,

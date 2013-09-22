@@ -8,34 +8,35 @@ import java.util.logging.Logger;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 import asu.edu.loggers.MyLogger;
+import java.util.List;
 
 public class NormalizeData {
 
 	private Logger logger = new MyLogger().getupLogger();
 
 	public NormalizeData(MatlabProxy proxy, String matlabScriptLoc,
-			String sampleDataLoc) throws IOException, MatlabInvocationException {
+			String sampleDataLoc,List<File> directories) throws IOException, MatlabInvocationException {
 		logger.info("Starting Normalization");
 
-		String axisW = sampleDataLoc + "/W";
+                for (int j = 0; j < directories.size(); j++) {
+                        String axisW = sampleDataLoc + "/"+directories.get(j).getName();
                 
-                System.out.println("Location is "+axisW);
+                        System.out.println("Location is "+axisW);
                 
-		File fileW = new File(axisW);
-		String[] directoriesW = fileW.list();
-		for (int i = 0; i < directoriesW.length; i++) {
+                        File fileW = new File(axisW);
+                        String[] directoriesW = fileW.list();
+                        for (int i = 0; i < directoriesW.length; i++) {
 			if (directoriesW[i].contains("csv")) {
 				String axisWFile = axisW + "/" + directoriesW[i];
-				String normalAxisWFile = sampleDataLoc + "/normalize/W" + "/"
+				String normalAxisWFile = sampleDataLoc + "/OUTPUTP1/normalize/"+directories.get(j).getName() + "/"
 						+ directoriesW[i];
 				proxy.eval("normalize('" + axisWFile + "','" + normalAxisWFile
 						+ "')");
 			}
 		}
-                
+                }
 
-
-		String axisX = sampleDataLoc + "/X";
+/*		String axisX = sampleDataLoc + "/X";
 		File fileX = new File(axisX);
 		String[] directoriesX = fileX.list();
 		for (int i = 0; i < directoriesX.length; i++) {
@@ -78,9 +79,6 @@ public class NormalizeData {
 			}
 		}
 		logger.info("Normalization Done !");
-
+*/
 	}
-        
-        
-
 }

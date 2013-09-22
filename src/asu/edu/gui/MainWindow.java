@@ -27,6 +27,8 @@ import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 import asu.edu.math.Task3FindSimilarData.DistanceFunction;
 import asu.edu.math.Task3FindSimilarData.Entity;
+import asu.edu.utils.ConstructGestureVectors;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFileChooser;
@@ -51,7 +53,8 @@ public class MainWindow extends javax.swing.JFrame {
     private static Logger logger = new MyLogger().getupLogger();
     private ProgressBarUpdator progressBar;
     
-    private ConstructGestureWords constructGestureWordsX = null;
+    private List<ConstructGestureWords> constructGestureWords = new ArrayList<ConstructGestureWords>();
+    private List<File> listOfDirectories;
     
     /**
      * Creates new form MainWindow
@@ -87,6 +90,8 @@ public class MainWindow extends javax.swing.JFrame {
         jTable2 = new javax.swing.JTable();
         jLabel13 = new javax.swing.JLabel();
         jToggleButton2 = new javax.swing.JToggleButton();
+        jLabel14 = new javax.swing.JLabel();
+        jComboBox3 = new javax.swing.JComboBox();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
@@ -107,7 +112,6 @@ public class MainWindow extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jProgressBar1 = new javax.swing.JProgressBar();
         jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -119,7 +123,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 564, Short.MAX_VALUE)
+            .addGap(0, 567, Short.MAX_VALUE)
         );
 
         jTabbedPane2.addTab("Task 2", jPanel2);
@@ -139,6 +143,8 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "TF", "TF-IDF", "TF-IDF2" }));
+        jComboBox1.setMaximumSize(new java.awt.Dimension(67, 23));
+        jComboBox1.setMinimumSize(new java.awt.Dimension(67, 23));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
@@ -150,6 +156,8 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel12.setText("Select Distance Function");
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Cosine Similarity", "Euclidian Function" }));
+        jComboBox2.setMaximumSize(new java.awt.Dimension(67, 23));
+        jComboBox2.setMinimumSize(new java.awt.Dimension(67, 23));
         jComboBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox2ActionPerformed(evt);
@@ -178,6 +186,17 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jLabel14.setText("Select Dictionary to Compare Against");
+
+        jComboBox3.setLightWeightPopupEnabled(false);
+        jComboBox3.setMaximumSize(new java.awt.Dimension(67, 23));
+        jComboBox3.setMinimumSize(new java.awt.Dimension(67, 23));
+        jComboBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -185,21 +204,25 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(56, 56, 56)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addGap(251, 251, 251)
-                        .addComponent(jToggleButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel11)
                             .addComponent(jLabel12))
-                        .addGap(123, 123, 123)
+                        .addGap(115, 115, 115)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox2, 0, 274, Short.MAX_VALUE)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))))
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel14))
+                        .addGap(175, 175, 175)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jComboBox3, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jToggleButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE))))
                 .addGap(148, 148, 148))
         );
         jPanel3Layout.setVerticalGroup(
@@ -211,19 +234,25 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jButton3))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(jLabel12))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel14)
+                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel13)
                     .addComponent(jToggleButton2))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jTabbedPane2.addTab("Task 3", jPanel3);
@@ -325,8 +354,6 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel8.setText("Progress");
 
-        jLabel9.setText("slfjsldkf");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -344,7 +371,7 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(49, 49, 49)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -361,8 +388,7 @@ public class MainWindow extends javax.swing.JFrame {
                                     .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                                     .addComponent(jTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
                                     .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)))
-                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                    .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE))))))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -372,9 +398,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(38, 38, 38)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -407,7 +431,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         jTabbedPane2.addTab("Task1", jPanel1);
@@ -455,16 +479,21 @@ public class MainWindow extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         
         jToggleButton1.setEnabled(false);
-        
+        listOfDirectories = null; 
         try {
             // TODO add your handling code here:
             //Check all input values
             if(dialog!=null)
             {
                 inputDirectoryPath = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
-                jLabel9.setText(inputDirectoryPath);
-                
-                
+                File[] list = new File(inputDirectoryPath).listFiles();
+                if(list.length==0)
+                {
+                    JOptionPane.showMessageDialog(getParent(),"Given directory is empty !");
+                    return;
+                }
+                listOfDirectories = findDirectories(list);
+                System.out.println(listOfDirectories.toArray());
             }else
             {
                 JOptionPane.showMessageDialog(getParent(),"Please Select Input Directory ");
@@ -500,7 +529,7 @@ public class MainWindow extends javax.swing.JFrame {
             String path = "cd(\'" + ss.matlabScriptLoc + "')";
              proxy.eval(path);
                    
-            new NormalizeData(proxy, ss.matlabScriptLoc, ss.sampleDataLoc);
+            new NormalizeData(proxy, ss.matlabScriptLoc, ss.sampleDataLoc,listOfDirectories);
 
             GaussianBands gb = new GaussianBands();
              
@@ -511,7 +540,7 @@ public class MainWindow extends javax.swing.JFrame {
             
 
             LetterRange.assignToGaussianCurve(proxy, ss.matlabScriptLoc,
-                                    ss.sampleDataLoc,rBandValueRange);
+                                    ss.sampleDataLoc+"/OUTPUTP1",rBandValueRange,listOfDirectories);
             
             
             progressBar.setValue(75);
@@ -531,10 +560,15 @@ public class MainWindow extends javax.swing.JFrame {
           jTable1.setModel(defaultTablePanel);
           defaultTablePanel.fireTableDataChanged();
           
-            constructGestureWordsX = new ConstructGestureWords();
-            constructGestureWordsX.constructGestureWords(wordLength.intValue(), shiftLength.intValue(), inputDirectoryPath+"\\letter\\X");
-		
-             
+           //Depending on Number of Directories call Constrcut gesture words N times
+            for (int i = 0; i < listOfDirectories.size(); i++) {
+                ConstructGestureWords cGestureWords = new ConstructGestureWords();
+                System.out.println(inputDirectoryPath+"\\OUTPUTP1\\letter\\"+listOfDirectories.get(i).getName()); 
+                cGestureWords.constructGestureWords(wordLength.intValue(), shiftLength.intValue(), inputDirectoryPath+"\\OUTPUTP1\\letter\\"+listOfDirectories.get(i).getName());
+                constructGestureWords.add(cGestureWords);
+                jComboBox3.addItem(listOfDirectories.get(i).getName()); 
+            }
+
              /*ConstructGestureWords constructGestureWordsY = new ConstructGestureWords();
              ConstructGestureWords constructGestureWordsZ = new ConstructGestureWords();
 	     ConstructGestureWords constructGestureWordsW = new ConstructGestureWords();*/
@@ -632,7 +666,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
         
-            if(constructGestureWordsX == null){
+            if(constructGestureWords == null){
                 JOptionPane.showMessageDialog(getParent(),"Empty Dictionary, Please build dictionary using Task1");
                 return;
             }
@@ -653,7 +687,13 @@ public class MainWindow extends javax.swing.JFrame {
                         
             DistanceFunction distanceFunction = jComboBox2.getSelectedIndex()==0?DistanceFunction.CosineFunction:DistanceFunction.Mahanolobis;
             Entity entity = jComboBox1.getSelectedIndex()==0?Entity.TF:(jComboBox1.getSelectedIndex()==1?Entity.TFIDF:Entity.TFIDF2);
-            Task3FindSimilarData task3FindSimilarData =  new Task3FindSimilarData(constructGestureWordsX.getTfIDFMapGlobal(),constructGestureWordsX.getTfMapArrayIDF(),constructGestureWordsX.getTfMapArrayIDF2(),wordLength.intValue(),shiftLength.intValue(),fileChooser,constructGestureWordsX, distanceFunction,entity);
+            
+            
+            
+            Integer index  = jComboBox3.getSelectedIndex();
+            ConstructGestureWords dictionary = constructGestureWords.get(index);
+            
+            Task3FindSimilarData task3FindSimilarData =  new Task3FindSimilarData(dictionary.getTfIDFMapGlobal(),dictionary.getTfMapArrayIDF(),dictionary.getTfMapArrayIDF2(),wordLength.intValue(),shiftLength.intValue(),fileChooser,dictionary, distanceFunction,entity);
             //constructGestureWordsX.getFileNames() for file Names
             HashMap<Integer, Double> similarityScore = task3FindSimilarData.getSimilarityScore();
             Object[][] object = new Object[similarityScore.entrySet().size()][2];
@@ -661,7 +701,7 @@ public class MainWindow extends javax.swing.JFrame {
             for (Map.Entry<Integer, Double> entry : similarityScore.entrySet()) { 
 		    Integer key = entry.getKey();
 		    Double value = entry.getValue();
-		    object[i][0]=(Object)constructGestureWordsX.getFileNames()[key];
+		    object[i][0]=(Object)dictionary.getFileNames()[key];
                     object[i++][1]=(Object)value;
 		}
            Object[] columnNames = {"Multivariate Series Name","Matching Score"};
@@ -675,6 +715,10 @@ public class MainWindow extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Something wrong the file score calculations !");
         }
     }//GEN-LAST:event_jToggleButton2ActionPerformed
+
+    private void jComboBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -718,11 +762,13 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JComboBox jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -730,7 +776,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -748,4 +793,13 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     // End of variables declaration//GEN-END:variables
+
+    private List<File> findDirectories(File[] listOfDirectories) {
+        List<File> fileList = new ArrayList<File>();
+        for (int i = 0; i < listOfDirectories.length; i++) {
+            if(listOfDirectories[i].isDirectory() && !listOfDirectories[i].isHidden() && !listOfDirectories[i].getName().equalsIgnoreCase("OUTPUTP1") )
+                fileList.add(listOfDirectories[i]);
+        }
+        return fileList;
+    }
 }

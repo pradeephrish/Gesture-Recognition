@@ -23,7 +23,7 @@ public class SetupSystem {
 
 		logger.info("Sample data Loc : " + sampleDataLoc);
 		{
-			File normalizeDirectory = new File(sampleDataLoc + "/normalize");
+			File normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize");
 			if (!normalizeDirectory.exists()) {
 				normalizeDirectory.mkdir();
 			} else {
@@ -31,18 +31,18 @@ public class SetupSystem {
 				delete(normalizeDirectory);
 				normalizeDirectory.mkdir();
 			}
-			normalizeDirectory = new File(sampleDataLoc + "/normalize/W");
+			normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/W");
 			normalizeDirectory.mkdir();
-			normalizeDirectory = new File(sampleDataLoc + "/normalize/X");
+			normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/X");
 			normalizeDirectory.mkdir();
-			normalizeDirectory = new File(sampleDataLoc + "/normalize/Y");
+			normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/Y");
 			normalizeDirectory.mkdir();
-			normalizeDirectory = new File(sampleDataLoc + "/normalize/Z");
+			normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/Z");
 			normalizeDirectory.mkdir();
 		}
 
 		{
-			File letterDirectory = new File(sampleDataLoc + "/letter");
+			File letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter");
 			if (!letterDirectory.exists()) {
 				letterDirectory.mkdir();
 			} else {
@@ -50,20 +50,20 @@ public class SetupSystem {
 				delete(letterDirectory);
 				letterDirectory.mkdir();
 			}
-			letterDirectory = new File(sampleDataLoc + "/letter/W");
+			letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/W");
 			letterDirectory.mkdir();
-			letterDirectory = new File(sampleDataLoc + "/letter/X");
+			letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/X");
 			letterDirectory.mkdir();
-			letterDirectory = new File(sampleDataLoc + "/letter/Y");
+			letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/Y");
 			letterDirectory.mkdir();
-			letterDirectory = new File(sampleDataLoc + "/letter/Z");
+			letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/Z");
 			letterDirectory.mkdir();
 		}
 
 		
 		
 		{
-			File task1Directory = new File(sampleDataLoc + "/task1");
+			File task1Directory = new File(sampleDataLoc + "/OUTPUTP1/task1");
 			if (!task1Directory.exists()) {
 				task1Directory.mkdir();
 			} else {
@@ -71,18 +71,18 @@ public class SetupSystem {
 				delete(task1Directory);
 				task1Directory.mkdir();
 			}
-			task1Directory = new File(sampleDataLoc + "/task1/W");
+			task1Directory = new File(sampleDataLoc + "/OUTPUTP1/task1/W");
 			task1Directory.mkdir();
-			task1Directory = new File(sampleDataLoc + "/task1/X");
+			task1Directory = new File(sampleDataLoc + "/OUTPUTP1/task1/X");
 			task1Directory.mkdir();
-			task1Directory = new File(sampleDataLoc + "/task1/Y");
+			task1Directory = new File(sampleDataLoc + "/OUTPUTP1/task1/Y");
 			task1Directory.mkdir();
-			task1Directory = new File(sampleDataLoc + "/task1/Z");
+			task1Directory = new File(sampleDataLoc + "/OUTPUTP1/task1/Z");
 			task1Directory.mkdir();
 		}
 		
 		{
-			File task2Directory = new File(sampleDataLoc + "/task2");
+			File task2Directory = new File(sampleDataLoc + "/OUTPUTP1/task2");
 			if (!task2Directory.exists()) {
 				task2Directory.mkdir();
 			} else {
@@ -90,18 +90,18 @@ public class SetupSystem {
 				delete(task2Directory);
 				task2Directory.mkdir();
 			}
-			task2Directory = new File(sampleDataLoc + "/task2/W");
+			task2Directory = new File(sampleDataLoc + "/OUTPUTP1/task2/W");
 			task2Directory.mkdir();
-			task2Directory = new File(sampleDataLoc + "/task2/X");
+			task2Directory = new File(sampleDataLoc + "/OUTPUTP1/task2/X");
 			task2Directory.mkdir();
-			task2Directory = new File(sampleDataLoc + "/task2/Y");
+			task2Directory = new File(sampleDataLoc + "/OUTPUTP1/task2/Y");
 			task2Directory.mkdir();
-			task2Directory = new File(sampleDataLoc + "/task2/Z");
+			task2Directory = new File(sampleDataLoc + "/OUTPUTP1/task2/Z");
 			task2Directory.mkdir();
 		}
 		
 		{
-			File rangeFile = new File(sampleDataLoc + File.separator+"rangeBandFile.csv");
+			File rangeFile = new File(sampleDataLoc + "/OUTPUTP1/"+File.separator+"rangeBandFile.csv");
 			if(rangeFile.exists()){
 				rangeFile.delete();
 			}

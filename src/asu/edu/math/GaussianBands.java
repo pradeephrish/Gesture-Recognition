@@ -56,7 +56,7 @@ public class GaussianBands {
 		rBandValuesRange[j-1][2] = j;
 
 		BufferedWriter br = new BufferedWriter(new FileWriter(new File(
-				sampleDataLoc + File.separator + "rangeBandFile.csv")));
+				sampleDataLoc + File.separator +"OUTPUTP1/"+ "rangeBandFile.csv")));
 		for (int i = 0; i < rBandValuesRange.length; i++) {
 			br.write(Double.toString(rBandValuesRange[i][0]) + ","
 					+ Double.toString(rBandValuesRange[i][1]) + ","

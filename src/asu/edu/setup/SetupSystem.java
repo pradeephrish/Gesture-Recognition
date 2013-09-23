@@ -23,6 +23,14 @@ public class SetupSystem {
 
 		logger.info("Sample data Loc : " + sampleDataLoc);
 		{
+                        File outputDirectory = new File(sampleDataLoc + "/OUTPUTP1");
+                        if(!outputDirectory.exists()){
+                            outputDirectory.mkdir();
+                        }else{
+                            delete(outputDirectory);
+                            outputDirectory.mkdir();
+                        }
+                    
 			File normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize");
 			if (!normalizeDirectory.exists()) {
 				normalizeDirectory.mkdir();

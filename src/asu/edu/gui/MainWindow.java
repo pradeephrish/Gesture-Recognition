@@ -648,6 +648,10 @@ public class MainWindow extends javax.swing.JFrame {
             ss = new SetupSystem(inputDirectoryPath);
 
             String path = "cd(\'" + ss.matlabScriptLoc + "')";
+
+            System.out.println("Path is "+path);
+            
+            
              proxy.eval(path);
                    
             new NormalizeData(proxy, ss.matlabScriptLoc, ss.sampleDataLoc,listOfDirectories);
@@ -705,7 +709,7 @@ public class MainWindow extends javax.swing.JFrame {
             
             
             progressBar.setValue(100);
-            JOptionPane.showMessageDialog(getParent(),"Processing Complete! Click on Open Output Directory ");
+            JOptionPane.showMessageDialog(this,"Processing Complete! Click on Open Output Directory ");
             progressBar.setValue(0); 
             jToggleButton1.setEnabled(true);
             
@@ -717,13 +721,13 @@ public class MainWindow extends javax.swing.JFrame {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             progressBar.setValue(0);
-            try {
+            //try {
                 // Disconnect the proxy from MATLAB
-                proxy.exit();
-            } catch (MatlabInvocationException ex) {
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            proxy.disconnect();
+                //proxy.exit();
+            //} catch (MatlabInvocationException ex) {
+//                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            //}
+            //proxy.disconnect();
         }
        
         

@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.asu.mwdb.loggers.MyLogger;
-import com.asu.mwdb.setup.SetupSystem;
+import com.asu.mwdb.setup.CreateFileStructure;
 
 public class ConstructGestureWords {
 
@@ -184,12 +184,12 @@ public class ConstructGestureWords {
         File task1OutputFileObj = new File(task1OutputFolder + File.separator
                 + "task1Output");
         if (task1OutputFileObj.exists()) {
-            SetupSystem.delete(task1OutputFileObj);
+            CreateFileStructure.delete(task1OutputFileObj);
         }
         File task1OutputFolderAll = new File(task1OutputFolder + File.separator
                 + "task1OutputAll");
         if (task1OutputFolderAll.exists()) {
-            SetupSystem.delete(task1OutputFolderAll);
+            CreateFileStructure.delete(task1OutputFolderAll);
         }
         if (task1OutputFileObj.mkdir() && task1OutputFolderAll.mkdir()) {
             for (int i = 0; i < getTfMapArrayIDF().size(); i++) {

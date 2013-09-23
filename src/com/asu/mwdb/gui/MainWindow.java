@@ -9,7 +9,7 @@ import com.asu.mwdb.math.ConstructGestureWords;
 import com.asu.mwdb.math.GaussianBands;
 import com.asu.mwdb.math.Task3FindSimilarData;
 import com.asu.mwdb.matlab.MatlabObject;
-import com.asu.mwdb.setup.SetupSystem;
+import com.asu.mwdb.setup.CreateFileStructure;
 import com.asu.mwdb.utils.AssignLetter;
 import com.asu.mwdb.utils.DataNormalizer;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class MainWindow extends javax.swing.JFrame {
     
     private Image image; //heatmap image
     private ShowHeatpMap heatMapVisualize;
-    private SetupSystem ss;
+    private CreateFileStructure ss;
     
     /**
      * Creates new form MainWindow
@@ -645,27 +645,27 @@ public class MainWindow extends javax.swing.JFrame {
             // Setup the file system
             ss = null;
             double rBandValueRange[][] = null;
-            ss = new SetupSystem(inputDirectoryPath,listOfDirectories);
+            ss = new CreateFileStructure(inputDirectoryPath,listOfDirectories);
 
-            String path = "cd(\'" + ss.matlabScriptLoc + "')";
+            String path = "cd(\'" + ss.matlabScriptLocation + "')";
 
             System.out.println("Path is "+path);
             
             
              proxy.eval(path);
                    
-            new DataNormalizer(proxy, ss.matlabScriptLoc, ss.sampleDataLoc,listOfDirectories);
+            new DataNormalizer(proxy, ss.matlabScriptLocation, ss.inputDataLocation,listOfDirectories);
 
             GaussianBands gb = new GaussianBands();
              
             
-            rBandValueRange = gb.getGaussianBands(ss.sampleDataLoc,
+            rBandValueRange = gb.getGaussianBands(ss.inputDataLocation,
                      bandValue, mean,
                      standardDeviation);
             
 
-            AssignLetter.assignToGaussianCurve(proxy, ss.matlabScriptLoc,
-                                    ss.sampleDataLoc+"/OUTPUTP1",rBandValueRange,listOfDirectories);
+            AssignLetter.assignToGaussianCurve(proxy, ss.matlabScriptLocation,
+                                    ss.inputDataLocation+"/OUTPUTP1",rBandValueRange,listOfDirectories);
             
             
             progressBar.setValue(75);
@@ -854,8 +854,8 @@ public class MainWindow extends javax.swing.JFrame {
             defaultTableModel.fireTableDataChanged();
            
             //Delete recently created file
-            SetupSystem.delete(new File(normalAxisWFile));
-            SetupSystem.delete(new File(letterAxisWFile));
+            CreateFileStructure.delete(new File(normalAxisWFile));
+            CreateFileStructure.delete(new File(letterAxisWFile));
             
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);

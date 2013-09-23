@@ -18,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.asu.mwdb.loggers.MyLogger;
-import com.asu.mwdb.setup.SetupSystem;
+import com.asu.mwdb.setup.CreateFileStructure;
 
 public class Task3FindSimilarData {
 	private Map<String,Integer> tfGlobalMap;
@@ -289,12 +289,12 @@ public class Task3FindSimilarData {
 		File task3OutputFileObj = new File(inputFolder + File.separator
 				+ "task3Output");
 		if (task3OutputFileObj.exists()) {
-			SetupSystem.delete(task3OutputFileObj);
+			CreateFileStructure.delete(task3OutputFileObj);
 		}
 		File task3OutputFolderAll = new File(inputFolder + File.separator
 				+ "task3OutputAll");
 		if (task3OutputFolderAll.exists()) {
-			SetupSystem.delete(task3OutputFolderAll);
+			CreateFileStructure.delete(task3OutputFolderAll);
 		}
 		if (task3OutputFileObj.mkdir() && task3OutputFolderAll.mkdir()) {
 		

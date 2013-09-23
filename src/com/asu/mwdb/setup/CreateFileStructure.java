@@ -10,21 +10,19 @@ import java.util.logging.Logger;
 import com.asu.mwdb.loggers.MyLogger;
 import java.util.List;
 
-public class SetupSystem {
+public class CreateFileStructure {
 
-	public String sampleDataLoc;
-	public String matlabScriptLoc;
+	public String inputDataLocation;
+	public String matlabScriptLocation;
 	private Logger logger = new MyLogger().getupLogger();
         
-        
-     
-	public SetupSystem(String fileLocation,List<File> directories) throws IOException {
-                this.sampleDataLoc = fileLocation;
-		setFileLoc();
+	public CreateFileStructure(String fileLocation,List<File> directories) throws IOException {
+                this.inputDataLocation = fileLocation;
+		setUpFileStructure();
 
-		logger.info("Sample data Loc : " + sampleDataLoc);
+		logger.info("Sample data Loc : " + inputDataLocation);
 		{
-                        File outputDirectory = new File(sampleDataLoc + "/OUTPUTP1");
+                        File outputDirectory = new File(inputDataLocation + "/OUTPUTP1");
                         if(!outputDirectory.exists()){
                             outputDirectory.mkdir();
                         }else{
@@ -32,7 +30,7 @@ public class SetupSystem {
                             outputDirectory.mkdir();
                         }
                     
-			File normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize");
+			File normalizeDirectory = new File(inputDataLocation + "/OUTPUTP1/normalize");
 			if (!normalizeDirectory.exists()) {
 				normalizeDirectory.mkdir();
 			} else {
@@ -42,22 +40,13 @@ public class SetupSystem {
 			}
                         
                         for (int i = 0; i < directories.size(); i++) {
-                            normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/"+directories.get(i).getName());
+                            normalizeDirectory = new File(inputDataLocation + "/OUTPUTP1/normalize/"+directories.get(i).getName());
                             normalizeDirectory.mkdir();
                          }
-                        
-			/*normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/W");
-			normalizeDirectory.mkdir();
-			normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/X");
-			normalizeDirectory.mkdir();
-			normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/Y");
-			normalizeDirectory.mkdir();
-			normalizeDirectory = new File(sampleDataLoc + "/OUTPUTP1/normalize/Z");
-			normalizeDirectory.mkdir();*/
 		}
 
 		{
-			File letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter");
+			File letterDirectory = new File(inputDataLocation + "/OUTPUTP1/letter");
 			if (!letterDirectory.exists()) {
 				letterDirectory.mkdir();
 			} else {
@@ -67,35 +56,25 @@ public class SetupSystem {
 			}
                         
                         for (int i = 0; i < directories.size(); i++) {
-                            letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/"+directories.get(i).getName());
+                            letterDirectory = new File(inputDataLocation + "/OUTPUTP1/letter/"+directories.get(i).getName());
                             letterDirectory.mkdir();
                          }
-                        
-                        
-			/*letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/W");
-			letterDirectory.mkdir();
-			letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/X");
-			letterDirectory.mkdir();
-			letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/Y");
-			letterDirectory.mkdir();
-			letterDirectory = new File(sampleDataLoc + "/OUTPUTP1/letter/Z");
-			letterDirectory.mkdir();*/
 		}
 		
 		{
-			File rangeFile = new File(sampleDataLoc + "/OUTPUTP1/"+File.separator+"rangeBandFile.csv");
+			File rangeFile = new File(inputDataLocation + "/OUTPUTP1/"+File.separator+"rangeBandFile.csv");
 			if(rangeFile.exists()){
 				rangeFile.delete();
 			}
 		}
 	}
 
-	public void setFileLoc() {
+	public void setUpFileStructure() {
 		Properties prop = new Properties();
 		try {
 			// load a properties file
 			prop.load(new FileInputStream(".\\config\\config.properties"));
-			matlabScriptLoc = prop.getProperty("MatlabScriptLoc");
+			matlabScriptLocation = prop.getProperty("MatlabScriptLoc");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -1,7 +1,6 @@
 package com.asu.mwdb.utils;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -224,7 +223,6 @@ public class ShowHeatpMap {
 
 			}
 		}
-
 		// logger.info("start range:"+start +" End range : "+end);
 		range[0] = start;
 		range[1] = end;

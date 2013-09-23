@@ -645,7 +645,7 @@ public class MainWindow extends javax.swing.JFrame {
             // Setup the file system
             ss = null;
             double rBandValueRange[][] = null;
-            ss = new SetupSystem(inputDirectoryPath);
+            ss = new SetupSystem(inputDirectoryPath,listOfDirectories);
 
             String path = "cd(\'" + ss.matlabScriptLoc + "')";
 

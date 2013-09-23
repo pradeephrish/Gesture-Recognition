@@ -29,7 +29,10 @@ import asu.edu.math.Task3FindSimilarData.DistanceFunction;
 import asu.edu.math.Task3FindSimilarData.Entity;
 import asu.edu.utils.ConstructGestureVectors;
 import asu.edu.utils.HeatpMapVisualize;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.io.File;
@@ -61,6 +64,9 @@ public class MainWindow extends javax.swing.JFrame {
     private List<File> listOfDirectories;
     private String inputFilePath;
     
+    private Image image; //heatmap image
+    private HeatpMapVisualize heatMapVisualize;
+    
     /**
      * Creates new form MainWindow
      */
@@ -91,6 +97,8 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jToggleButton3 = new javax.swing.JToggleButton();
+        jToggleButton4 = new javax.swing.JToggleButton();
+        checkbox1 = new java.awt.Checkbox();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
@@ -127,6 +135,8 @@ public class MainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+
         jLabel15.setText("Select Input File");
 
         jButton4.setText("Browse");
@@ -162,7 +172,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
         );
 
         jToggleButton3.setSelected(true);
@@ -178,6 +188,16 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jToggleButton4.setText("Highlight");
+        jToggleButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton4ActionPerformed(evt);
+            }
+        });
+
+        checkbox1.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
+        checkbox1.setLabel("Draw & HightLight");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -191,14 +211,19 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(jLabel16))
                         .addGap(183, 183, 183)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox4, 0, 284, Short.MAX_VALUE)
-                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE))
+                            .addComponent(jComboBox4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(107, 107, 107))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jToggleButton3)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jToggleButton3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(180, 180, 180)
+                                .addComponent(jToggleButton4))
                             .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(18, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -212,7 +237,11 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel16)
                     .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jToggleButton3)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jToggleButton3)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jToggleButton4)
+                        .addComponent(checkbox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -836,16 +865,19 @@ public class MainWindow extends javax.swing.JFrame {
          if(dialog==null){
              JOptionPane.showMessageDialog(null, "Please Select Input File");
              //return;
-         } 
-         if(inputFilePath == null)
-                inputFilePath = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
+         }
          
-         if(inputFilePath==null){
-             JOptionPane.showMessageDialog(null, "Please select input file");
-             //return;
+         
+         
+         String inputFile = null;
+         try      {
+            inputFile = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
+         }catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Please select input file");
+             return;
          }
 
-         File file = new File(inputFilePath);
+         File file = new File(inputFile);
          /*
           * This codes expects input file to be from same input sample location 
          */ 
@@ -856,22 +888,14 @@ public class MainWindow extends javax.swing.JFrame {
          
          String userChoice = jComboBox4.getSelectedIndex()==0?"TF":(jComboBox4.getSelectedIndex()==1?"IDF":(jComboBox4.getSelectedIndex()==2?"IDF2":jComboBox4.getSelectedIndex()==3?"TF-IDF":"TF-IDF2"));
          
-         HeatpMapVisualize heatMapVisualize = new HeatpMapVisualize();
+         boolean checkboxticked = checkbox1.getState();
+         
+         heatMapVisualize = new HeatpMapVisualize();
         try {
-            Image image = heatMapVisualize.drawHeatMap(normalizedFileName,task2FilePath,letterFileName,wordLength==null?3:wordLength.intValue(),shiftLength==null?2:shiftLength.intValue(),userChoice);
-             Integer[][] boundry = heatMapVisualize.getBoundry();
-             for (int i = 0; i < boundry.length; i++) {
-
-                int starty = boundry[i][2]*20;  
-                int startx = boundry[i][0]*20+80;   //80 x offset
-                
-                System.out.println("Startx "+startx+"    "+"Starty "+starty);
-                int wordl = wordLength==null?3:wordLength.intValue();
-                image.getGraphics().drawRect(startx, starty, (boundry[i][1]-boundry[i][0]+1)*20, 20);  //drawing on image   
-                 
-            }
-             jScrollPane3.setPreferredSize(jScrollPane3.getParent().getMaximumSize());
-             boolean drawImage = jScrollPane3.getGraphics().drawImage(image, 0, 0, null); 
+            image = heatMapVisualize.drawHeatMap(normalizedFileName,task2FilePath,letterFileName,wordLength==null?3:wordLength.intValue(),shiftLength==null?2:shiftLength.intValue(),userChoice,checkboxticked);
+             
+             //jScrollPane3.setPreferredSize(jScrollPane3.getParent().getMaximumSize());
+             boolean drawImage = jScrollPane3.getGraphics().drawImage(image, 0, 0,jScrollPane3.getWidth(),jScrollPane3.getHeight(), null); 
         } catch (IOException ex) {
             
             JOptionPane.showMessageDialog(null, "Something wrong with heatmap generation");
@@ -886,6 +910,80 @@ public class MainWindow extends javax.swing.JFrame {
     private void jToggleButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton3MouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jToggleButton3MouseClicked
+
+    private void jToggleButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton4ActionPerformed
+        // TODO add your handling code here:
+        
+               if(dialog==null){
+             JOptionPane.showMessageDialog(null, "Please Select Input File");
+             return;
+         } 
+
+         String inputFile = null;
+         try      {
+            inputFile = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
+         }catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Please select input file");
+             return;
+         }
+
+         File file = new File(inputFile);
+         /*
+          * This codes expects input file to be from same input sample location 
+         */ 
+         File parent = file.getParentFile();
+         String normalizedFileName = parent.getParentFile()+"/OUTPUTP1/normalize/"+parent.getName()+"/"+file.getName();
+         String task2FilePath = parent.getParentFile()+"/OUTPUTP1/letter/"+parent.getName()+"/task1OutputAll/"+file.getName();
+         String letterFileName = parent.getParentFile()+"/OUTPUTP1/letter/"+parent.getName()+"/"+file.getName();
+         
+         String userChoice = jComboBox4.getSelectedIndex()==0?"TF":(jComboBox4.getSelectedIndex()==1?"IDF":(jComboBox4.getSelectedIndex()==2?"IDF2":jComboBox4.getSelectedIndex()==3?"TF-IDF":"TF-IDF2"));
+         
+         boolean checkboxticked = checkbox1.getState();
+        HeatpMapVisualize heatMapVisualize1 = new HeatpMapVisualize();
+        try {
+            image = heatMapVisualize1.drawHeatMap(normalizedFileName,task2FilePath,letterFileName,wordLength==null?3:wordLength.intValue(),shiftLength==null?2:shiftLength.intValue(),userChoice,checkboxticked);
+             
+             //jScrollPane3.setPreferredSize(jScrollPane3.getParent().getMaximumSize());
+             boolean drawImage = jScrollPane3.getGraphics().drawImage(image, 0, 0, null); 
+        } catch (IOException ex) {
+            
+            JOptionPane.showMessageDialog(null, "Something wrong with heatmap generation");
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
+        
+        //first create heatmap
+        
+        
+        
+        Integer[][] boundry = heatMapVisualize1.getBoundry();
+             for (int i = 0; i < boundry.length && i <10; i++) {
+
+                int starty = boundry[i][2]*20;  
+                int startx = boundry[i][0]*20+80;   //80 x offset
+                
+                System.out.println("Startx "+startx+"    "+"Starty "+starty);
+                int wordl = wordLength==null?3:wordLength.intValue();
+                 Graphics2D graphics = (Graphics2D) image.getGraphics();
+                                  
+                 if(i < 4)
+                    graphics.setPaint(Color.RED); 
+                 else if(i < 6)
+                    graphics.setPaint(Color.GREEN);
+                 else if(i < 8)
+                    graphics.setPaint(Color.YELLOW);
+                 else
+                    graphics.setPaint(Color.BLUE);
+                 
+                 graphics.setFont(new Font( "SansSerif", Font.BOLD, 14 ));
+                 graphics.drawString(String.valueOf(i+1), startx, starty); 
+                 graphics.drawRect(startx, starty, (boundry[i][1]-boundry[i][0]+1)*20, 20);  //drawing on image 
+                jScrollPane3.getGraphics().drawImage(image, 0, 0,jScrollPane3.getWidth(),jScrollPane3.getHeight(), null);
+            }
+        
+    }//GEN-LAST:event_jToggleButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -924,6 +1022,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.Checkbox checkbox1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -966,6 +1065,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JToggleButton jToggleButton3;
+    private javax.swing.JToggleButton jToggleButton4;
     // End of variables declaration//GEN-END:variables
 
     private List<File> findDirectories(File[] listOfDirectories) {

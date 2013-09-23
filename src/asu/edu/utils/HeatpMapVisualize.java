@@ -20,18 +20,18 @@ import java.awt.Image;
 public class HeatpMapVisualize {
 
 	private static Logger logger = new MyLogger().getupLogger();
-        private static Integer[][] boundry = new Integer[10][3];
+        private  Integer[][] boundry = new Integer[10][3];
 
-    public static Integer[][] getBoundry() {
+    public  Integer[][] getBoundry() {
         return boundry;
     }
 
-    public static void setBoundry(Integer[][] boundry) {
-        HeatpMapVisualize.boundry = boundry;
+    public  void setBoundry(Integer[][] boundry) {
+        this.boundry = boundry;
     }
         
-	public static Image drawHeatMap(String normalizeFileName,
-			String task2FileName, String letterFileName, int w, int s, String type) throws IOException {
+	public  Image drawHeatMap(String normalizeFileName,
+			String task2FileName, String letterFileName, int w, int s, String type,boolean checkboxticked) throws IOException {
 		CSVReader csvReader = new CSVReader(new FileReader(normalizeFileName));
 		List<String[]> matrixStr = csvReader.readAll();
 		csvReader.close();
@@ -88,7 +88,8 @@ public class HeatpMapVisualize {
 			int index = t[0];
 			int len = t[1] - t[0] + 1;
 			for (int j = 0; j < len; j++) {
-				matrix[lineNum - 1][index] = highlightValue;
+                                if(checkboxticked)
+                                    matrix[lineNum - 1][index] = highlightValue;
 				index++;
 			}
 			highlightValue = highlightValue - 0.15;

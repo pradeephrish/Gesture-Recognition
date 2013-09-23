@@ -29,7 +29,6 @@ import asu.edu.math.Task3FindSimilarData.DistanceFunction;
 import asu.edu.math.Task3FindSimilarData.Entity;
 import asu.edu.utils.ConstructGestureVectors;
 import asu.edu.utils.HeatpMapVisualize;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import static java.awt.image.ImageObserver.WIDTH;
@@ -60,6 +59,7 @@ public class MainWindow extends javax.swing.JFrame {
     
     private List<ConstructGestureWords> constructGestureWords = new ArrayList<ConstructGestureWords>();
     private List<File> listOfDirectories;
+    private String inputFilePath;
     
     /**
      * Creates new form MainWindow
@@ -836,8 +836,9 @@ public class MainWindow extends javax.swing.JFrame {
          if(dialog==null){
              JOptionPane.showMessageDialog(null, "Please Select Input File");
              //return;
-         }    
-         String inputFilePath = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
+         } 
+         if(inputFilePath == null)
+                inputFilePath = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();
          
          if(inputFilePath==null){
              JOptionPane.showMessageDialog(null, "Please select input file");
@@ -860,15 +861,17 @@ public class MainWindow extends javax.swing.JFrame {
             Image image = heatMapVisualize.drawHeatMap(normalizedFileName,task2FilePath,letterFileName,wordLength==null?3:wordLength.intValue(),shiftLength==null?2:shiftLength.intValue(),userChoice);
              Integer[][] boundry = heatMapVisualize.getBoundry();
              for (int i = 0; i < boundry.length; i++) {
-               image.getGraphics().setColor(Color.green);
-                 
-                int startx = boundry[i][2]*20+98;
-                int starty = ((boundry[i][1]-boundry[i][0])*20)+40;
-                 
-                image.getGraphics().drawRect(startx, starty, 60, 20);  //drawing on image   
+
+                int starty = boundry[i][2]*20;  
+                int startx = boundry[i][0]*20+80;   //80 x offset
+                
+                System.out.println("Startx "+startx+"    "+"Starty "+starty);
+                int wordl = wordLength==null?3:wordLength.intValue();
+                image.getGraphics().drawRect(startx, starty, (boundry[i][1]-boundry[i][0]+1)*20, 20);  //drawing on image   
                  
             }
-            jScrollPane3.getGraphics().drawImage(image, 0, 0, null); 
+             jScrollPane3.setPreferredSize(jScrollPane3.getParent().getMaximumSize());
+             boolean drawImage = jScrollPane3.getGraphics().drawImage(image, 0, 0, null); 
         } catch (IOException ex) {
             
             JOptionPane.showMessageDialog(null, "Something wrong with heatmap generation");

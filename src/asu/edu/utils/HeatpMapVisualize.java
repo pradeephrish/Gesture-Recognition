@@ -96,11 +96,10 @@ public class HeatpMapVisualize {
 		// Step 1: Create our heat map chart using our data.
 		HeatChart map = new HeatChart(matrix);
 
-		// Step 2: Customise the chart.
-		map.setTitle(" Heat Map");
+		// Step 2: Customise the charts.
 		map.setXAxisLabel("X Axis");
 		map.setYAxisLabel("Y Axis");
-
+                
 		String xAxisLabels[] = new String[matrix[0].length];
 
 		for (int i = 0; i < xAxisLabels.length; i++) {

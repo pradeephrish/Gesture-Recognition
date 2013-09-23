@@ -66,6 +66,7 @@ public class MainWindow extends javax.swing.JFrame {
     
     private Image image; //heatmap image
     private HeatpMapVisualize heatMapVisualize;
+    private SetupSystem ss;
     
     /**
      * Creates new form MainWindow
@@ -76,7 +77,6 @@ public class MainWindow extends javax.swing.JFrame {
         progressBar = new ProgressBarUpdator(jProgressBar1);
         new Thread(progressBar).start();
         progressBar.setValue(0);
-        this.setAlwaysOnTop(true);
     }
 
     /**
@@ -610,14 +610,14 @@ public class MainWindow extends javax.swing.JFrame {
                 File[] list = new File(inputDirectoryPath).listFiles();
                 if(list.length==0)
                 {
-                    JOptionPane.showMessageDialog(getParent(),"Given directory is empty !");
+                    JOptionPane.showMessageDialog(this,"Given directory is empty !");
                     return;
                 }
                 listOfDirectories = findDirectories(list);
                 System.out.println(listOfDirectories.toArray());
             }else
             {
-                JOptionPane.showMessageDialog(getParent(),"Please Select Input Directory ");
+                JOptionPane.showMessageDialog(this,"Please Select Input Directory ");
                 return;
             }
            
@@ -630,7 +630,7 @@ public class MainWindow extends javax.swing.JFrame {
             shiftLength = Double.parseDouble(jTextField2.getText());
             standardDeviation = Double.parseDouble(jTextField5.getText());
             }catch(Exception exception){
-                JOptionPane.showMessageDialog(getParent(),"Please Enter Valid Inputs"+exception.getMessage());
+                JOptionPane.showMessageDialog(this,"Please Enter Valid Inputs"+exception.getMessage());
                 return;
             }
          //all good  
@@ -643,7 +643,7 @@ public class MainWindow extends javax.swing.JFrame {
            
 
             // Setup the file system
-            SetupSystem ss = null;
+            ss = null;
             double rBandValueRange[][] = null;
             ss = new SetupSystem(inputDirectoryPath);
 
@@ -792,7 +792,7 @@ public class MainWindow extends javax.swing.JFrame {
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
         
             if(constructGestureWords == null){
-                JOptionPane.showMessageDialog(getParent(),"Empty Dictionary, Please build dictionary using Task1");
+                JOptionPane.showMessageDialog(this,"Empty Dictionary, Please build dictionary using Task1");
                 return;
             }
         
@@ -806,19 +806,37 @@ public class MainWindow extends javax.swing.JFrame {
                 fileChooser = dialog.getjFileChooser1().getSelectedFile().getAbsolutePath();  
             }else
             {
-                JOptionPane.showMessageDialog(getParent(),"Please Select Input Directory ");
+                JOptionPane.showMessageDialog(this,"Please Select Input Directory ");
                 return;
             }
+            
+            //normalize, assign letters
+            
+            File normalizeOutputFile = dialog.getjFileChooser1().getSelectedFile().getParentFile();
+            String normalAxisWFile = normalizeOutputFile.getAbsolutePath()+"/nm123.csv";
+            String letterAxisWFile = normalizeOutputFile.getAbsolutePath()+"/letter123.csv";
+            
+           try {
+                    proxy.eval("normalize('" + fileChooser + "','" + normalAxisWFile+ "')");
+                } catch (MatlabInvocationException ex) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            GaussianBands gb = new GaussianBands();
+            double[][] rBandValueRange = gb.getGaussianBands(normalAxisWFile,bandValue, mean,standardDeviation);
+            
+
+            LetterRange.assignLetter(normalAxisWFile, letterAxisWFile, rBandValueRange);
+ 
+            //normalize assign letters
                         
             DistanceFunction distanceFunction = jComboBox2.getSelectedIndex()==0?DistanceFunction.CosineFunction:DistanceFunction.Mahanolobis;
             Entity entity = jComboBox1.getSelectedIndex()==0?Entity.TF:(jComboBox1.getSelectedIndex()==1?Entity.TFIDF:Entity.TFIDF2);
             
-            
-            
+
             Integer index  = jComboBox3.getSelectedIndex();
             ConstructGestureWords dictionary = constructGestureWords.get(index);
             
-            Task3FindSimilarData task3FindSimilarData =  new Task3FindSimilarData(dictionary.getTfIDFMapGlobal(),dictionary.getTfMapArrayIDF(),dictionary.getTfMapArrayIDF2(),wordLength.intValue(),shiftLength.intValue(),fileChooser,dictionary, distanceFunction,entity);
+            Task3FindSimilarData task3FindSimilarData =  new Task3FindSimilarData(dictionary.getTfIDFMapGlobal(),dictionary.getTfMapArrayIDF(),dictionary.getTfMapArrayIDF2(),wordLength.intValue(),shiftLength.intValue(),letterAxisWFile,dictionary, distanceFunction,entity);
             //constructGestureWordsX.getFileNames() for file Names
             HashMap<Integer, Double> similarityScore = task3FindSimilarData.getSimilarityScore();
             Object[][] object = new Object[similarityScore.entrySet().size()][2];

@@ -415,7 +415,7 @@ public class Task3FindSimilarData {
 	private void updateGlobalMap(
 			
 			
-		//Mr. Candan Said , this is not required	
+		//as per comments , this is not required	
 			
 			List<Map<String, List<Double>>> inputFileGesturewords2) {
 		// TODO Auto-generated method stub

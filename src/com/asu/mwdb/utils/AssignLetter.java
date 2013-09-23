@@ -14,7 +14,7 @@ import matlabcontrol.MatlabProxy;
 import com.asu.mwdb.loggers.MyLogger;
 import au.com.bytecode.opencsv.CSVReader;
 
-public class LetterRange {
+public class AssignLetter {
 
 	private static Logger logger = new MyLogger().getupLogger();
 
@@ -52,85 +52,6 @@ public class LetterRange {
 		}
 		logger.info(" Done with "+directory.get(j).getName()+" folder ...");
                 }
-            
-
-		/*String axisW = sampleDataLoc + File.separator + "normalize"
-				+ File.separator + "W";
-		File fileW = new File(axisW);
-		String[] directoriesW = fileW.list();
-		for (int i = 0; i < directoriesW.length; i++) {
-			if (directoriesW[i].contains("csv")) {
-				String bandRangeFile = sampleDataLoc + File.separator
-						+ "rangeBandFile.csv";
-				String letterAxisWFile = sampleDataLoc + File.separator
-						+ "letter" + File.separator + "W" + File.separator
-						+ directoriesW[i];
-				String normalAxisWFile = sampleDataLoc + "/normalize/W" + "/"
-						+ directoriesW[i];
-				assignLetter(normalAxisWFile, letterAxisWFile, rBandValueRange);
-//				proxy.eval("letterrange('" + normalAxisWFile + "','"
-//						+ letterAxisWFile + "','" + bandRangeFile + "')");
-			}
-		}
-		logger.info(" Done with W folder ...");
-		String axisX = sampleDataLoc + File.separator + "normalize"
-				+ File.separator + "X";
-		File fileX = new File(axisX);
-		String[] directoriesX = fileX.list();
-		for (int i = 0; i < directoriesX.length; i++) {
-			if (directoriesX[i].contains("csv")) {
-				String bandRangeFile = sampleDataLoc + File.separator
-						+ "rangeBandFile.csv";
-				String letterAxisXFile = sampleDataLoc + File.separator
-						+ "letter" + File.separator + "X" + File.separator
-						+ directoriesX[i];
-				String normalAxisXFile = sampleDataLoc + "/normalize/X" + "/"
-						+ directoriesX[i];
-				assignLetter(normalAxisXFile, letterAxisXFile, rBandValueRange);
-//				proxy.eval("letterrange('" + normalAxisXFile + "','"
-//						+ letterAxisXFile + "','" + bandRangeFile + "')");
-			}
-		}
-		logger.info(" Done with X folder ...");
-		String axisY = sampleDataLoc + File.separator + "normalize"
-				+ File.separator + "Y";
-		File fileY = new File(axisY);
-		String[] directoriesY = fileY.list();
-		for (int i = 0; i < directoriesY.length; i++) {
-			if (directoriesY[i].contains("csv")) {
-				String bandRangeFile = sampleDataLoc + File.separator
-						+ "rangeBandFile.csv";
-				String letterAxisYFile = sampleDataLoc + File.separator
-						+ "letter" + File.separator + "Y" + File.separator
-						+ directoriesY[i];
-				String normalAxisYFile = sampleDataLoc + "/normalize/Y" + "/"
-						+ directoriesY[i];
-				assignLetter(normalAxisYFile, letterAxisYFile, rBandValueRange);
-//				proxy.eval("letterrange('" + normalAxisYFile + "','"
-//						+ letterAxisYFile + "','" + bandRangeFile + "')");
-			}
-		}
-
-		logger.info(" Done with Y folder ...");
-		String axisZ = sampleDataLoc + File.separator + "normalize"
-				+ File.separator + "Z";
-		File fileZ = new File(axisZ);
-		String[] directoriesZ = fileZ.list();
-		for (int i = 0; i < directoriesZ.length; i++) {
-			if (directoriesZ[i].contains("csv")) {
-				String bandRangeFile = sampleDataLoc + File.separator
-						+ "rangeBandFile.csv";
-				String letterAxisZFile = sampleDataLoc + File.separator
-						+ "letter" + File.separator + "Z" + File.separator
-						+ directoriesZ[i];
-				String normalAxisZFile = sampleDataLoc + "/normalize/Z" + "/"
-						+ directoriesZ[i];
-				assignLetter(normalAxisZFile, letterAxisZFile, rBandValueRange);
-//				proxy.eval("letterrange('" + normalAxisZFile + "','"
-//						+ letterAxisZFile + "','" + bandRangeFile + "')");
-			}
-		}
-		logger.info(" Done with Z folder ...");*/
 	}
 
 	public static void assignLetter(String normalAxisWFile,

@@ -10,11 +10,11 @@ import matlabcontrol.MatlabProxy;
 import com.asu.mwdb.loggers.MyLogger;
 import java.util.List;
 
-public class NormalizeData {
+public class DataNormalizer {
 
 	private Logger logger = new MyLogger().getupLogger();
 
-	public NormalizeData(MatlabProxy proxy, String matlabScriptLoc,
+	public DataNormalizer(MatlabProxy proxy, String matlabScriptLoc,
 			String sampleDataLoc,List<File> directories) throws IOException, MatlabInvocationException {
 		logger.info("Starting Normalization");
 

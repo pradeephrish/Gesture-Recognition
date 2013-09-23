@@ -17,7 +17,7 @@ import com.asu.mwdb.loggers.MyLogger;
 import au.com.bytecode.opencsv.CSVReader;
 import java.awt.Image;
 
-public class HeatpMapVisualize {
+public class ShowHeatpMap {
 
 	private static Logger logger = new MyLogger().getupLogger();
         private  Integer[][] boundry = new Integer[10][3];

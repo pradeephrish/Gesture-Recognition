@@ -10,8 +10,8 @@ import com.asu.mwdb.math.GaussianBands;
 import com.asu.mwdb.math.Task3FindSimilarData;
 import com.asu.mwdb.matlab.MatlabObject;
 import com.asu.mwdb.setup.SetupSystem;
-import com.asu.mwdb.utils.LetterRange;
-import com.asu.mwdb.utils.NormalizeData;
+import com.asu.mwdb.utils.AssignLetter;
+import com.asu.mwdb.utils.DataNormalizer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import matlabcontrol.MatlabProxy;
 import com.asu.mwdb.math.Task3FindSimilarData.DistanceFunction;
 import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 import com.asu.mwdb.utils.ConstructGestureVectors;
-import com.asu.mwdb.utils.HeatpMapVisualize;
+import com.asu.mwdb.utils.ShowHeatpMap;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -65,7 +65,7 @@ public class MainWindow extends javax.swing.JFrame {
     private String inputFilePath;
     
     private Image image; //heatmap image
-    private HeatpMapVisualize heatMapVisualize;
+    private ShowHeatpMap heatMapVisualize;
     private SetupSystem ss;
     
     /**
@@ -654,7 +654,7 @@ public class MainWindow extends javax.swing.JFrame {
             
              proxy.eval(path);
                    
-            new NormalizeData(proxy, ss.matlabScriptLoc, ss.sampleDataLoc,listOfDirectories);
+            new DataNormalizer(proxy, ss.matlabScriptLoc, ss.sampleDataLoc,listOfDirectories);
 
             GaussianBands gb = new GaussianBands();
              
@@ -664,7 +664,7 @@ public class MainWindow extends javax.swing.JFrame {
                      standardDeviation);
             
 
-            LetterRange.assignToGaussianCurve(proxy, ss.matlabScriptLoc,
+            AssignLetter.assignToGaussianCurve(proxy, ss.matlabScriptLoc,
                                     ss.sampleDataLoc+"/OUTPUTP1",rBandValueRange,listOfDirectories);
             
             
@@ -825,7 +825,7 @@ public class MainWindow extends javax.swing.JFrame {
             double[][] rBandValueRange = gb.getGaussianBands(normalAxisWFile,bandValue, mean,standardDeviation);
             
 
-            LetterRange.assignLetter(normalAxisWFile, letterAxisWFile, rBandValueRange);
+            AssignLetter.assignLetter(normalAxisWFile, letterAxisWFile, rBandValueRange);
  
             //normalize assign letters
                         
@@ -916,7 +916,7 @@ public class MainWindow extends javax.swing.JFrame {
          
          boolean checkboxticked = checkbox1.getState();
          
-         heatMapVisualize = new HeatpMapVisualize();
+         heatMapVisualize = new ShowHeatpMap();
         try {
             image = heatMapVisualize.drawHeatMap(normalizedFileName,task2FilePath,letterFileName,wordLength==null?3:wordLength.intValue(),shiftLength==null?2:shiftLength.intValue(),userChoice,checkboxticked);
              
@@ -965,7 +965,7 @@ public class MainWindow extends javax.swing.JFrame {
          String userChoice = jComboBox4.getSelectedIndex()==0?"TF":(jComboBox4.getSelectedIndex()==1?"IDF":(jComboBox4.getSelectedIndex()==2?"IDF2":jComboBox4.getSelectedIndex()==3?"TF-IDF":"TF-IDF2"));
          
          boolean checkboxticked = checkbox1.getState();
-        HeatpMapVisualize heatMapVisualize1 = new HeatpMapVisualize();
+        ShowHeatpMap heatMapVisualize1 = new ShowHeatpMap();
         try {
             image = heatMapVisualize1.drawHeatMap(normalizedFileName,task2FilePath,letterFileName,wordLength==null?3:wordLength.intValue(),shiftLength==null?2:shiftLength.intValue(),userChoice,checkboxticked);
              

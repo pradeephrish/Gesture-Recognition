@@ -22,8 +22,17 @@ import com.asu.mwdb.setup.CreateFileStructure;
 
 public class ConstructGestureWords {
 
-    private Map<String, Integer> tfIDFMapGlobal = new HashMap<String, Integer>();  //global map
+    /*
+     *  Map<String, Integer> tfIDFMapGlobal,   TF Global Map stores, Term and Frequency for whole dictionary
+     */
+    private Map<String, Integer> tfIDFMapGlobal = new HashMap<String, Integer>(); 
+    /*
+     *  List<List<Map<String, List<Double>>>> tfMapArrayIDF,   Stores all dictionary which gets created
+     */
     private List<List<Map<String, List<Double>>>> tfMapArrayIDF = new ArrayList<List<Map<String, List<Double>>>>();
+    /*
+     * List<Map<String, Double>> tfMapArrayIDF2 , Stores Term and Frequency per Multivariate Series
+     */
     private List<Map<String, Double>> tfMapArrayIDF2 = new ArrayList<Map<String, Double>>();
     private static Logger logger = new MyLogger().getupLogger();
     private File[] fileNames;

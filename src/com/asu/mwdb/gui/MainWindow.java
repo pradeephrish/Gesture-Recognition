@@ -6,7 +6,7 @@ package com.asu.mwdb.gui;
 
 import com.asu.mwdb.loggers.MyLogger;
 import com.asu.mwdb.math.ConstructGestureWords;
-import com.asu.mwdb.math.GaussianBands;
+import com.asu.mwdb.math.CreateGaussianBands;
 import com.asu.mwdb.math.Task3FindSimilarData;
 import com.asu.mwdb.matlab.MatlabObject;
 import com.asu.mwdb.setup.CreateFileStructure;
@@ -656,7 +656,7 @@ public class MainWindow extends javax.swing.JFrame {
                    
             new DataNormalizer(proxy, ss.matlabScriptLocation, ss.inputDataLocation,listOfDirectories);
 
-            GaussianBands gb = new GaussianBands();
+            CreateGaussianBands gb = new CreateGaussianBands();
              
             
             rBandValueRange = gb.getGaussianBands(ss.inputDataLocation,
@@ -821,7 +821,7 @@ public class MainWindow extends javax.swing.JFrame {
                 } catch (MatlabInvocationException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            GaussianBands gb = new GaussianBands();
+            CreateGaussianBands gb = new CreateGaussianBands();
             double[][] rBandValueRange = gb.getGaussianBands(normalAxisWFile,bandValue, mean,standardDeviation);
             
 

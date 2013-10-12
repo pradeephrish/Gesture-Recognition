@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CosineSimilarity {
-	//first map is for input
+	/*
+         * This function computes cosine similarity score between two vectors
+         */
 	public static double difference(Map<String, Double> hashMap,
 			Map<String, Double> hashMap2) {
 		String[] keys = new String[hashMap.size()];

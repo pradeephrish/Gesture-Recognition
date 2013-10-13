@@ -149,7 +149,6 @@ public class MainWindow extends javax.swing.JFrame {
     //Populate List<List<List<Double>>> sensorWordsScores
     public List<Map<String,Double[]>> createSensorWordScores(Map<Integer,Set<String>> sensorWords,List<List<Map<String, List<Double>>>> dictionary)
     {
-    	
     	List<Map<String,Double[]>> sensorWordsScores = new ArrayList<Map<String,Double[]>>();
     	
     	for (int i = 0; i < sensorWords.size(); i++) {  //assuming keys start from 0 to 19
@@ -157,7 +156,10 @@ public class MainWindow extends javax.swing.JFrame {
     		List<String> words = new ArrayList<String>(sensorWords.get(i)); //since order doesn't matter
     		
     		Map<String,Double[]> dimensionAgainstAllDocuments = new HashMap<String, Double[]>();
-    		
+    		//insert all words with zero initial value for tf-idf / tf-idf2
+    		for (int j = 0; j < words.size(); j++) {
+				dimensionAgainstAllDocuments.put(words.get(j), new Double[dictionary.size()]);
+			}
     		
     		//now iterate dictionary
 			for (int k = 0; k < dictionary.size(); k++) {
@@ -165,21 +167,13 @@ public class MainWindow extends javax.swing.JFrame {
 				
 				for (int j = 0; j < words.size(); j++) {
 					if(map.containsKey(words.get(j))){
-						if(dimensionAgainstAllDocuments.get(words.get(j))!=null){
 							 Double[] temp = dimensionAgainstAllDocuments.get(words.get(j));
 							 temp[k]=map.get(words.get(j)).get(3);   //for 3 for tf-idf
-						}	
-						else
-						{
-							Double score[]   = new Double[dictionary.size()];
-							score[k]= map.get(words.get(j)).get(3);
-							dimensionAgainstAllDocuments.put(words.get(j), score); //put 3 for tf-idf
-						}
 					}else
-					{ //if not found put zero
-						Double score[]   = new Double[dictionary.size()];
-						score[k]=0.0;  // by default it does zero so no worries
-						dimensionAgainstAllDocuments.put(words.get(j), score);
+					{
+					//else it's value is already zero - so this part is not required at all
+					Double[] temp = dimensionAgainstAllDocuments.get(words.get(j));
+					temp[k]=0.0;   //for 3 for tf-idf
 					}
 				}
 			}

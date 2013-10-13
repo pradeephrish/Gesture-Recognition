@@ -9,13 +9,18 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +31,7 @@ import javax.swing.table.DefaultTableModel;
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
+import au.com.bytecode.opencsv.CSVWriter;
 
 import com.asu.mwdb.loggers.MyLogger;
 import com.asu.mwdb.math.ConstructGestureWords;
@@ -106,6 +112,39 @@ public class MainWindow extends javax.swing.JFrame {
 		}
     	return sensorWords;
     }
+    
+    public void savewordstoCSV(List<Map<String,Double[]>> sensorWordsScores){
+    	try{
+    	for (int i = 0; i < sensorWordsScores.size(); i++) {
+    		//System.out.println("Input Directory Path is "+inputDirectoryPath);
+            //inputDirectoryPath=(inputDirectoryPath==null)?"data\\":inputDirectoryPath+"\\OUTPUTP1\\phase2\\";
+            //System.out.println("Input Directory Path is"+inputDirectoryPath);
+    		
+            //check this later
+			CSVWriter csvWriter = new CSVWriter(new FileWriter("data\\"+i+".csv"));
+			
+			Iterator<Entry<String, Double[]>> iterator = sensorWordsScores.get(i).entrySet().iterator();
+			
+			System.out.println("***************************");
+			System.out.println("\tSensor\t"+i);
+        	while(iterator.hasNext()){
+        		Entry<String, Double[]> entry = iterator.next();
+        		List<String> list = new ArrayList<String>();
+        		list.add(entry.getKey());
+        		Double[] array = entry.getValue();
+        		for (int j = 0; j < array.length; j++) {
+					list.add(String.valueOf(array[j]));
+				}
+        		csvWriter.writeNext(list.toArray(new String[list.size()]));
+        	}
+        	System.out.println("***************************");
+			csvWriter.close();
+		}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    
     
     //Populate List<List<List<Double>>> sensorWordsScores
     public List<Map<String,Double[]>> createSensorWordScores(Map<Integer,Set<String>> sensorWords,List<List<Map<String, List<Double>>>> dictionary)
@@ -772,7 +811,7 @@ public class MainWindow extends javax.swing.JFrame {
           jTable1.setModel(defaultTablePanel);
           defaultTablePanel.fireTableDataChanged();
           
-           //Depending on Number of Directories call Constrcut gesture words N times
+           //Depending on Number of Directories call construct gesture words N times
             for (int i = 0; i < listOfDirectories.size(); i++) {
                 ConstructGestureWords cGestureWords = new ConstructGestureWords();
                 System.out.println(inputDirectoryPath+"\\OUTPUTP1\\letter\\"+listOfDirectories.get(i).getName()); 

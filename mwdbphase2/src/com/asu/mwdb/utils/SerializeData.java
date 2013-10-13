@@ -65,7 +65,7 @@ public class SerializeData {
 				
 			}
             
-            
+            main.savewordstoCSV(computedScores); 
 			
 //			Map map = constructGestureWords.getTfIDFMapGlobal();
 			

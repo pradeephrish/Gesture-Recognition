@@ -37,6 +37,7 @@ import com.asu.mwdb.matlab.MatlabObject;
 import com.asu.mwdb.setup.CreateFileStructure;
 import com.asu.mwdb.utils.AssignLetter;
 import com.asu.mwdb.utils.DataNormalizer;
+import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.ShowHeatpMap;
 
 /**
@@ -77,7 +78,7 @@ public class MainWindow extends javax.swing.JFrame {
      *              Second Map corresponds to words/dimesnions for ith Sensor  -assume this is j
      *              Third  List contains only two elements, first is TF-IDF and second is TF-IDF2 , which correponds to jth word in ith sensor -- therefore size always 20                 
      */
-    private List<Map<String,List<Double>>> sensorWordsScores = new ArrayList<Map<String,List<Double>>>();
+    private List<Map<String,Double[]>> sensorWordsScores = new ArrayList<Map<String,Double[]>>();
     
     
     /***  Phase 2 Methods  ***/
@@ -107,15 +108,17 @@ public class MainWindow extends javax.swing.JFrame {
     }
     
     //Populate List<List<List<Double>>> sensorWordsScores
-    public List<Map<String,List<Double>>> createSensorWordScores(Map<Integer,Set<String>> sensorWords,List<List<Map<String, List<Double>>>> dictionary)
+    public List<Map<String,Double[]>> createSensorWordScores(Map<Integer,Set<String>> sensorWords,List<List<Map<String, List<Double>>>> dictionary)
     {
-    	List<Map<String,List<Double>>> sensorWordsScores = new ArrayList<Map<String,List<Double>>>();
+    	
+    	List<Map<String,Double[]>> sensorWordsScores = new ArrayList<Map<String,Double[]>>();
     	
     	for (int i = 0; i < sensorWords.size(); i++) {  //assuming keys start from 0 to 19
     		//get words
     		List<String> words = new ArrayList<String>(sensorWords.get(i)); //since order doesn't matter
     		
-    		Map<String,List<Double>> dimensionAgainstAllDocuments = new HashMap<String, List<Double>>();
+    		Map<String,Double[]> dimensionAgainstAllDocuments = new HashMap<String, Double[]>();
+    		
     		
     		//now iterate dictionary
 			for (int k = 0; k < dictionary.size(); k++) {
@@ -123,18 +126,20 @@ public class MainWindow extends javax.swing.JFrame {
 				
 				for (int j = 0; j < words.size(); j++) {
 					if(map.containsKey(words.get(j))){
-						if(dimensionAgainstAllDocuments.get(words.get(j))!=null)
-							dimensionAgainstAllDocuments.get(words.get(j)).add(map.get(words.get(j)).get(3)); //put 3 for tf-idf
+						if(dimensionAgainstAllDocuments.get(words.get(j))!=null){
+							 Double[] temp = dimensionAgainstAllDocuments.get(words.get(j));
+							 temp[k]=map.get(words.get(j)).get(3);   //for 3 for tf-idf
+						}	
 						else
 						{
-							List<Double> score   = new ArrayList<Double>();
-							score.add(map.get(words.get(j)).get(3));
+							Double score[]   = new Double[dictionary.size()];
+							score[k]= map.get(words.get(j)).get(3);
 							dimensionAgainstAllDocuments.put(words.get(j), score); //put 3 for tf-idf
 						}
 					}else
 					{ //if not found put zero
-						List<Double> score   = new ArrayList<Double>();
-						score.add(0.0);
+						Double score[]   = new Double[dictionary.size()];
+						score[k]=0.0;  // by default it does zero so no worries
 						dimensionAgainstAllDocuments.put(words.get(j), score);
 					}
 				}
@@ -781,8 +786,10 @@ public class MainWindow extends javax.swing.JFrame {
             
             //assume only one component right now, hence, index 0 below
             
+             SerializeData.serialize("data/test.obj", constructGestureWords.get(0).getTfMapArrayIDF());
+            
             Map<Integer, Set<String>> variable1 = createWordsPerSensor(constructGestureWords.get(0).getTfMapArrayIDF());
-            List<Map<String, List<Double>>> computedScores = createSensorWordScores(variable1, constructGestureWords.get(0).getTfMapArrayIDF());
+            List<Map<String, Double[]>> computedScores = createSensorWordScores(variable1, constructGestureWords.get(0).getTfMapArrayIDF());
             
             System.out.println("Scores of phase 2"+computedScores.size());
             

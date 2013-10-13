@@ -12,8 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -81,9 +83,9 @@ public class MainWindow extends javax.swing.JFrame {
     /***  Phase 2 Methods  ***/
     
     //Populates  Map<String,List<String>> sensorWords
-    public Map<Integer,List<String>> createWordsPerSensor(List<List<Map<String, List<Double>>>> dictionary){
+    public Map<Integer,Set<String>> createWordsPerSensor(List<List<Map<String, List<Double>>>> dictionary){
     	
-    	Map<Integer,List<String>> sensorWords = new HashMap<Integer, List<String>>();
+    	Map<Integer,Set<String>> sensorWords = new HashMap<Integer, Set<String>>();
     	
     	//iterate multivariate documents
     	for (int i = 0; i < dictionary.size(); i++) {
@@ -95,7 +97,7 @@ public class MainWindow extends javax.swing.JFrame {
     					sensorWords.get(j).addAll(dictionary.get(i).get(j).keySet());
     			else
     			{
-    				List<String> wordsPerSensor = new ArrayList<String>();
+    				Set<String> wordsPerSensor = new HashSet<String>();
     				wordsPerSensor.addAll(dictionary.get(i).get(j).keySet());
     				sensorWords.put(j, wordsPerSensor);
     			}
@@ -105,13 +107,14 @@ public class MainWindow extends javax.swing.JFrame {
     }
     
     //Populate List<List<List<Double>>> sensorWordsScores
-    public List<Map<String,List<Double>>> createSensorWordScores(Map<Integer,List<String>> sensorWords,List<List<Map<String, List<Double>>>> dictionary)
+    public List<Map<String,List<Double>>> createSensorWordScores(Map<Integer,Set<String>> sensorWords,List<List<Map<String, List<Double>>>> dictionary)
     {
     	List<Map<String,List<Double>>> sensorWordsScores = new ArrayList<Map<String,List<Double>>>();
     	
     	for (int i = 0; i < sensorWords.size(); i++) {  //assuming keys start from 0 to 19
     		//get words
-    		List<String> words = sensorWords.get(i);
+    		List<String> words = new ArrayList<String>(sensorWords.get(i)); //since order doesn't matter
+    		
     		Map<String,List<Double>> dimensionAgainstAllDocuments = new HashMap<String, List<Double>>();
     		
     		//now iterate dictionary
@@ -773,18 +776,19 @@ public class MainWindow extends javax.swing.JFrame {
                 jComboBox3.addItem(listOfDirectories.get(i).getName()); 
             }
 
-             /*ConstructGestureWords constructGestureWordsY = new ConstructGestureWords();
-             ConstructGestureWords constructGestureWordsZ = new ConstructGestureWords();
-	     ConstructGestureWords constructGestureWordsW = new ConstructGestureWords();*/
-
-//		
-//		logger.info("Gesture files ready with W angle");
-//		constructGestureWordsX.constructGestureWords(w, s, sampleDataLoc+"\\letter\\X", sampleDataLoc+"\\task1\\X",sampleDataLoc+"\\task2\\X");
-//		logger.info("Gesture files ready with X axis");
-//		constructGestureWordsY.constructGestureWords(w, s, sampleDataLoc+"\\letter\\Y", sampleDataLoc+"\\task1\\Y",sampleDataLoc+"\\task2\\Y");
-//		logger.info("Gesture files ready with Y axis");
-//		constructGestureWordsZ.constructGestureWords(w, s, sampleDataLoc+"\\letter\\Z", sampleDataLoc+"\\task1\\Z",sampleDataLoc+"\\task2\\Z");
-//		logger.info("Gesture files ready with Z axis");
+            
+            /** Phase 2 Code ***/
+            
+            //assume only one component right now, hence, index 0 below
+            
+            Map<Integer, Set<String>> variable1 = createWordsPerSensor(constructGestureWords.get(0).getTfMapArrayIDF());
+            List<Map<String, List<Double>>> computedScores = createSensorWordScores(variable1, constructGestureWords.get(0).getTfMapArrayIDF());
+            
+            System.out.println("Scores of phase 2"+computedScores.size());
+            
+            
+            /** Phase 2 Code ***/
+            
             
             
             progressBar.setValue(100);

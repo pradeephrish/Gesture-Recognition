@@ -4,41 +4,38 @@
  */
 package com.asu.mwdb.gui;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+import matlabcontrol.MatlabConnectionException;
+import matlabcontrol.MatlabInvocationException;
+import matlabcontrol.MatlabProxy;
+
 import com.asu.mwdb.loggers.MyLogger;
 import com.asu.mwdb.math.ConstructGestureWords;
 import com.asu.mwdb.math.CreateGaussianBands;
 import com.asu.mwdb.math.Task3FindSimilarData;
+import com.asu.mwdb.math.Task3FindSimilarData.DistanceFunction;
+import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 import com.asu.mwdb.matlab.MatlabObject;
 import com.asu.mwdb.setup.CreateFileStructure;
 import com.asu.mwdb.utils.AssignLetter;
 import com.asu.mwdb.utils.DataNormalizer;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableModel;
-import matlabcontrol.MatlabConnectionException;
-import matlabcontrol.MatlabInvocationException;
-import matlabcontrol.MatlabProxy;
-import com.asu.mwdb.math.Task3FindSimilarData.DistanceFunction;
-import com.asu.mwdb.math.Task3FindSimilarData.Entity;
-import com.asu.mwdb.utils.ConstructGestureVectors;
 import com.asu.mwdb.utils.ShowHeatpMap;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import static java.awt.image.ImageObserver.WIDTH;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import javax.swing.JFileChooser;
 
 /**
  *
@@ -67,6 +64,88 @@ public class MainWindow extends javax.swing.JFrame {
     private Image image; //heatmap image
     private ShowHeatpMap heatMapVisualize;
     private CreateFileStructure ss;
+    
+    
+    /***  Phase 2 Data Structure  ***/
+    //Holds data of sensor against list of words/dimensions
+    private Map<Integer,List<String>> sensorWords = new HashMap<Integer, List<String>>();
+    /*
+     * Below,  (From Left to Right)  
+     *              First List corresponds to 20 sensors   -assume this is i 
+     *              Second Map corresponds to words/dimesnions for ith Sensor  -assume this is j
+     *              Third  List contains only two elements, first is TF-IDF and second is TF-IDF2 , which correponds to jth word in ith sensor -- therefore size always 20                 
+     */
+    private List<Map<String,List<Double>>> sensorWordsScores = new ArrayList<Map<String,List<Double>>>();
+    
+    
+    /***  Phase 2 Methods  ***/
+    
+    //Populates  Map<String,List<String>> sensorWords
+    public Map<Integer,List<String>> createWordsPerSensor(List<List<Map<String, List<Double>>>> dictionary){
+    	
+    	Map<Integer,List<String>> sensorWords = new HashMap<Integer, List<String>>();
+    	
+    	//iterate multivariate documents
+    	for (int i = 0; i < dictionary.size(); i++) {
+			//iterate univariate document
+    		for (int j = 0; j < dictionary.get(i).size(); j++) {
+				//iterate each sensor   -- note assuming  0 to 19
+    			
+    			if(sensorWords.get(j)!=null)
+    					sensorWords.get(j).addAll(dictionary.get(i).get(j).keySet());
+    			else
+    			{
+    				List<String> wordsPerSensor = new ArrayList<String>();
+    				wordsPerSensor.addAll(dictionary.get(i).get(j).keySet());
+    				sensorWords.put(j, wordsPerSensor);
+    			}
+			}
+		}
+    	return sensorWords;
+    }
+    
+    //Populate List<List<List<Double>>> sensorWordsScores
+    public List<Map<String,List<Double>>> createSensorWordScores(Map<Integer,List<String>> sensorWords,List<List<Map<String, List<Double>>>> dictionary)
+    {
+    	List<Map<String,List<Double>>> sensorWordsScores = new ArrayList<Map<String,List<Double>>>();
+    	
+    	for (int i = 0; i < sensorWords.size(); i++) {  //assuming keys start from 0 to 19
+    		//get words
+    		List<String> words = sensorWords.get(i);
+    		Map<String,List<Double>> dimensionAgainstAllDocuments = new HashMap<String, List<Double>>();
+    		
+    		//now iterate dictionary
+			for (int k = 0; k < dictionary.size(); k++) {
+				Map<String, List<Double>> map = dictionary.get(k).get(i);  //get i th map  of all multivariate series documents
+				
+				for (int j = 0; j < words.size(); j++) {
+					if(map.containsKey(words.get(j))){
+						if(dimensionAgainstAllDocuments.get(words.get(j))!=null)
+							dimensionAgainstAllDocuments.get(words.get(j)).add(map.get(words.get(j)).get(3)); //put 3 for tf-idf
+						else
+						{
+							List<Double> score   = new ArrayList<Double>();
+							score.add(map.get(words.get(j)).get(3));
+							dimensionAgainstAllDocuments.put(words.get(j), score); //put 3 for tf-idf
+						}
+					}else
+					{ //if not found put zero
+						List<Double> score   = new ArrayList<Double>();
+						score.add(0.0);
+						dimensionAgainstAllDocuments.put(words.get(j), score);
+					}
+				}
+			}
+    		//iterated dictionary for  ith sensor,  add it to main list
+			sensorWordsScores.add(dimensionAgainstAllDocuments);
+		}
+    	
+    	return sensorWordsScores;
+    }
+    
+    /***/
+    
+    
     
     /**
      * Creates new form MainWindow

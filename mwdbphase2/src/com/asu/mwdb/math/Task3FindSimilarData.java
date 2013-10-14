@@ -61,21 +61,6 @@ public class Task3FindSimilarData {
 		inputFileGesturewords = new ArrayList<Map<String,List<Double>>>();
 		init(wordLength,shiftLength,inputDirectory); //generated tf,idf,idf2 save to file
 		
-		//now we have two seperate dictionaries 'inputDictionary' for given input and 'dictionary' for sample data provided
-		//we can directly process these two dictionaries instead of again reading from file
-	
-		//perform on TF
-	//	HashMap<Integer, Double> tfSimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TF);
-	//	HashMap<Integer, Double> tfidfSimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TFIDF);
-	//	HashMap<Integer, Double> tfidf2SimilarScores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,Entity.TFIDF2);
-		
-	//	logger.info("Top 10 TF Matching series");
-	//	showLinkedHashMap(tfSimilarScores,10);
-	//	logger.info("Top 10 TFIDF Matching series");
-	//	showLinkedHashMap(tfidfSimilarScores, 10);
-	//	logger.info("Top 10 TFIDF2 Matching series");
-	//	showLinkedHashMap(tfidf2SimilarScores, 10);
-		
 		
 	}
 

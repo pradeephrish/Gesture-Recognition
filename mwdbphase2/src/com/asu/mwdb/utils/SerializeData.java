@@ -65,7 +65,8 @@ public class SerializeData {
 				
 			}
             
-            main.savewordstoCSV(computedScores); 
+            List<List<String>> order = main.savewordstoCSV(computedScores);
+            System.out.println(order.toString());
 			
 //			Map map = constructGestureWords.getTfIDFMapGlobal();
 			

@@ -113,7 +113,8 @@ public class MainWindow extends javax.swing.JFrame {
     	return sensorWords;
     }
     
-    public void savewordstoCSV(List<Map<String,Double[]>> sensorWordsScores){
+    public List<List<String>> savewordstoCSV(List<Map<String,Double[]>> sensorWordsScores){
+    	List<List<String>> orderofDimenions = new ArrayList<List<String>>();
     	try{
     	for (int i = 0; i < sensorWordsScores.size(); i++) {
     		//System.out.println("Input Directory Path is "+inputDirectoryPath);
@@ -122,27 +123,35 @@ public class MainWindow extends javax.swing.JFrame {
     		
             //check this later
 			CSVWriter csvWriter = new CSVWriter(new FileWriter("data\\"+i+".csv"));
+			csvWriter = new CSVWriter(new FileWriter("data\\"+i+".csv"),',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 			
 			Iterator<Entry<String, Double[]>> iterator = sensorWordsScores.get(i).entrySet().iterator();
 			
 			System.out.println("***************************");
 			System.out.println("\tSensor\t"+i);
+			List<String> wordOrder = new ArrayList<String>();
         	while(iterator.hasNext()){
         		Entry<String, Double[]> entry = iterator.next();
         		List<String> list = new ArrayList<String>();
-        		list.add(entry.getKey());
+        		//list.add(entry.getKey());  //for testing, not needed, since matlab will need only values of dimensions
+        		
+        		wordOrder.add(entry.getKey());
+        		
         		Double[] array = entry.getValue();
         		for (int j = 0; j < array.length; j++) {
 					list.add(String.valueOf(array[j]));
 				}
         		csvWriter.writeNext(list.toArray(new String[list.size()]));
         	}
+        	orderofDimenions.add(wordOrder);
+        	
         	System.out.println("***************************");
 			csvWriter.close();
 		}
     	}catch(Exception e){
     		e.printStackTrace();
     	}
+    	return orderofDimenions;
     }
     
     

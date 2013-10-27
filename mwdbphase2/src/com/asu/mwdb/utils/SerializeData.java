@@ -88,7 +88,7 @@ public class SerializeData {
 //			serialize("data/test.obj", map);
             
             main.executePCA("data",order);
-            
+            main.executeSVD("data", order);
             
 
            // constructGestureGestureMatix(dictionary);

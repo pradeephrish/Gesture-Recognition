@@ -13,6 +13,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -186,6 +187,53 @@ public class MainWindow extends javax.swing.JFrame {
 			}*/
         }
     } 
+    
+    	
+       public void exectuteLDA(String inputLocation,List<List<String>> order){
+    	   
+       }
+       
+       public String[][][] transformDataForLDA(String inputLocation) throws IOException{
+    	   
+    	   File[] files = new File(inputLocation).listFiles(new FileFilter() {
+    		   @Override
+   			public boolean accept(File pathname) {
+   				// TODO Auto-generated method stub
+   				String name = pathname.getName().toLowerCase();
+                   return name.endsWith(".csv") && pathname.isFile();
+   			}
+		});
+    	 String[][][] data3D = new String[files.length][][];  
+    	 for (int i = 0; i < files.length; i++) {
+			CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(files[i])));
+			List<String[]> csvRead = csvReader.readAll();
+			String[][] data2D = new String[csvRead.size()][];
+			for (int j = 0; j < csvRead.size(); j++) {
+				/** Tranform data for svd **/ 
+				String[] input = csvRead.get(j);
+				for (int k = 0; k < input.length; k++) {
+					input[k]=String.valueOf(j+1)+':'+input[k];
+				}
+				/***/
+				data2D[j]=input;
+			}
+			data3D[i]=data2D;
+			csvReader.close();
+		}  
+ 
+    	for (int i = 0; i < data3D.length; i++) {
+    		String ldaOutputFile =  new File(inputLocation).getAbsolutePath()+File.separator+"lda"+File.separator+i+".csv";
+    		CSVWriter csvWrite = new CSVWriter(new OutputStreamWriter(new FileOutputStream(ldaOutputFile)),'\t',CSVWriter.NO_QUOTE_CHARACTER);
+    		for (int j = 0; j < data3D[i].length; j++) {
+				csvWrite.writeNext(data3D[i][j]);
+			}
+    		csvWrite.close();
+		}
+		return data3D;
+    	   //note still need to transform whole data, to have  Doucument vs Topic Distribution 
+       }
+    
+    
         
         public void executeSVD(String inputLocation,List<List<String>> order) throws MatlabConnectionException, MatlabInvocationException, IOException{
         	MatlabObject matlabObject = new MatlabObject();

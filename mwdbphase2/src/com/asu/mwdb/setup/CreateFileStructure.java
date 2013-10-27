@@ -79,6 +79,17 @@ public class CreateFileStructure {
 			e.printStackTrace();
 		}
 	}
+	
+	public static String getScriptLocation() {
+		Properties prop = new Properties();
+		try {
+			// load a properties file
+			prop.load(new FileInputStream(".\\config\\config.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return prop.getProperty("MatlabScriptLoc");
+	}
 
 	public static void delete(File file) throws IOException {
 		if (file.isDirectory()) {

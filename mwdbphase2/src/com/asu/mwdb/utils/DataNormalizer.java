@@ -1,14 +1,14 @@
 package com.asu.mwdb.utils;
 
-import com.asu.mwdb.gui.MainWindow;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
+
 import com.asu.mwdb.loggers.MyLogger;
-import java.util.List;
 
 public class DataNormalizer {
 

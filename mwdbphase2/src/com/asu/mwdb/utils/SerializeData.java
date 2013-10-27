@@ -1,6 +1,5 @@
 package com.asu.mwdb.utils;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,19 +11,17 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import java.util.Set;
 
+import matlabcontrol.MatlabConnectionException;
+import matlabcontrol.MatlabInvocationException;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.asu.mwdb.gui.MainWindow;
-import com.asu.mwdb.math.ConstructGestureWords;
 import com.asu.mwdb.math.CosineSimilarity;
-import com.asu.mwdb.math.Task3FindSimilarData.DistanceFunction;
 import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 
 public class SerializeData {
@@ -50,11 +47,11 @@ public class SerializeData {
 	}
 	
 	
-	public static void main(String[] args) throws ClassNotFoundException {
+	public static void main(String[] args) throws ClassNotFoundException, MatlabConnectionException, MatlabInvocationException {
 		try {
 		
 			
-			List<List<Map<String, List<Double>>>> dictionary = (List<List<Map<String, List<Double>>>>) deserialize("data/test.obj");
+			List<List<Map<String, List<Double>>>> dictionary = (List<List<Map<String, List<Double>>>>) deserialize("object/test.obj");
 			
 			
 			MainWindow main = new MainWindow();
@@ -81,14 +78,20 @@ public class SerializeData {
 			}
             
             List<List<String>> order = main.savewordstoCSV(computedScores);
-            System.out.println(order.toString());
+            for (int i = 0; i < order.size(); i++) {
+            	System.out.println(order.get(i).toString());
+			}
+//            System.out.println(order.toString());
 			
-//			Map map = constructGestureWords.getTfIDFMapGlobal();
+//			Map map = constructGesstureWords.getTfIDFMapGlobal();
 			
 //			serialize("data/test.obj", map);
-		
-			
-            constructGestureGestureMatix(dictionary);
+            
+            main.executePCA("data",order);
+            
+            
+
+           // constructGestureGestureMatix(dictionary);
             
             
 		} catch (IOException e) {

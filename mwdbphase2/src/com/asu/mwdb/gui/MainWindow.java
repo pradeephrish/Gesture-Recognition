@@ -9,8 +9,14 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +37,9 @@ import javax.swing.table.DefaultTableModel;
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
+
+
+import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.asu.mwdb.loggers.MyLogger;
@@ -87,7 +96,118 @@ public class MainWindow extends javax.swing.JFrame {
     private List<Map<String,Double[]>> sensorWordsScores = new ArrayList<Map<String,Double[]>>();
     
     
-    /***  Phase 2 Methods  ***/
+    /***  Phase 2 Methods  
+     * @throws MatlabConnectionException 
+     * @throws MatlabInvocationException 
+     * @throws IOException ***/
+    
+    
+    public void executePCA(String inputLocation,List<List<String>> order) throws MatlabConnectionException, MatlabInvocationException, IOException{
+    	MatlabObject matlabObject = new MatlabObject();
+        proxy = matlabObject.getMatlabProxy();
+          
+        String scriptLocation = CreateFileStructure.getScriptLocation();
+        scriptLocation="."+File.separator+scriptLocation;
+        System.out.println("Script Location"+scriptLocation);
+        
+        String path = "cd(\'" + scriptLocation + "')";
+        
+        proxy.eval(path);
+        
+        File[] files = new File(inputLocation).listFiles(new FileFilter() {
+			
+			@Override
+			public boolean accept(File pathname) {
+				// TODO Auto-generated method stub
+				String name = pathname.getName().toLowerCase();
+                return name.endsWith(".csv") && pathname.isFile();
+			}
+		});
+        for (int i = 0; i < files.length; i++) {  
+        	System.out.println("path is "+files[i].getParent()+i+File.separator+files[i].getName()); 
+        	proxy.eval("PCAFinder('" + files[i].getAbsolutePath() + "','" + files[i].getParentFile().getAbsolutePath()+File.separator+"pca"+File.separator+files[i].getName()+ "')");
+		}
+        //************************* now print  top-3 latent semantics
+        
+       /* String newLineMark = System.getProperty("line.separator");
+
+        String leftAlignFormat = "| %-15s ";
+        String topRow =   "+-----------------";
+        String columnName="| Column name     |";
+        String bottomRow= "+-----------------+";*/
+        
+        for (int i = 0; i < order.size(); i++) {
+        	/*for (int j = 0; j < order.get(i).size(); j++) {
+        		leftAlignFormat+=" | %f"; 
+        		topRow+="+--------";
+        		columnName+="|"+order.get(i).get(j)+"|";
+        		bottomRow+="+--------";
+			}
+        	leftAlignFormat+= "|" + newLineMark;
+        	topRow+="+" + newLineMark;
+        	bottomRow+="+" + newLineMark;
+        	columnName+="|" + newLineMark;
+        	
+        	System.out.format(topRow);
+            System.out.printf(columnName);
+            System.out.format(bottomRow);*/
+            
+            
+            //read sensor 0 data and print
+            
+            String pcaFileName =  files[i].getParentFile().getAbsolutePath()+File.separator+"pca"+File.separator+i+".csv";
+            String pcaSemanticFileName = files[i].getParentFile().getAbsolutePath()+File.separator+"pca-semantic"+File.separator+i+".csv";
+            
+            CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(pcaFileName)));
+            CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(new FileOutputStream(pcaSemanticFileName))); 
+            
+            List<String> orderList = order.get(i);
+            String[] list=new String[orderList.size()];
+            
+            for (int j = 0; j < orderList.size(); j++) {
+				list[j]=orderList.get(j);
+			}
+            csvWriter.writeNext(list);
+            
+            for (int j = 0; j < 3; j++) {
+				csvWriter.writeNext(csvReader.readNext()); 
+			}
+            csvWriter.close();
+            csvReader.close();
+            
+            /*for (int j = 0; j < 3; j++) {
+            	String[] array = csvReader.readNext();
+            	Object[] objectArray = new Object[array.length+1];
+            	objectArray[0]="Semantic "+(j+1);
+            	for (int k = 0; k < array.length; k++) {
+            		 objectArray[k]=new Double(array[k]);
+				}
+            	System.out.format(leftAlignFormat, objectArray);	
+			}*/
+            
+            System.out.println("-----------------------------------------------------------------------");
+            System.out.println();
+            System.out.println();
+            System.out.println();
+        }
+        
+
+        
+        
+        
+        
+        
+        
+        
+        //System.out.format("+-----------------+------+" + newLineMark);
+        
+        
+    }
+    
+    
+    
+    
+    
     
     //Populates  Map<String,List<String>> sensorWords
     public Map<Integer,Set<String>> createWordsPerSensor(List<List<Map<String, List<Double>>>> dictionary){
@@ -781,7 +901,7 @@ public class MainWindow extends javax.swing.JFrame {
             System.out.println("Path is "+path);
             
             
-             proxy.eval(path);
+            proxy.eval(path);
                    
             new DataNormalizer(proxy, ss.matlabScriptLocation, ss.inputDataLocation,listOfDirectories);
 

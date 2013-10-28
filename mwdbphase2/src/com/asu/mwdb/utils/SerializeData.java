@@ -90,7 +90,7 @@ public class SerializeData {
              main.transformDataForLDA("data");
 //            main.executePCA("data",order);
 //            main.executeSVD("data", order);
-            
+            main.exectuteLDA("data/lda/input", order,3);
 
            // constructGestureGestureMatix(dictionary);
             

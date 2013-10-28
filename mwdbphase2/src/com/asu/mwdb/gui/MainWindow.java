@@ -187,10 +187,37 @@ public class MainWindow extends javax.swing.JFrame {
 			}*/
         }
     } 
-    
-    	
-       public void exectuteLDA(String inputLocation,List<List<String>> order){
-    	   
+
+       public void exectuteLDA(String inputLocation,List<List<String>> order,Integer ktopics) throws MatlabConnectionException, MatlabInvocationException{
+    	   MatlabObject matlabObject = new MatlabObject();
+           proxy = matlabObject.getMatlabProxy();
+             
+           String scriptLocation = CreateFileStructure.getScriptLocation();
+           scriptLocation="."+File.separator+scriptLocation;
+           System.out.println("Script Location"+scriptLocation);
+           
+           String path = "cd(\'" + scriptLocation +"\\lda"+ "')";
+           proxy.eval(path);
+           //execute lda
+           
+           
+           File[] files = new File(inputLocation).listFiles(new FileFilter() {
+   			
+   			@Override
+   			public boolean accept(File pathname) {
+   				// TODO Auto-generated method stub
+   				String name = pathname.getName().toLowerCase();
+                   return name.endsWith(".csv") && pathname.isFile();
+   			}
+   		});
+           for (int i = 0; i < files.length; i++) {  
+           	System.out.println("path is "+files[i].getParent()+i+File.separator+files[i].getName()); 
+           	System.out.println("Method call is ");
+           	System.out.println("ldamain('" + files[i].getAbsolutePath() + "','" + files[i].getParentFile().getAbsolutePath()+File.separator+"output"+File.separator+files[i].getName()+ "','" +ktopics+ "')");
+           	proxy.eval("ldamain('" + files[i].getAbsolutePath() + "','" + files[i].getParentFile().getParentFile().getAbsolutePath()+File.separator+"output"+File.separator+files[i].getName()+ "'," +ktopics+ ")"); //three for 3 topics
+   		}
+           
+           
        }
        
        public String[][][] transformDataForLDA(String inputLocation) throws IOException{
@@ -219,10 +246,12 @@ public class MainWindow extends javax.swing.JFrame {
 			}
 			data3D[i]=data2D;
 			csvReader.close();
-		}  
- 
-    	for (int i = 0; i < data3D.length; i++) {
-    		String ldaOutputFile =  new File(inputLocation).getAbsolutePath()+File.separator+"lda"+File.separator+i+".csv";
+		}   
+    	 
+    	data3D = transform(data3D); 
+    	 
+    	for (int i = 0; i < files.length; i++) {
+    		String ldaOutputFile =  new File(inputLocation).getAbsolutePath()+File.separator+"lda"+File.separator+"input"+File.separator+files[i].getName();
     		CSVWriter csvWrite = new CSVWriter(new OutputStreamWriter(new FileOutputStream(ldaOutputFile)),'\t',CSVWriter.NO_QUOTE_CHARACTER);
     		for (int j = 0; j < data3D[i].length; j++) {
 				csvWrite.writeNext(data3D[i][j]);
@@ -235,7 +264,23 @@ public class MainWindow extends javax.swing.JFrame {
     
     
         
-        public void executeSVD(String inputLocation,List<List<String>> order) throws MatlabConnectionException, MatlabInvocationException, IOException{
+       //tranpose tensor
+        private String[][][] transform(String[][][] data3D) {
+		// TODO Auto-generated method stub
+        	for (int i = 0; i < data3D.length; i++) {
+				String[][] data2D = data3D[i];
+				String[][] tranpose2D = new String[data2D[0].length][data2D.length];
+				for (int j = 0; j < data2D.length; j++) {
+					for (int k = 0; k < data2D[j].length; k++) {
+							tranpose2D[k][j]=data2D[j][k];
+					}
+				}
+				data3D[i]=tranpose2D;
+			}
+		return data3D;
+	}
+
+		public void executeSVD(String inputLocation,List<List<String>> order) throws MatlabConnectionException, MatlabInvocationException, IOException{
         	MatlabObject matlabObject = new MatlabObject();
             proxy = matlabObject.getMatlabProxy();
               

@@ -1,4 +1,4 @@
-function PCAFinder(filein,fileout)
+function PCAFinder(filein,fileout,transformoutput)
 	filein
 	X = csvread(filein);
     X

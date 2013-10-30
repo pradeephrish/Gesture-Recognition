@@ -96,6 +96,7 @@ public class SerializeData {
 //            Utils.tranformData("data/svd-semantic", "data", "data/svd-transform");
             
             main.exectuteLDA("data/lda/input",order,3);
+            Utils.tranformData("data/lda/outputk", "data", "data/lda/lda-transform");
             
            // constructGestureGestureMatix(dictionary);
             

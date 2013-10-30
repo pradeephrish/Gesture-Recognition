@@ -81,9 +81,9 @@ public class SearchDatabaseForSimilarity {
 		HashMap<Integer, Double> tfIDF2Scores = computeSimilarilty(inputDictionary,this.dictionary, DistanceFunction.CosineFunction,UserChoice.TFIDF2);
 		
 		
-		System.out.println("Top 10 documents with similar TF-IDF values are as follows:");
+		System.out.println("Top 5 documents with similar TF-IDF values are as follows:");
 		displayMapResults(tfIDFScores);
-		System.out.println("Top 10 documents with similar TF-IDF2 values are as follows:");
+		System.out.println("Top 5 documents with similar TF-IDF2 values are as follows:");
 		displayMapResults(tfIDF2Scores);
 	}
 

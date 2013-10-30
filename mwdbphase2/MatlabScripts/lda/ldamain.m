@@ -15,4 +15,5 @@ end
 %inputpath=transpose(inputpath);
 d = fmatrix(inputpath);
 [alpha,beta] = lda(d,k,emmax,demmax);
+beta=transpose(beta);
 csvwrite(outputpath,beta);

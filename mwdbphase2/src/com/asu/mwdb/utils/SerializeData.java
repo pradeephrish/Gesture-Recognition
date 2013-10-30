@@ -56,6 +56,7 @@ public class SerializeData {
 			
 			MainWindow main = new MainWindow();
 			
+			
 			Map<Integer, Set<String>> variable1 = main.createWordsPerSensor(dictionary);
             List<Map<String, Double[]>> computedScores = main.createSensorWordScores(variable1, dictionary);
             
@@ -87,11 +88,15 @@ public class SerializeData {
 			
 //			serialize("data/test.obj", map);
             
-             main.transformDataForLDA("data");
+//            main.transformDataForLDA("data");
 //            main.executePCA("data",order);
+//            Utils.tranformData("data/pca-semantic", "data", "data/pca-transform");
+            
 //            main.executeSVD("data", order);
-            main.exectuteLDA("data/lda/input", order,3);
-
+//            Utils.tranformData("data/svd-semantic", "data", "data/svd-transform");
+            
+            main.exectuteLDA("data/lda/input",order,3);
+            
            // constructGestureGestureMatix(dictionary);
             
             

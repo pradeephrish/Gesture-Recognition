@@ -88,15 +88,15 @@ public class SerializeData {
 			
 //			serialize("data/test.obj", map);
             
-//            main.transformDataForLDA("data");
-//            main.executePCA("data",order);
-//            Utils.tranformData("data/pca-semantic", "data", "data/pca-transform");
+           // main.transformDataForLDA("data");
+            main.executePCA("data",order);
+            Utils.tranformData("data/pca-semantic", "data", "data/pca-transform");
             
-//            main.executeSVD("data", order);
-//            Utils.tranformData("data/svd-semantic", "data", "data/svd-transform");
+            main.executeSVD("data", order);
+          Utils.tranformData("data/svd-semantic", "data", "data/svd-transform");
             
-            main.exectuteLDA("data/lda/input",order,3);
-            Utils.tranformData("data/lda/outputk", "data", "data/lda/lda-transform");
+            /*main.exectuteLDA("data/lda/input",order,3);
+            Utils.tranformData("data/lda/outputk", "data", "data/lda/lda-transform");*/
             
            // constructGestureGestureMatix(dictionary);
             

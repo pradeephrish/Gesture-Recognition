@@ -3,16 +3,20 @@ package com.asu.mwdb.utils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class Utils {
-	
+
 	public static Double[][]  getMatrix(String filePath,Integer offset) throws IOException //offset to skip first row in case of pca  
 	{
 		CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(filePath)));
@@ -29,19 +33,19 @@ public class Utils {
 		}
 		return matrix;
 	}
-	
-	
+
+
 	//inputDirectoryOne is always latent semantics 
 	public static void tranformData(String inputDirectoryOne,String inputDirectoryTwo,String outputDirectory) throws IOException{
 		File[] filesOne = new File(inputDirectoryOne).listFiles(new FileFilter() {
-   			
-   			@Override
-   			public boolean accept(File pathname) {
-   				// TODO Auto-generated method stub
-   				String name = pathname.getName().toLowerCase();
-                   return name.endsWith(".csv") && pathname.isFile();
-   			}
-   		});		
+
+			@Override
+			public boolean accept(File pathname) {
+				// TODO Auto-generated method stub
+				String name = pathname.getName().toLowerCase();
+				return name.endsWith(".csv") && pathname.isFile();
+			}
+		});		
 		for (int i = 0; i < filesOne.length; i++) {
 			String otherFile = inputDirectoryTwo+File.separator+filesOne[i].getName();
 			File file = new File(otherFile);
@@ -56,13 +60,13 @@ public class Utils {
 				System.out.println("Corresponding file for multiplication not found "+ otherFile);
 				return;
 			}
-			
+
 		}
-		
+
 		System.out.println("Transform Successfull");
 	}
-	
-	
+
+
 	public static void saveMatrixFile(Double[][] outputMatrix,
 			String outputDirectory, String name) throws IOException {
 		// TODO Auto-generated method stub
@@ -79,37 +83,37 @@ public class Utils {
 
 	public static Double[][] multiplicar(Double[][] A, Double[][] B) {
 
-        int aRows = A.length;
-        int aColumns = A[0].length;
-        int bRows = B.length;
-        int bColumns = B[0].length;
+		int aRows = A.length;
+		int aColumns = A[0].length;
+		int bRows = B.length;
+		int bColumns = B[0].length;
 
-        if (aColumns != bRows) {
-            throw new IllegalArgumentException("A:Rows: " + aColumns + " did not match B:Columns " + bRows + ".");
-        }
+		if (aColumns != bRows) {
+			throw new IllegalArgumentException("A:Rows: " + aColumns + " did not match B:Columns " + bRows + ".");
+		}
 
-        Double[][] C = new Double[aRows][bColumns];
-       /* for (int i = 0; i < 2; i++) {
+		Double[][] C = new Double[aRows][bColumns];
+		/* for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                 C[i][j] = 0.00000;
             }
         }*/
 
-        for (int i = 0; i < aRows; i++) { // aRow
-            for (int j = 0; j < bColumns; j++) { // bColumn
-            		C[i][j]=0.0;
-                for (int k = 0; k < aColumns; k++) { // aColumn
-                	System.out.println("LOL");
-                	System.out.println(C[i][j]);
-                	System.out.println(A[i][k]);
-                	System.out.println(B[k][j]);
-                    C[i][j] += A[i][k] * B[k][j];
-                }
-            }
-        }
+		for (int i = 0; i < aRows; i++) { // aRow
+			for (int j = 0; j < bColumns; j++) { // bColumn
+				C[i][j]=0.0;
+				for (int k = 0; k < aColumns; k++) { // aColumn
+					System.out.println("LOL");
+					System.out.println(C[i][j]);
+					System.out.println(A[i][k]);
+					System.out.println(B[k][j]);
+					C[i][j] += A[i][k] * B[k][j];
+				}
+			}
+		}
 
-        return C;
-    }
+		return C;
+	}
 	public static void print(Double[][] results)
 	{
 		for (int i = 0; i < results.length; i++) {
@@ -124,23 +128,61 @@ public class Utils {
 		print(data1);
 		Double[][] data2 = Utils.getMatrix("2.csv",0);
 		print(data2);
-		
+
 		//mutliply matrix
 		Double[][] results = Utils.multiplicar(data1, data2);
 		print(results);
 	}
-	
-	  
-    //tranpose tensor
-     public static Double[][] transposeMatrix(Double[][] data2D) {
+
+
+	//tranpose tensor
+	public static Double[][] transposeMatrix(Double[][] data2D) {
 		// TODO Auto-generated method stub
-				Double[][] tranpose2D = new Double[data2D[0].length][data2D.length];
-				for (int j = 0; j < data2D.length; j++) {
-					for (int k = 0; k < data2D[j].length; k++) {
-							tranpose2D[k][j]=data2D[j][k];
-					}
-				}
+		Double[][] tranpose2D = new Double[data2D[0].length][data2D.length];
+		for (int j = 0; j < data2D.length; j++) {
+			for (int k = 0; k < data2D[j].length; k++) {
+				tranpose2D[k][j]=data2D[j][k];
+			}
+		}
 		return tranpose2D;
 	}
-	
+
+	/**
+	 * Get the transformed data for LSA and convert it into a format
+	 * which can be used for comparison of query doc and database document
+	 * @throws IOException 
+	 */
+	public static List<List<String[]>> convertDataForComparison(String inputDirectory, File[] listFiles) throws IOException {
+		File file = new File(inputDirectory);
+		File[] files = file.listFiles();
+		Arrays.sort(files, new NumberedFileComparator());
+		File firstFile = files[0];
+		CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(firstFile.getAbsolutePath()))); 
+		List<List<String[]>> allFileData = new ArrayList<List<String[]>>();
+		List <String[]> fileData = csvReader.readAll();
+		csvReader.close();
+		Iterator <String[]> fileDataIterator = fileData.iterator();
+		while(fileDataIterator.hasNext()){
+			String data[] = fileDataIterator.next();
+			List <String[]> singleList = new ArrayList<String[]>();
+			singleList.add(data);
+			allFileData.add(singleList);
+		}
+		for(int i=1 ;i<files.length;i++){
+			File sensorFile =files[i];
+			csvReader = new CSVReader(new InputStreamReader(new FileInputStream(sensorFile.getAbsolutePath()))); 
+			List <String[]> fileData1 = csvReader.readAll();
+			csvReader.close();
+			Iterator <String[]> fileDataIterator1 = fileData1.iterator();
+			Iterator <List<String[]>> allFileDataIterator = allFileData.iterator();
+			while(fileDataIterator1.hasNext()){
+				String data[] = fileDataIterator1.next();
+				List<String[]> singleFileList = allFileDataIterator.next();
+				singleFileList.add(data);
+			}
+		}
+		return allFileData;
+		
+	}
+
 }

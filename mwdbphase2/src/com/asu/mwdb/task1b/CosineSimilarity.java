@@ -1,5 +1,6 @@
 package com.asu.mwdb.task1b;
 
+import java.util.List;
 import java.util.Map;
 /**
  * This class is responsible for calculating cosine similarities of two vectors
@@ -48,5 +49,38 @@ public class CosineSimilarity {
 			return 0;
 		
 		return (float) (ans / (hash2Length * hashLength));
+	}
+	
+	public static double compareLSADocument(List<String[]> queryData, List<String[]> documentData) {
+		double sum = 0.0;
+		for(int i=0; i< queryData.size(); i++) {
+			String[] querySensorData = queryData.get(i);
+			String[] docSensorData = documentData.get(i);
+			float ans1 = 0;
+			for(int j=0; j<querySensorData.length; j++) {
+				// a.b
+				ans1 = ans1 + (Float.parseFloat(querySensorData[j]) * Float.parseFloat(docSensorData[j]));
+			}
+			
+			// find |a|.|b|
+			float hashLength = 0;
+			for (int j = 0; j < querySensorData.length; j++) {
+				hashLength += (Float.parseFloat(querySensorData[j]) * Float.parseFloat(querySensorData[j]));
+			}
+			hashLength = (float) Math.sqrt(hashLength);
+			
+			float hashLength2 = 0;
+			for (int j = 0; j < querySensorData.length; j++) {
+				hashLength2 += (Float.parseFloat(docSensorData[j]) * Float.parseFloat(docSensorData[j]));
+			}
+			hashLength2 = (float) Math.sqrt(hashLength2);
+			
+			if(hashLength == 0 || hashLength2 == 0){
+				sum = sum + 0;
+			} else {
+				sum = sum + (ans1/ (hashLength2 * hashLength));
+			}
+		}
+		return sum;
 	}
 }

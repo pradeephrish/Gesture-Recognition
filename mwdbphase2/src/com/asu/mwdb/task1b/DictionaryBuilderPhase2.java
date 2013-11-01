@@ -157,7 +157,18 @@ public class DictionaryBuilderPhase2 {
 			wordMap.put(currentWord, list);
 		} else {
 			List<Double> list = new ArrayList<Double>();
+			
+			
 			list.add(0, 1.0);
+			
+		    //bad logic - should have used Double Array
+		 	list.add(1,0.0);
+		 	list.add(2,0.0);
+		 	list.add(3,0.0);
+		 	list.add(4,0.0);
+		 	list.add(5,0.0); // unnormilzed TF
+		 	// 		
+		 	
 			wordMap.put(currentWord, list);
 		}
 	}
@@ -175,8 +186,9 @@ public class DictionaryBuilderPhase2 {
 		while(iterator.hasNext()){
 			 Map.Entry<String, List<Double>> entry = (Map.Entry<String, List<Double>>) iterator.next();
 			 if(totalWordCountPerDocument> 0.0)
+				 entry.getValue().set(5,entry.getValue().get(0)); //store unnormized version
 				 entry.getValue().set(0,entry.getValue().get(0)/totalWordCountPerDocument); //add all tf for total words
-		}
+			 	}
 	
 		return wordMap;
 	}
@@ -322,7 +334,7 @@ public class DictionaryBuilderPhase2 {
 							* getTfMapArrayIDF().get(0).size()) / getTfIDFMapGlobal()
 							.get(pairs.getKey()));
 					Double idf = (Math.log(inverse));
-					pairs.getValue().add(idf); // 1 for IDF
+					pairs.getValue().set(1,idf); // 1 for IDF
 				}
 			}
 		}
@@ -350,10 +362,10 @@ public class DictionaryBuilderPhase2 {
 							.size()) / idf2PerDocument.get(pairs.getKey())); // already
 																				// inversse
 					List<Double> tf = pairs.getValue();
-					tf.add(Math.log(inverse));
-					tf.add(tf.get(0) * tf.get(1));
+					tf.set(2,Math.log(inverse));
+					tf.set(3,tf.get(0) * tf.get(1));  //tf-idf
 					idfValues.add(tf.get(1));
-					tf.add(tf.get(0) * tf.get(2));
+					tf.set(4,tf.get(0) * tf.get(2));  //tf-idf2
 					idf2Values.add(tf.get(2));
 				}
 			}

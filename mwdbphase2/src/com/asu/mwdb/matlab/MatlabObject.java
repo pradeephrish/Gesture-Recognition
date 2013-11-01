@@ -5,10 +5,14 @@ import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
 
 public class MatlabObject {
+	
+	private static MatlabProxy _instance = null;
 
 	public MatlabProxy getMatlabProxy() throws MatlabConnectionException {
 		MatlabProxyFactory factory = new MatlabProxyFactory();
-		MatlabProxy proxy = factory.getProxy();
-		return proxy;
+		if(_instance == null) {
+			_instance = factory.getProxy();
+		}
+		return _instance;
 	}
 }

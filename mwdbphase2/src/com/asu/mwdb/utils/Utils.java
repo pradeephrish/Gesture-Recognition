@@ -63,7 +63,7 @@ public class Utils {
 	}
 	
 	
-	private static void saveMatrixFile(Double[][] outputMatrix,
+	public static void saveMatrixFile(Double[][] outputMatrix,
 			String outputDirectory, String name) throws IOException {
 		// TODO Auto-generated method stub
 		CSVWriter writer = new CSVWriter(new FileWriter(new File(outputDirectory+File.separator+name)), ',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
@@ -132,7 +132,7 @@ public class Utils {
 	
 	  
     //tranpose tensor
-     private static Double[][] transposeMatrix(Double[][] data2D) {
+     public static Double[][] transposeMatrix(Double[][] data2D) {
 		// TODO Auto-generated method stub
 				Double[][] tranpose2D = new Double[data2D[0].length][data2D.length];
 				for (int j = 0; j < data2D.length; j++) {

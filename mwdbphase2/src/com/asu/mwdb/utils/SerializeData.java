@@ -58,7 +58,7 @@ public class SerializeData {
 			
 			
 			Map<Integer, Set<String>> variable1 = main.createWordsPerSensor(dictionary);
-            List<Map<String, Double[]>> computedScores = main.createSensorWordScores(variable1, dictionary);
+            List<Map<String, Double[]>> computedScores = main.createSensorWordScores(variable1, dictionary,3); //for tf-idf
             
             
             System.out.println("Scores of phase 2 : "+computedScores.size());
@@ -78,7 +78,7 @@ public class SerializeData {
 				
 			}
             
-            List<List<String>> order = main.savewordstoCSV(computedScores);
+            List<List<String>> order = main.savewordstoCSV(computedScores,"data");
             for (int i = 0; i < order.size(); i++) {
             	System.out.println(order.get(i).toString());
 			}

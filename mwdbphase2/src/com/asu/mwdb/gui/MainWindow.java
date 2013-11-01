@@ -38,7 +38,6 @@ import javax.swing.table.DefaultTableModel;
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
-
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -255,7 +254,7 @@ public class MainWindow extends javax.swing.JFrame {
 			String ldaSemanticFileName = files[i].getParentFile().getParentFile()
 					.getAbsolutePath()
 					+ File.separator
-					+ "outputk"+File.separator
+					+ "lda-semantic"+File.separator
 					 + i+".csv";
 
 			CSVReader csvReader = new CSVReader(new InputStreamReader(
@@ -316,7 +315,7 @@ public class MainWindow extends javax.swing.JFrame {
 		data3D = transform(data3D);
 
 		for (int i = 0; i < files.length; i++) {
-			String ldaOutputFile = new File(inputLocation).getAbsolutePath()
+			String ldaOutputFile = new File(inputLocation).getParentFile().getParentFile()
 					+ File.separator + "lda" + File.separator + "input"
 					+ File.separator + files[i].getName();
 			CSVWriter csvWrite = new CSVWriter(new OutputStreamWriter(
@@ -471,7 +470,8 @@ public class MainWindow extends javax.swing.JFrame {
 	}
 
 	public List<List<String>> savewordstoCSV(
-			List<Map<String, Double[]>> sensorWordsScores) {
+			List<Map<String, Double[]>> sensorWordsScores, String outputDirectory) {
+
 		List<List<String>> orderofDimenions = new ArrayList<List<String>>();
 		try {
 			for (int i = 0; i < sensorWordsScores.size(); i++) {
@@ -480,13 +480,11 @@ public class MainWindow extends javax.swing.JFrame {
 				// System.out.println("Input Directory Path is"+inputDirectoryPath);
 
 				// check this later
-				CSVWriter csvWriter = new CSVWriter(new FileWriter("data\\" + i
-						+ ".csv"));
-				csvWriter = new CSVWriter(
-						new FileWriter("data\\" + i + ".csv"), ',',
+				CSVWriter csvWriter = new CSVWriter(
+						new FileWriter(outputDirectory+File.separator + i + ".csv"), ',',
 						CSVWriter.NO_QUOTE_CHARACTER,
 						CSVWriter.DEFAULT_LINE_END);
-
+				
 				Iterator<Entry<String, Double[]>> iterator = sensorWordsScores
 						.get(i).entrySet().iterator();
 
@@ -505,7 +503,10 @@ public class MainWindow extends javax.swing.JFrame {
 					for (int j = 0; j < array.length; j++) {
 						list.add(String.valueOf(array[j]));
 					}
-					csvWriter.writeNext(list.toArray(new String[list.size()]));
+//					System.out.println(list);
+					String[] stringList = list.toArray(new String[list.size()]);
+//					System.out.println(Arrays.toString(stringList));
+					csvWriter.writeNext(stringList);
 				}
 				orderofDimenions.add(wordOrder);
 
@@ -521,7 +522,7 @@ public class MainWindow extends javax.swing.JFrame {
 	// Populate List<List<List<Double>>> sensorWordsScores
 	public List<Map<String, Double[]>> createSensorWordScores(
 			Map<Integer, Set<String>> sensorWords,
-			List<List<Map<String, List<Double>>>> dictionary) {
+			List<List<Map<String, List<Double>>>> dictionary,int choice) {
 		List<Map<String, Double[]>> sensorWordsScores = new ArrayList<Map<String, Double[]>>();
 
 		for (int i = 0; i < sensorWords.size(); i++) { // assuming keys start
@@ -555,13 +556,12 @@ public class MainWindow extends javax.swing.JFrame {
 					if (map.containsKey(words.get(j))) {
 						Double[] temp = dimensionAgainstAllDocuments.get(words
 								.get(j));
-						temp[k] = map.get(words.get(j)).get(3); // for 3 for
+						temp[k] = map.get(words.get(j)).get(choice); // pass th approprite index for tf  or  tf-idf 
 																// tf-idf
 					} else {
 						// else it's value is already zero - so this part is not
 						// required at all
-						Double[] temp = dimensionAgainstAllDocuments.get(words
-								.get(j));
+						Double[] temp = dimensionAgainstAllDocuments.get(words.get(j));
 						temp[k] = 0.0; // for 3 for tf-idf
 					}
 				}
@@ -1579,12 +1579,11 @@ public class MainWindow extends javax.swing.JFrame {
 			SerializeData.serialize("data/test.obj",
 					constructGestureWords.get(0).getTfMapArrayIDF());
 
-			Map<Integer, Set<String>> variable1 = createWordsPerSensor(constructGestureWords
+/*			Map<Integer, Set<String>> variable1 = createWordsPerSensor(constructGestureWords
 					.get(0).getTfMapArrayIDF());
-			List<Map<String, Double[]>> computedScores = createSensorWordScores(
-					variable1, constructGestureWords.get(0).getTfMapArrayIDF());
+			List<Map<String, Double[]>> computedScores = createSensorWordScores(variable1, constructGestureWords.get(0).getTfMapArrayIDF());
 
-			System.out.println("Scores of phase 2" + computedScores.size());
+			System.out.println("Scores of phase 2" + computedScores.size()); */
 
 			/** Phase 2 Code ***/
 

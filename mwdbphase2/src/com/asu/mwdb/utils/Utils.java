@@ -30,6 +30,8 @@ public class Utils {
 		return matrix;
 	}
 	
+	
+	//inputDirectoryOne is always latent semantics 
 	public static void tranformData(String inputDirectoryOne,String inputDirectoryTwo,String outputDirectory) throws IOException{
 		File[] filesOne = new File(inputDirectoryOne).listFiles(new FileFilter() {
    			

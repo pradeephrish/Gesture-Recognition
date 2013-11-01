@@ -7,8 +7,10 @@ import matlabcontrol.MatlabProxyFactory;
 public class MatlabObject {
 	
 	private static MatlabProxy _instance = null;
+	
+	private MatlabObject() {}
 
-	public MatlabProxy getMatlabProxy() throws MatlabConnectionException {
+	public static MatlabProxy getMatlabProxy() throws MatlabConnectionException {
 		MatlabProxyFactory factory = new MatlabProxyFactory();
 		if(_instance == null) {
 			_instance = factory.getProxy();

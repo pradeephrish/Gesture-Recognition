@@ -30,6 +30,10 @@ public class SearchDatabaseForSimilarity {
 	private List<Map<String,List<Double>>> inputFileGesturewords; 
 	private List<List<Map<String,List<Double>>>> dictionary;
 	private List<List<Map<String,List<Double>>>> inputDictionary;
+	public List<List<Map<String, List<Double>>>> getInputDictionary() {
+		return inputDictionary;
+	}
+
 	private List<Map<String,Double>> dictionaryPerDocument; //per documents means per row
 	private DictionaryBuilderPhase2 dictionaryCreator;
 	private Double maxTF;

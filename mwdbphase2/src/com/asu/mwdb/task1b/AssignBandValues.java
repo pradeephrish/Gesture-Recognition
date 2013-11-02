@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.asu.mwdb.utils.IConstants;
+
 
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
@@ -33,16 +35,16 @@ public class AssignBandValues {
 		File file = new File(inputDirectory);
 		String[] filesList = file.list();
 		
-		String gaussianOutputDirectory = inputDirectory + File.separator + "letters";
+		String gaussianOutputDirectory = inputDirectory + File.separator + IConstants.LETTERS_FILE;
 		File outputDirectoryFileObject = new File(gaussianOutputDirectory);
 		if (outputDirectoryFileObject.exists()) {
 			FileIOHelper.delete(outputDirectoryFileObject);
 		}
 		if(outputDirectoryFileObject.mkdir()) {
 			for (int i = 0; i < filesList.length; i++) {
-				if (filesList[i].contains("csv") && !filesList[i].contains("rangeBandFile")) {
-					String inputFileLocation = inputDirectory + File.separator + "normalized" + File.separator +  filesList[i];
-					String gausianFileLocation = inputDirectory + File.separator + "letters" + File.separator + filesList[i];
+				if (filesList[i].contains("csv") && !filesList[i].contains(IConstants.RANGED_BAND)) {
+					String inputFileLocation = inputDirectory + File.separator + IConstants.NORMALIZED_FILE + File.separator +  filesList[i];
+					String gausianFileLocation = inputDirectory + File.separator + IConstants.LETTERS_FILE + File.separator + filesList[i];
 					assignLetterToValue(inputFileLocation, gausianFileLocation, rBandValueRange);
 				}
 			}
@@ -57,8 +59,8 @@ public class AssignBandValues {
 		if (position > 0) {
 			String currentDirectory = inputFileLocation.substring(0, position);
 			String gaussianFileOutput = currentDirectory + File.separator
-					+ "gaussian.csv";
-			String normalizedFileLocation = currentDirectory + File.separator + "normalized.csv";
+					+  IConstants.GAUSSIAN_FILE + ".csv";
+			String normalizedFileLocation = currentDirectory + File.separator + IConstants.NORMALIZED_FILE;
 			assignLetterToValue(normalizedFileLocation, gaussianFileOutput, rBandValueRange);
 			logger.info("Done with assigning band letters for Task 3");
 		} else {

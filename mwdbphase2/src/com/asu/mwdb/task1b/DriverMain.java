@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.swing.Icon;
+
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
@@ -30,7 +32,6 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.asu.mwdb.gui.MainWindow;
 import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 import com.asu.mwdb.utils.IConstants;
-import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.Utils;
 
 public class DriverMain {
@@ -232,10 +233,7 @@ public class DriverMain {
 	private static void executeTask1a(String inputDirectory)
 			throws IOException, MatlabConnectionException,
 			MatlabInvocationException {
-		// TODO Auto-generated method stub
-
 		MainWindow main = new MainWindow();
-
 		List<List<Map<String, List<Double>>>> getDictionary = dictMap.get(inputDirectory).getTfMapArrayIDF();
 
 		Map<Integer, Set<String>> variable1 = main
@@ -253,9 +251,6 @@ public class DriverMain {
 		List<List<String>> orderLDA = main.savewordstoCSV(computedScoresLDA,"data//lda//baseinput");
 		main.transformDataForLDA("data//lda//baseinput");  //this write data to "data/lda/input"
 		/***************/
-		
-		
-
 		System.out.println("1. PCA");
 		System.out.println("2. SVD");
 		System.out.println("3. LDA");
@@ -323,26 +318,13 @@ public class DriverMain {
 
 		// For files without folders
 		if (gestureFolders.length == 0) {
-
 			componentList.add(databaseDirectory);
-			
-			File folder = new File(databaseDirectory);
-			File[] fileNames = folder.listFiles(new FileFilter() {
-				@Override
-				public boolean accept(File path) {
-					String name = path.getName().toLowerCase();
-					return name.endsWith(".csv") && path.isFile();
-				}
-			});
 			// Normalize data between -1 and 1
 			buildDictionary(new File(databaseDirectory), rBandValueRange);
-
-		}
-		else{
+		} else {
 			
 			copyAllFiles(new File(databaseDirectory), allFiles);
-			
-			
+					
 			for (File folder : gestureFolders) {
 				componentList.add(folder.getAbsolutePath());
 				copyAllFiles(folder, allFiles);
@@ -350,10 +332,8 @@ public class DriverMain {
 				buildDictionary(folder, rBandValueRange);
 			}
 			buildDictionary(allFiles, rBandValueRange);
-			componentList.add(allFiles.getAbsolutePath());
-			
+			componentList.add(allFiles.getAbsolutePath());	
 		}
-		
 		return componentList;
 	}
 
@@ -395,15 +375,15 @@ public class DriverMain {
 		File[] files = fileObj.listFiles();
 		for (File file : files) {
 			String fileName = file.getName();
-			if (fileName.contains("gaussian")
-					|| fileName.contains("normalized")
-					|| fileName.contains("letters")
-					|| fileName.contains("task1Output")
-					|| fileName.contains("task1OutputAll")
-					|| fileName.contains("task3Output")
-					|| fileName.contains("task3OutputAll")
-					|| fileName.contains("rangeBandFile")
-					|| fileName.contains("all")
+			if (fileName.contains(IConstants.GAUSSIAN_FILE)
+					|| fileName.contains(IConstants.NORMALIZED_FILE)
+					|| fileName.contains(IConstants.LETTERS_FILE)
+					|| fileName.contains(IConstants.TASK1_OUTPUT)
+					|| fileName.contains(IConstants.TASK1_OUTPUT_ALL)
+					|| fileName.contains(IConstants.TASK3_OUTPUT)
+					|| fileName.contains(IConstants.TASK3_OUTPUT_ALL)
+					|| fileName.contains(IConstants.RANGED_BAND)
+					|| fileName.contains(IConstants.ALL)
 					) {
 				FileIOHelper.delete(file);
 			}
@@ -420,7 +400,12 @@ public class DriverMain {
 				cleanData(inputDirectory + File.separator + "Z");
 			} 
 		}
+		
+		// now clean ./data directory here
+		File dataDirObj = new File("." + File.separator + IConstants.DATA);
+		
 	}
+	
 
 	/**
 	 * Task 3: Given a query file - find 10 most similar gesture files based on
@@ -455,8 +440,6 @@ public class DriverMain {
 	
 		String queryFilePath = "." + File.separator + "data" + File.separator + "queryWords";
 		File file = new File(queryFilePath);
-		File[] queryFiles = file.listFiles();
-		
 		// TODO - Create folders for each component and fetch the semantic values from that location
 		String semanticDir = "." + File.separator + "data" + File.separator + "pca-semantic";
 		String semanticOutputDirectory = "." + File.separator + "data" + File.separator + "pca-semantic-mapped";
@@ -573,7 +556,6 @@ public class DriverMain {
 		String inputFileLocation = br.readLine();
 		NormalizeData.NormalizeDataForSingleFile(proxy, inputFileLocation);
 		logger.info("Done normalization for Task 1c");
-		int position = inputFileLocation.lastIndexOf(File.separator);
 		AssignBandValues.assignGaussianCurveTask3(proxy, inputFileLocation,
 				rBandValueRange);
 		DictionaryBuilderPhase2 dictionary = dictMap.get(databaseDirectory

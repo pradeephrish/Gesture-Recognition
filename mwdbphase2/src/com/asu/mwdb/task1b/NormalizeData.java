@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import com.asu.mwdb.utils.IConstants;
+
 
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
@@ -17,7 +19,7 @@ public class NormalizeData {
 		logger.info("Starting normalization for Task 1");
 		File file = new File(inputDirectory);
 		String[] filesList = file.list();
-		String outputDirectory = inputDirectory + File.separator + "normalized";
+		String outputDirectory = inputDirectory + File.separator + IConstants.NORMALIZED_FILE;
 		File outputDirectoryFileObject = new File(outputDirectory);
 		if (outputDirectoryFileObject.exists()) {
 			FileIOHelper.delete(outputDirectoryFileObject);
@@ -42,7 +44,7 @@ public class NormalizeData {
 		if (position > 0) {
 			String currentDirectory = inputFileLocation.substring(0, position);
 			String normalizedOutputFile = currentDirectory + File.separator
-					+ "normalized" + ".csv";
+					+ IConstants.NORMALIZED_FILE + ".csv";
 			proxy.eval("normalize('" + inputFileLocation + "','"
 					+ normalizedOutputFile + "')");
 		} else {

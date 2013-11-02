@@ -3,7 +3,6 @@ package com.asu.mwdb.utils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,11 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.asu.mwdb.math.CosineSimilarity;
-import com.asu.mwdb.math.Task3FindSimilarData.Entity;
-
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+
+import com.asu.mwdb.math.CosineSimilarity;
+import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 
 public class Utils {
 
@@ -38,6 +37,7 @@ public class Utils {
 				matrix[i][j]=Double.parseDouble(row[j]);
 			}
 		}
+		csvReader.close();
 		return matrix;
 	}
 
@@ -48,7 +48,6 @@ public class Utils {
 
 			@Override
 			public boolean accept(File pathname) {
-				// TODO Auto-generated method stub
 				String name = pathname.getName().toLowerCase();
 				return name.endsWith(".csv") && pathname.isFile();
 			}
@@ -76,7 +75,6 @@ public class Utils {
 
 	public static void saveMatrixFile(Double[][] outputMatrix,
 			String outputDirectory, String name) throws IOException {
-		// TODO Auto-generated method stub
 		CSVWriter writer = new CSVWriter(new FileWriter(new File(outputDirectory+File.separator+name)), ',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 		for (int rowCount = 0; rowCount < outputMatrix.length; rowCount++) {
 			String[] currentRowString = new String[outputMatrix.length];
@@ -144,7 +142,6 @@ public class Utils {
 
 	//tranpose tensor
 	public static Double[][] transposeMatrix(Double[][] data2D) {
-		// TODO Auto-generated method stub
 		Double[][] tranpose2D = new Double[data2D[0].length][data2D.length];
 		for (int j = 0; j < data2D.length; j++) {
 			for (int k = 0; k < data2D[j].length; k++) {
@@ -159,6 +156,7 @@ public class Utils {
 	 * which can be used for comparison of query doc and database document
 	 * @throws IOException 
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<List<String[]>> convertDataForComparison(String inputDirectory, File[] listFiles) throws IOException {
 		File file = new File(inputDirectory);
 		File[] files = file.listFiles();
@@ -200,7 +198,6 @@ public class Utils {
 	 * @throws IOException
 	 */
 	public static void writeGestureGestureToFile(Entity entity,String folderPath,double[][] doubleValues) throws IOException {
-//		double[][] doubleValues= null;
 		String fileName = folderPath+ File.separator;
 		switch(entity) {
 			case TFIDF:
@@ -249,24 +246,11 @@ public class Utils {
 				}
 			}
 		}
-		
-		// this switch statement can be extended to include for additional parameters
-		/*switch (entity) {
-		case TFIDF:
-					gestureGestureTFIDF = doubleValues;
-					break;
-		case TFIDF2:
-					gestureGestureTFIDF2 = doubleValues;
-					break;
-		default:
-					break;
-		}*/
 		return doubleValues;
 	}
 	
 	private static Map<String, Double> convertMap(Map<String, List<Double>> map,
 			Entity entity) {
-		// TODO Auto-generated method stub
 			Map<String,Double> values = new HashMap<String, Double>(); 
 			Iterator<Entry<String, List<Double>>> iterator = map.entrySet().iterator();
 			while(iterator.hasNext()){

@@ -133,30 +133,10 @@ public class MainWindow extends javax.swing.JFrame {
 					+ File.separator + "pca" + File.separator
 					+ files[i].getName() + "')");
 		}
-		// ************************* now print top-3 latent semantics
-
-		/*
-		 * String newLineMark = System.getProperty("line.separator");
-		 * 
-		 * String leftAlignFormat = "| %-15s "; String topRow =
-		 * "+-----------------"; String columnName="| Column name     |"; String
-		 * bottomRow= "+-----------------+";
-		 */
 
 		for (int i = 0; i < order.size(); i++) {
-			/*
-			 * for (int j = 0; j < order.get(i).size(); j++) {
-			 * leftAlignFormat+=" | %f"; topRow+="+--------";
-			 * columnName+="|"+order.get(i).get(j)+"|"; bottomRow+="+--------";
-			 * } leftAlignFormat+= "|" + newLineMark; topRow+="+" + newLineMark;
-			 * bottomRow+="+" + newLineMark; columnName+="|" + newLineMark;
-			 * 
-			 * System.out.format(topRow); System.out.printf(columnName);
-			 * System.out.format(bottomRow);
-			 */
 
 			// read sensor 0 data and print
-
 			String pcaFileName = files[i].getParentFile().getAbsolutePath()
 					+ File.separator + "pca" + File.separator + i + ".csv";
 			String pcaSemanticFileName = files[i].getParentFile()
@@ -183,15 +163,6 @@ public class MainWindow extends javax.swing.JFrame {
 			}
 			csvWriter.close();
 			csvReader.close();
-
-			/*
-			 * for (int j = 0; j < 3; j++) { String[] array =
-			 * csvReader.readNext(); Object[] objectArray = new
-			 * Object[array.length+1]; objectArray[0]="Semantic "+(j+1); for
-			 * (int k = 0; k < array.length; k++) { objectArray[k]=new
-			 * Double(array[k]); } System.out.format(leftAlignFormat,
-			 * objectArray); }
-			 */
 		}
 	}
 
@@ -273,17 +244,6 @@ public class MainWindow extends javax.swing.JFrame {
 		}
 
 		for (int i = 0; i < order.size(); i++) {
-			/*
-			 * for (int j = 0; j < order.get(i).size(); j++) {
-			 * leftAlignFormat+=" | %f"; topRow+="+--------";
-			 * columnName+="|"+order.get(i).get(j)+"|"; bottomRow+="+--------";
-			 * } leftAlignFormat+= "|" + newLineMark; topRow+="+" + newLineMark;
-			 * bottomRow+="+" + newLineMark; columnName+="|" + newLineMark;
-			 * 
-			 * System.out.format(topRow); System.out.printf(columnName);
-			 * System.out.format(bottomRow);
-			 */
-
 			// read sensor 0 data and print
 
 			String ldaFileName = files[i].getParentFile().getParentFile()

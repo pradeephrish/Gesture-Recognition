@@ -7,10 +7,17 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.asu.mwdb.math.CosineSimilarity;
+import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -185,4 +192,97 @@ public class Utils {
 		
 	}
 
+	
+	/**
+	 * Once the gesture-gesture matrix is created, write the matrix into file 
+	 * for future reference
+	 * @param entity
+	 * @throws IOException
+	 */
+	public static void writeGestureGestureToFile(Entity entity,String folderPath,double[][] doubleValues) throws IOException {
+//		double[][] doubleValues= null;
+		String fileName = folderPath+ File.separator;
+		switch(entity) {
+			case TFIDF:
+						fileName = fileName + "ggTFIDF.csv";
+						break;
+			case TFIDF2:
+						fileName = fileName + "ggTFIDF2.csv";
+						break;
+			default:	
+					    break;
+		} 
+		CSVWriter writer = new CSVWriter(new FileWriter(new File(fileName)), ',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+		for (int rowCount = 0; rowCount < doubleValues.length; rowCount++) {
+			String[] currentRowString = new String[doubleValues.length];
+			double[] currentRowDouble = doubleValues[rowCount];
+			for (int rowCount2 = 0; rowCount2 < currentRowString.length; rowCount2++) {
+				currentRowString[rowCount2] = String.valueOf(currentRowDouble[rowCount2]);
+			}
+			writer.writeNext(currentRowString);
+		}
+		writer.close();
+	}
+	
+	
+	public static double[][] computeSimilarilty(List<List<Map<String, List<Double>>>> dictionary, Entity entity) {
+		double[][] doubleValues= null;
+		doubleValues = new double[dictionary.size()][dictionary.size()];
+		for (int currentFileIndex = 0; currentFileIndex < dictionary.size(); currentFileIndex++) {
+			List<Map<String, List<Double>>> currentGesture = dictionary.get(currentFileIndex);
+			for (int comparedFileIndex = 0; comparedFileIndex < dictionary.size(); comparedFileIndex++) {
+				List<Map<String, List<Double>>> comparedGesture = dictionary.get(comparedFileIndex);
+				double sum = 0.0d;
+				try {
+					for (int k = 0; k < comparedGesture.size(); k++) {
+						Map<String, Double> inputMap = convertMap(
+								comparedGesture.get(k), entity);
+						Map<String, Double> dictMap = convertMap(
+								currentGesture.get(k), entity);
+						sum += CosineSimilarity.difference(inputMap, dictMap);
+					}
+					DecimalFormat df = new DecimalFormat("#.###");
+					doubleValues[currentFileIndex][comparedFileIndex] = Double.parseDouble(df.format(sum))/20.0;
+					doubleValues[comparedFileIndex][currentFileIndex] = Double.parseDouble(df.format(sum))/20.0;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		// this switch statement can be extended to include for additional parameters
+		/*switch (entity) {
+		case TFIDF:
+					gestureGestureTFIDF = doubleValues;
+					break;
+		case TFIDF2:
+					gestureGestureTFIDF2 = doubleValues;
+					break;
+		default:
+					break;
+		}*/
+		return doubleValues;
+	}
+	
+	private static Map<String, Double> convertMap(Map<String, List<Double>> map,
+			Entity entity) {
+		// TODO Auto-generated method stub
+			Map<String,Double> values = new HashMap<String, Double>(); 
+			Iterator<Entry<String, List<Double>>> iterator = map.entrySet().iterator();
+			while(iterator.hasNext()){
+				Entry<String, List<Double>> entry = iterator.next();
+				values.put(entry.getKey(), entry.getValue().get(entity.ordinal()));
+			}
+			
+		return values;
+	}
+	
+	public static List<String> convertList(File[] fileList){
+		List<String> documentOrder = new ArrayList<String>();
+		for (int i = 0; i < fileList.length; i++) {
+			documentOrder.add(fileList[i].getName());
+		}
+		return documentOrder;
+	}
+	
 }

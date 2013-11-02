@@ -28,6 +28,9 @@ import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.asu.mwdb.gui.MainWindow;
+import com.asu.mwdb.math.Task3FindSimilarData.Entity;
+import com.asu.mwdb.utils.IConstants;
+import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.Utils;
 
 public class DriverMain {
@@ -73,19 +76,59 @@ public class DriverMain {
 
 			System.out.println("Enter value of shift length (s):");
 			shiftLength = Integer.parseInt(br.readLine());
-			indexFiles(rBandValueRange, databaseDirectory);
+			List<String> componentList = indexFiles(rBandValueRange, databaseDirectory);
 
 			/***/
+			
+			System.out.println("1. Task1a");
+			System.out.println("2. Task1b");
+			System.out.println("3. Task1c");
+			System.out.println("4. Task2b");
+			System.out.println("5. Task2c");
 
-			System.out.println("Enter component folder for Task 1a:");
-			String inputDirectory1a = br.readLine();
-			executeTask1a(inputDirectory1a);
+			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			String choice = in.readLine();
+
+			do{
+			switch (Integer.parseInt(choice)) {
+				
+			case 1:
+				System.out.println("Enter component folder for Task 1a:");
+				String inputDirectory1a = in.readLine();
+				executeTask1a(inputDirectory1a);
+				break;
+			case 2:
+				System.out.println("Enter component folder for Task 1b:");
+				String inputDirectory = br.readLine();
+
+				executeTask1b(rBandValueRange, inputDirectory);
+				break;
+			case 3:
+				executeTask1c(rBandValueRange, databaseDirectory);
+				break;
+			case 4:
+				executeTask2b(componentList);
+				break;
+			
+			}
+			System.out.println("1. Task1a");
+			System.out.println("2. Task1b");
+			System.out.println("3. Task1c");
+			System.out.println("4. Task2b");
+			System.out.println("5. Task2c");
+			choice = in.readLine();
+			}while(!choice.equalsIgnoreCase("6"));
+			in.close();
+			
+			/*System.out.println("Enter component folder for Task 1a:");
+			String inputDirectory1a = in.readLine();
+			executeTask1a(inputDirectory1a);*/
 			/***/
 
-			System.out.println("Enter component folder for Task 1b:");
+			/*System.out.println("Enter component folder for Task 1b:");
 			String inputDirectory = br.readLine();
 
-			executeTask1b(rBandValueRange, inputDirectory);
+			executeTask1b(rBandValueRange, inputDirectory);*/
 
 			executeTask1c(rBandValueRange, databaseDirectory);
 
@@ -100,6 +143,47 @@ public class DriverMain {
 
 	}
 
+	private static void executeTask2b(List<String> inputDirectoryKey) throws IOException, MatlabConnectionException, MatlabInvocationException{
+		//pre-processing
+		System.out.println("Executing task2b   .....  ");
+		for (int i = 0; i < inputDirectoryKey.size(); i++) {
+			System.out.println("\tExecuting for task : "+inputDirectoryKey.get(i));
+			if(!dictMap.containsKey(inputDirectoryKey)){
+				System.out.println("\tWrong inputDirectory given  ");
+			}else
+			{
+				DictionaryBuilderPhase2 dictionaryHolder = dictMap.get(inputDirectoryKey.get(i));
+				List<List<Map<String, List<Double>>>> currentDictionary = dictionaryHolder.getTfMapArrayIDF();
+				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator));
+				//make dir
+				String path = IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir;
+				File file = new File(IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir);
+				if(file.exists()){
+						FileIOHelper.delete(file);
+				}
+				
+				if(!file.mkdir()){
+					System.out.println("File Creatation failed for "+file.getAbsolutePath());
+				}else{
+					//directory creation done
+					double[][] outputtfidf = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF);
+					double[][] outputtfidf2 = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF2);
+					//
+					//now implemented it for PCA, SVD, LDA latent semantics
+					//
+					Utils.writeGestureGestureToFile(Entity.TFIDF, path, outputtfidf);
+					Utils.writeGestureGestureToFile(Entity.TFIDF2, path, outputtfidf2);
+					MainWindow mainWindow = new MainWindow();
+					mainWindow.executePCAGG(path+File.separator+"ggTFIDF.csv", Utils.convertList(dictionaryHolder.getFileNames()));
+					mainWindow.executePCAGG(path+File.separator+"ggTFIDF2.csv", Utils.convertList(dictionaryHolder.getFileNames()));
+				}
+			}
+		}
+		
+		System.out.println("Succefully executed task2b");
+	}
+	
+	
 	private static void executeTask1a(String inputDirectory)
 			throws IOException, MatlabConnectionException,
 			MatlabInvocationException {
@@ -130,6 +214,7 @@ public class DriverMain {
 		System.out.println("1. PCA");
 		System.out.println("2. SVD");
 		System.out.println("3. LDA");
+		System.out.println("4. Exit");
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String choice = br.readLine();
@@ -165,11 +250,14 @@ public class DriverMain {
 	 * 
 	 * @throws IOException
 	 * @throws MatlabInvocationException
+	 * return List of Components
 	 */
-	private static void indexFiles(double[][] rBandValueRange,
+	private static List<String> indexFiles(double[][] rBandValueRange,
 			String databaseDirectory) throws IOException,
 			MatlabInvocationException {
 
+		List<String> componentList = new ArrayList<String>();
+		
 		File dir = new File(databaseDirectory);
 		File allFiles = new File(databaseDirectory + File.separator + "all");
 		if (allFiles.exists()) {
@@ -185,13 +273,14 @@ public class DriverMain {
 		if (!allFiles.mkdir()) {
 			System.out
 					.println("Error while creating intermediate directory, task not complete");
-			return;
+			return null;
 		}
 
 		// For files without folders
 		if (gestureFolders.length == 0) {
 
-			copyAllFiles(new File(databaseDirectory), allFiles);
+			componentList.add(databaseDirectory);
+			
 			File folder = new File(databaseDirectory);
 			File[] fileNames = folder.listFiles(new FileFilter() {
 				@Override
@@ -202,18 +291,25 @@ public class DriverMain {
 			});
 			// Normalize data between -1 and 1
 			buildDictionary(new File(databaseDirectory), rBandValueRange);
+
 		}
-		// For folders
-		if (!(gestureFolders.length == 0)) {
+		else{
+			
+			copyAllFiles(new File(databaseDirectory), allFiles);
+			
+			
 			for (File folder : gestureFolders) {
+				componentList.add(folder.getAbsolutePath());
 				copyAllFiles(folder, allFiles);
 				// Normalize data between -1 and 1
 				buildDictionary(folder, rBandValueRange);
 			}
+			buildDictionary(allFiles, rBandValueRange);
+			componentList.add(allFiles.getAbsolutePath());
+			
 		}
-
-		buildDictionary(allFiles, rBandValueRange);
-
+		
+		return componentList;
 	}
 
 	private static void buildDictionary(File folder, double[][] rBandValueRange)

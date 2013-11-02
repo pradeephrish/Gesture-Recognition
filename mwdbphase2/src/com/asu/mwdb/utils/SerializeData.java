@@ -110,11 +110,11 @@ public class SerializeData {
 
 
 	private static void constructGestureGestureMatix(List<List<Map<String, List<Double>>>> dictionary) throws IOException {
-		
+		/*
 		computeSimilarilty(dictionary,Entity.TFIDF);
 		computeSimilarilty(dictionary,Entity.TFIDF2);
-		writeGestureGestureToFile(Entity.TFIDF);
-		writeGestureGestureToFile(Entity.TFIDF2);
+		writeGestureGestureToFile(Entity.TFIDF,IConstants.DATA+File.separator+IConstants.PCA_DIR_GG);
+		writeGestureGestureToFile(Entity.TFIDF2,IConstants.DATA+File.separator+IConstants.PCA_DIR_GG);*/
 		
 	}
 	
@@ -124,9 +124,9 @@ public class SerializeData {
 	 * @param entity
 	 * @throws IOException
 	 */
-	private static void writeGestureGestureToFile(Entity entity) throws IOException {
-		double[][] doubleValues= null;
-		String fileName = "." + File.separator + "data" + File.separator;
+/*	public static void writeGestureGestureToFile(Entity entity,String folderPath,double[][] doubleValues) throws IOException {
+//		double[][] doubleValues= null;
+		String fileName = folderPath+ File.separator;
 		switch(entity) {
 			case TFIDF:
 						doubleValues = gestureGestureTFIDF;
@@ -152,7 +152,7 @@ public class SerializeData {
 	}
 	
 	
-	private static void computeSimilarilty(List<List<Map<String, List<Double>>>> dictionary, Entity entity) {
+	public static double[][] computeSimilarilty(List<List<Map<String, List<Double>>>> dictionary, Entity entity) {
 		double[][] doubleValues= null;
 		doubleValues = new double[dictionary.size()][dictionary.size()];
 		for (int currentFileIndex = 0; currentFileIndex < dictionary.size(); currentFileIndex++) {
@@ -188,6 +188,7 @@ public class SerializeData {
 		default:
 					break;
 		}
+		return doubleValues;
 	}
 	
 	private static Map<String, Double> convertMap(Map<String, List<Double>> map,
@@ -201,6 +202,6 @@ public class SerializeData {
 			}
 			
 		return values;
-	}
+	}*/
 	
 }

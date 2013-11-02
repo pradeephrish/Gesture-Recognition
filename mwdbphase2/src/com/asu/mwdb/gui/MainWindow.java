@@ -51,6 +51,7 @@ import com.asu.mwdb.matlab.MatlabObject;
 import com.asu.mwdb.setup.CreateFileStructure;
 import com.asu.mwdb.utils.AssignLetter;
 import com.asu.mwdb.utils.DataNormalizer;
+import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.ShowHeatpMap;
 
@@ -195,6 +196,49 @@ public class MainWindow extends javax.swing.JFrame {
 		}
 	}
 
+	public void executePCAGG(String fileLocation, List<String> docOrder)
+			throws MatlabConnectionException, MatlabInvocationException,
+			IOException {
+		MatlabObject matlabObject = new MatlabObject();
+		proxy = matlabObject.getMatlabProxy();
+
+		String scriptLocation = CreateFileStructure.getScriptLocation();
+		scriptLocation = "." + File.separator + scriptLocation;
+		System.out.println("Script Location" + scriptLocation);
+
+		String path = "cd(\'" + scriptLocation + "')";
+
+		proxy.eval(path);
+		File file = new File(fileLocation);
+		proxy.eval("PCAFinder('" + fileLocation + "','" + IConstants.DATA
+				+ File.separator + IConstants.PCA_DIR_GG + File.separator
+				+ file.getName() + "')");
+
+		String pcaFileName = IConstants.DATA + File.separator
+				+ IConstants.PCA_DIR_GG + File.separator + file.getName();
+		String pcaSemanticFileName = IConstants.DATA + File.separator
+				+ IConstants.PCA_DIR_GG + File.separator + "semanticgg_"
+				+ file.getName();
+
+		CSVReader csvReader = new CSVReader(new InputStreamReader(
+				new FileInputStream(pcaFileName)));
+		CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(
+				new FileOutputStream(pcaSemanticFileName)));
+
+		String[] list = new String[docOrder.size()];
+
+		for (int j = 0; j < docOrder.size(); j++) {
+			list[j] = docOrder.get(j);
+		}
+		csvWriter.writeNext(list);
+
+		for (int j = 0; j < 3; j++) { // consider top 3
+			csvWriter.writeNext(csvReader.readNext());
+		}
+		csvWriter.close();
+		csvReader.close();
+	}
+
 	public void exectuteLDA(String inputLocation, List<List<String>> order,
 			Integer ktopics) throws MatlabConnectionException,
 			MatlabInvocationException, IOException {
@@ -221,10 +265,13 @@ public class MainWindow extends javax.swing.JFrame {
 			System.out.println("path is " + files[i].getParent() + i
 					+ File.separator + files[i].getName());
 			System.out.println("Method call is ");
-			System.out.println("ldamain('" + files[i].getAbsolutePath() + "','"
-					+ files[i].getParentFile().getParentFile().getAbsolutePath()
-					+ File.separator + "output" + File.separator
-					+ files[i].getName() + "','" + ktopics + "')");
+			System.out.println("ldamain('"
+					+ files[i].getAbsolutePath()
+					+ "','"
+					+ files[i].getParentFile().getParentFile()
+							.getAbsolutePath() + File.separator + "output"
+					+ File.separator + files[i].getName() + "','" + ktopics
+					+ "')");
 			proxy.eval("ldamain('"
 					+ files[i].getAbsolutePath()
 					+ "','"
@@ -234,7 +281,6 @@ public class MainWindow extends javax.swing.JFrame {
 					+ ")"); // three for 3 topics
 		}
 
-		
 		for (int i = 0; i < order.size(); i++) {
 			/*
 			 * for (int j = 0; j < order.get(i).size(); j++) {
@@ -249,13 +295,16 @@ public class MainWindow extends javax.swing.JFrame {
 
 			// read sensor 0 data and print
 
-			String ldaFileName = files[i].getParentFile().getParentFile().getAbsolutePath()
-					+ File.separator +"output"+File.separator+ i + ".csv";
-			String ldaSemanticFileName = files[i].getParentFile().getParentFile()
+			String ldaFileName = files[i].getParentFile().getParentFile()
 					.getAbsolutePath()
+					+ File.separator + "output" + File.separator + i + ".csv";
+			String ldaSemanticFileName = files[i].getParentFile()
+					.getParentFile().getAbsolutePath()
 					+ File.separator
-					+ "lda-semantic"+File.separator
-					 + i+".csv";
+					+ "lda-semantic"
+					+ File.separator
+					+ i
+					+ ".csv";
 
 			CSVReader csvReader = new CSVReader(new InputStreamReader(
 					new FileInputStream(ldaFileName)));
@@ -276,10 +325,8 @@ public class MainWindow extends javax.swing.JFrame {
 			csvWriter.close();
 			csvReader.close();
 
-	
 		}
-		
-		
+
 	}
 
 	public String[][][] transformDataForLDA(String inputLocation)
@@ -315,9 +362,12 @@ public class MainWindow extends javax.swing.JFrame {
 		data3D = transform(data3D);
 
 		for (int i = 0; i < files.length; i++) {
-			String ldaOutputFile = new File(inputLocation).getParentFile().getParentFile()
-					+ File.separator + "lda" + File.separator + "input"
-					+ File.separator + files[i].getName();
+			String ldaOutputFile = new File(inputLocation).getParentFile()
+					.getParentFile()
+					+ File.separator
+					+ "lda"
+					+ File.separator
+					+ "input" + File.separator + files[i].getName();
 			CSVWriter csvWrite = new CSVWriter(new OutputStreamWriter(
 					new FileOutputStream(ldaOutputFile)), '\t',
 					CSVWriter.NO_QUOTE_CHARACTER);
@@ -423,7 +473,7 @@ public class MainWindow extends javax.swing.JFrame {
 			}
 			csvWriter.writeNext(list);
 
-			for (int j = 0; j < 3; j++) {  //top 3
+			for (int j = 0; j < 3; j++) { // top 3
 				csvWriter.writeNext(csvReader.readNext());
 			}
 			csvWriter.close();
@@ -470,7 +520,8 @@ public class MainWindow extends javax.swing.JFrame {
 	}
 
 	public List<List<String>> savewordstoCSV(
-			List<Map<String, Double[]>> sensorWordsScores, String outputDirectory) {
+			List<Map<String, Double[]>> sensorWordsScores,
+			String outputDirectory) {
 
 		List<List<String>> orderofDimenions = new ArrayList<List<String>>();
 		try {
@@ -480,11 +531,11 @@ public class MainWindow extends javax.swing.JFrame {
 				// System.out.println("Input Directory Path is"+inputDirectoryPath);
 
 				// check this later
-				CSVWriter csvWriter = new CSVWriter(
-						new FileWriter(outputDirectory+File.separator + i + ".csv"), ',',
+				CSVWriter csvWriter = new CSVWriter(new FileWriter(
+						outputDirectory + File.separator + i + ".csv"), ',',
 						CSVWriter.NO_QUOTE_CHARACTER,
 						CSVWriter.DEFAULT_LINE_END);
-				
+
 				Iterator<Entry<String, Double[]>> iterator = sensorWordsScores
 						.get(i).entrySet().iterator();
 
@@ -503,9 +554,9 @@ public class MainWindow extends javax.swing.JFrame {
 					for (int j = 0; j < array.length; j++) {
 						list.add(String.valueOf(array[j]));
 					}
-//					System.out.println(list);
+					// System.out.println(list);
 					String[] stringList = list.toArray(new String[list.size()]);
-//					System.out.println(Arrays.toString(stringList));
+					// System.out.println(Arrays.toString(stringList));
 					csvWriter.writeNext(stringList);
 				}
 				orderofDimenions.add(wordOrder);
@@ -522,7 +573,7 @@ public class MainWindow extends javax.swing.JFrame {
 	// Populate List<List<List<Double>>> sensorWordsScores
 	public List<Map<String, Double[]>> createSensorWordScores(
 			Map<Integer, Set<String>> sensorWords,
-			List<List<Map<String, List<Double>>>> dictionary,int choice) {
+			List<List<Map<String, List<Double>>>> dictionary, int choice) {
 		List<Map<String, Double[]>> sensorWordsScores = new ArrayList<Map<String, Double[]>>();
 
 		for (int i = 0; i < sensorWords.size(); i++) { // assuming keys start
@@ -556,12 +607,18 @@ public class MainWindow extends javax.swing.JFrame {
 					if (map.containsKey(words.get(j))) {
 						Double[] temp = dimensionAgainstAllDocuments.get(words
 								.get(j));
-						temp[k] = map.get(words.get(j)).get(choice); // pass th approprite index for tf  or  tf-idf 
-																// tf-idf
+						temp[k] = map.get(words.get(j)).get(choice); // pass th
+																		// approprite
+																		// index
+																		// for
+																		// tf or
+																		// tf-idf
+						// tf-idf
 					} else {
 						// else it's value is already zero - so this part is not
 						// required at all
-						Double[] temp = dimensionAgainstAllDocuments.get(words.get(j));
+						Double[] temp = dimensionAgainstAllDocuments.get(words
+								.get(j));
 						temp[k] = 0.0; // for 3 for tf-idf
 					}
 				}
@@ -1579,11 +1636,15 @@ public class MainWindow extends javax.swing.JFrame {
 			SerializeData.serialize("data/test.obj",
 					constructGestureWords.get(0).getTfMapArrayIDF());
 
-/*			Map<Integer, Set<String>> variable1 = createWordsPerSensor(constructGestureWords
-					.get(0).getTfMapArrayIDF());
-			List<Map<String, Double[]>> computedScores = createSensorWordScores(variable1, constructGestureWords.get(0).getTfMapArrayIDF());
-
-			System.out.println("Scores of phase 2" + computedScores.size()); */
+			/*
+			 * Map<Integer, Set<String>> variable1 =
+			 * createWordsPerSensor(constructGestureWords
+			 * .get(0).getTfMapArrayIDF()); List<Map<String, Double[]>>
+			 * computedScores = createSensorWordScores(variable1,
+			 * constructGestureWords.get(0).getTfMapArrayIDF());
+			 * 
+			 * System.out.println("Scores of phase 2" + computedScores.size());
+			 */
 
 			/** Phase 2 Code ***/
 

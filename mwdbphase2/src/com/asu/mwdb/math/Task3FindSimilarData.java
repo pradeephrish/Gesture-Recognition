@@ -44,7 +44,10 @@ public class Task3FindSimilarData {
 		IDF,
 		IDF2,
 		TFIDF,
-		TFIDF2;
+		TFIDF2,
+		PCA_LSA,
+		SVD_LSA,
+		LDA_LSA;
 	}
 	
 	

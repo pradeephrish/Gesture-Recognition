@@ -70,7 +70,7 @@ public class CosineSimilarity {
 			hashLength = (double) Math.sqrt(hashLength);
 			
 			double hashLength2 = 0;
-			for (int j = 0; j < querySensorData.length; j++) {
+			for (int j = 0; j < docSensorData.length; j++) {
 				hashLength2 += (Double.parseDouble(docSensorData[j]) * Double.parseDouble(docSensorData[j]));
 			}
 			hashLength2 = (double) Math.sqrt(hashLength2);

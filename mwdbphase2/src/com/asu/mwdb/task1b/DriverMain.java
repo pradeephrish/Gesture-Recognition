@@ -32,6 +32,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.asu.mwdb.gui.MainWindow;
 import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 import com.asu.mwdb.utils.IConstants;
+import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.Utils;
 
 public class DriverMain {
@@ -158,27 +159,45 @@ public class DriverMain {
 				List<List<Map<String, List<Double>>>> currentDictionary = dictionaryHolder.getTfMapArrayIDF();
 				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
 				//make dir
-//				String path = IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir;
+				
 				File file = new File(IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir);
 				String path = file.getAbsolutePath();
-				if(file.exists()){
-						FileIOHelper.delete(file);
-				}
+
+				if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir))
+					return;
 				
-				if(!file.mkdir()){
-					System.out.println("File Creatation failed for "+file.getAbsolutePath());
-				}else{
+				{
 					//directory creation done
 					double[][] outputtfidf = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF);
 					double[][] outputtfidf2 = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF2);
 					//
 					//now implemented it for PCA, SVD, LDA latent semantics
+					
+					//pca latent semantic
+					 List<List<String[]>> out = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					 double[][] pcaGGLS = Utils.getGestureGestureMatrixLSA(out);
+					 
+					 //svd latent semantic
+					 List<List<String[]>> out1 = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					 double[][] svdGGLS = Utils.getGestureGestureMatrixLSA(out1);
+					 
+					 //lda latent semantic
+					 List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					 double[][] ldaGGLS = Utils.getGestureGestureMatrixLSA(out2);
 					//
+					 
 					Utils.writeGestureGestureToFile(Entity.TFIDF, path, outputtfidf);
 					Utils.writeGestureGestureToFile(Entity.TFIDF2, path, outputtfidf2);
+					Utils.writeGestureGestureToFile(Entity.PCA_LSA, path, pcaGGLS);
+					Utils.writeGestureGestureToFile(Entity.SVD_LSA, path, svdGGLS);
+					Utils.writeGestureGestureToFile(Entity.LDA_LSA, path, ldaGGLS);
+					
 					MainWindow mainWindow = new MainWindow();
 					mainWindow.executePCAGG(path+File.separator+"ggTFIDF.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
 					mainWindow.executePCAGG(path+File.separator+"ggTFIDF2.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+					mainWindow.executePCAGG(path+File.separator+"ggPCA.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+					mainWindow.executePCAGG(path+File.separator+"ggSVD.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+					mainWindow.executePCAGG(path+File.separator+"ggLDA.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
 				}
 			}
 		}
@@ -298,7 +317,7 @@ public class DriverMain {
 		System.out.println("1. PCA");
 		System.out.println("2. SVD");
 		System.out.println("3. LDA");
-		System.out.println("3. EXIT");
+		System.out.println("4. GO Back");
 		choice = br.readLine();
 		}
 	}

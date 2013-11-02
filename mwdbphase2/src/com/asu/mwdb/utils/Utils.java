@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.asu.mwdb.math.CosineSimilarity;
+import com.asu.mwdb.task1b.CosineSimilarity;
 import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 import com.asu.mwdb.task1b.FileIOHelper;
 
@@ -78,7 +78,7 @@ public class Utils {
 			String outputDirectory, String name) throws IOException {
 		CSVWriter writer = new CSVWriter(new FileWriter(new File(outputDirectory+File.separator+name)), ',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 		for (int rowCount = 0; rowCount < outputMatrix.length; rowCount++) {
-			String[] currentRowString = new String[outputMatrix.length];
+			String[] currentRowString = new String[outputMatrix[rowCount].length];
 			for (int i = 0; i < outputMatrix[rowCount].length; i++) {
 				currentRowString[i]=String.valueOf(outputMatrix[rowCount][i]);
 			}
@@ -121,14 +121,15 @@ public class Utils {
 		}
 	}
 	public static void main(String[] args) throws IOException {
-		Double[][] data1 = Utils.getMatrix("1.csv",0);
-		print(data1);
-		Double[][] data2 = Utils.getMatrix("2.csv",0);
-		print(data2);
+		Double[][] data1 = Utils.getMatrix("data\\pca-semantic\\X\\13.csv",1);
+		//print(data1);
+		Double[][] data2 = Utils.getMatrix("data\\basedata\\X\\13.csv",0);
+		//sprint(data2);
 
 		//mutliply matrix
 		Double[][] results = Utils.multiplicar(data1, data2);
-		print(results);
+//		print(transposeMatrix(results));
+		saveMatrixFile(transposeMatrix(results), "D:\\", "1.csv");
 	}
 
 
@@ -197,6 +198,15 @@ public class Utils {
 						break;
 			case TFIDF2:
 						fileName = fileName + "ggTFIDF2.csv";
+						break;
+			case PCA_LSA:
+						fileName = fileName + "ggPCA.csv";
+						break;
+			case SVD_LSA:
+					fileName = fileName + "ggSVD.csv";
+						break;
+			case LDA_LSA:
+					fileName = fileName + "ggLDA.csv";
 						break;
 			default:	
 					    break;
@@ -276,6 +286,18 @@ public class Utils {
 			return false;
 		}
 		return true;
+	}
+
+
+	public static double[][] getGestureGestureMatrixLSA(List<List<String[]>> out) {
+		// TODO Auto-generated method stub
+		double[][] output = new double[out.size()][out.size()];
+		for (int i = 0; i < out.size(); i++) {
+			for (int j = 0; j < out.size();j++) {
+				output[i][j]=CosineSimilarity.compareLSADocument(out.get(i), out.get(j))/20;
+			}
+		}
+		return output;
 	}
 	
 }

@@ -20,7 +20,7 @@ public class CosineSimilarity {
 		String[] keys = new String[hashMap.size()];
 		hashMap.keySet().toArray(keys);
 
-		float ans = 0;
+		double ans = 0;
 
 		for (int i = 0; i < keys.length; i++) {
 			if (hashMap2.containsKey(keys[i])) {
@@ -29,26 +29,26 @@ public class CosineSimilarity {
 			}
 		}
 
-		float hashLength = 0;
+		double hashLength = 0;
 		for (int i = 0; i < keys.length; i++) {
 			hashLength += (hashMap.get(keys[i]) * hashMap.get(keys[i]));
 		}
-		hashLength = (float) Math.sqrt(hashLength);
+		hashLength = (double) Math.sqrt(hashLength);
 
 		String[] keys2 = new String[hashMap2.size()];
 		hashMap2.keySet().toArray(keys2);
 
-		float hash2Length = 0;
+		double hash2Length = 0;
 		for (int i = 0; i < keys2.length; i++) {
 
 			hash2Length += hashMap2.get(keys2[i]) * hashMap2.get(keys2[i]);
 
 		}
-		hash2Length = (float) Math.sqrt(hash2Length);
+		hash2Length = (double) Math.sqrt(hash2Length);
 		if(hash2Length == 0 || hashLength == 0)
 			return 0;
 		
-		return (float) (ans / (hash2Length * hashLength));
+		return (double) (ans / (hash2Length * hashLength));
 	}
 	
 	public static double compareLSADocument(List<String[]> queryData, List<String[]> documentData) {
@@ -56,24 +56,24 @@ public class CosineSimilarity {
 		for(int i=0; i< queryData.size(); i++) {
 			String[] querySensorData = queryData.get(i);
 			String[] docSensorData = documentData.get(i);
-			float ans1 = 0;
+			double ans1 = 0;
 			for(int j=0; j<querySensorData.length; j++) {
 				// a.b
-				ans1 = ans1 + (Float.parseFloat(querySensorData[j]) * Float.parseFloat(docSensorData[j]));
+				ans1 = ans1 + (Double.parseDouble(querySensorData[j]) * Double.parseDouble(docSensorData[j]));
 			}
 			
 			// find |a|.|b|
-			float hashLength = 0;
+			double hashLength = 0;
 			for (int j = 0; j < querySensorData.length; j++) {
-				hashLength += (Float.parseFloat(querySensorData[j]) * Float.parseFloat(querySensorData[j]));
+				hashLength += (Double.parseDouble(querySensorData[j]) * Double.parseDouble(querySensorData[j]));
 			}
-			hashLength = (float) Math.sqrt(hashLength);
+			hashLength = (double) Math.sqrt(hashLength);
 			
-			float hashLength2 = 0;
+			double hashLength2 = 0;
 			for (int j = 0; j < querySensorData.length; j++) {
-				hashLength2 += (Float.parseFloat(docSensorData[j]) * Float.parseFloat(docSensorData[j]));
+				hashLength2 += (Double.parseDouble(docSensorData[j]) * Double.parseDouble(docSensorData[j]));
 			}
-			hashLength2 = (float) Math.sqrt(hashLength2);
+			hashLength2 = (double) Math.sqrt(hashLength2);
 			
 			if(hashLength == 0 || hashLength2 == 0){
 				sum = sum + 0;

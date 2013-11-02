@@ -423,7 +423,7 @@ public class MainWindow extends javax.swing.JFrame {
 			}
 			csvWriter.writeNext(list);
 
-			for (int j = 0; j < 3; j++) {
+			for (int j = 0; j < 3; j++) {  //top 3
 				csvWriter.writeNext(csvReader.readNext());
 			}
 			csvWriter.close();

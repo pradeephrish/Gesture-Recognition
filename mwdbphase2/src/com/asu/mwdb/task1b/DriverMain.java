@@ -148,16 +148,17 @@ public class DriverMain {
 		System.out.println("Executing task2b   .....  ");
 		for (int i = 0; i < inputDirectoryKey.size(); i++) {
 			System.out.println("\tExecuting for task : "+inputDirectoryKey.get(i));
-			if(!dictMap.containsKey(inputDirectoryKey)){
+			if(!dictMap.containsKey(inputDirectoryKey.get(i))){
 				System.out.println("\tWrong inputDirectory given  ");
 			}else
 			{
 				DictionaryBuilderPhase2 dictionaryHolder = dictMap.get(inputDirectoryKey.get(i));
 				List<List<Map<String, List<Double>>>> currentDictionary = dictionaryHolder.getTfMapArrayIDF();
-				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator));
+				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
 				//make dir
-				String path = IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir;
+//				String path = IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir;
 				File file = new File(IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir);
+				String path = file.getAbsolutePath();
 				if(file.exists()){
 						FileIOHelper.delete(file);
 				}
@@ -174,8 +175,8 @@ public class DriverMain {
 					Utils.writeGestureGestureToFile(Entity.TFIDF, path, outputtfidf);
 					Utils.writeGestureGestureToFile(Entity.TFIDF2, path, outputtfidf2);
 					MainWindow mainWindow = new MainWindow();
-					mainWindow.executePCAGG(path+File.separator+"ggTFIDF.csv", Utils.convertList(dictionaryHolder.getFileNames()));
-					mainWindow.executePCAGG(path+File.separator+"ggTFIDF2.csv", Utils.convertList(dictionaryHolder.getFileNames()));
+					mainWindow.executePCAGG(path+File.separator+"ggTFIDF.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+					mainWindow.executePCAGG(path+File.separator+"ggTFIDF2.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
 				}
 			}
 		}

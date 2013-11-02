@@ -1,4 +1,4 @@
-import java.io.BufferedReader;
+/*import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -69,12 +69,12 @@ public class DriverMain {
 			shiftLength = Integer.parseInt(br.readLine());
 			indexFiles(rBandValueRange, databaseDirectory);
 
-			/***/
+			*//***//*
 
 			System.out.println("Enter component folder for Task 1a:");
 			String inputDirectory1a = br.readLine();
 			Task1a.executeTask1a(inputDirectory1a, dictMap);
-			/***/
+			*//***//*
 
 			System.out.println("Enter component folder for Task 1b:");
 			String inputDirectory = br.readLine();
@@ -96,13 +96,13 @@ public class DriverMain {
 
 	
 
-	/**
+	*//**
 	 * Task 1: Read a gesture file and normalize it. After that assign letters
 	 * to normalized files and construct dictionary out of this folder
 	 * 
 	 * @throws IOException
 	 * @throws MatlabInvocationException
-	 */
+	 *//*
 	private static void indexFiles(double[][] rBandValueRange,
 			String databaseDirectory) throws IOException,
 			MatlabInvocationException {
@@ -224,3 +224,4 @@ public class DriverMain {
 
 	
 }
+*/

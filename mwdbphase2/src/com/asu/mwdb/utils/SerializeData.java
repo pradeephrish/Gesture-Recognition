@@ -92,7 +92,7 @@ public class SerializeData {
             main.executePCA("data",order,null);
             Utils.tranformData("data/pca-semantic", "data", "data/pca-transform");
             
-            main.executeSVD("data", order);
+            main.executeSVD("data", order,null);
           Utils.tranformData("data/svd-semantic", "data", "data/svd-transform");
             
             /*main.exectuteLDA("data/lda/input",order,3);

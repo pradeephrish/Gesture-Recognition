@@ -1,9 +1,5 @@
-function normalize(filein,fileout)
-	p = csvread(filein);
-	a = min(p(:));
-	b = max(p(:));
-	ra = 1;
-	rb = -1;
-	pa = (((ra-rb) * (p - a)) / (b - a)) + rb;
-	csvwrite(fileout,pa);
-end
+function x = normalize(v)
+% x = normalize(v)
+% Normalize a vector v to sum to 1.
+% $Id: normalize.m,v 1.1 2004/09/14 04:33:05 dmochiha Exp $
+x = v / sum(v);

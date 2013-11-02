@@ -219,20 +219,11 @@ public class MainWindow extends javax.swing.JFrame {
 	}
 
 	public void exectuteLDA(String inputLocation, List<List<String>> order,
-			Integer ktopics) throws MatlabConnectionException,
+			Integer ktopics,MatlabProxy proxy) throws MatlabConnectionException,
 			MatlabInvocationException, IOException {
 		
 		String component = inputLocation.substring(inputLocation.lastIndexOf(File.separator) + 1);
-		
-		
-		MatlabProxy proxy = new MatlabProxyFactory().getProxy();
 
-		String scriptLocation = CreateFileStructure.getScriptLocation();
-		scriptLocation = "." + File.separator + scriptLocation;
-		System.out.println("Script Location" + scriptLocation);
-
-		String path = "cd(\'" + scriptLocation + "\\lda" + "')";
-		proxy.eval(path);
 
 		File[] files = new File(inputLocation).listFiles(new FileFilter() {
 
@@ -1725,7 +1716,7 @@ public class MainWindow extends javax.swing.JFrame {
 					+ "/letter123.csv";
 
 			try {
-				proxy.eval("normalize('" + fileChooser + "','"
+				proxy.eval("normalize_p1('" + fileChooser + "','"
 						+ normalAxisWFile + "')");
 			} catch (MatlabInvocationException ex) {
 				Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE,

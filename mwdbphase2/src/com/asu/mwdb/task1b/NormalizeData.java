@@ -29,7 +29,7 @@ public class NormalizeData {
 				if (filesList[i].contains("csv")) {
 					String normalizedFile = outputDirectory + File.separator + filesList[i];
 					String inputFileName = inputDirectory + File.separator + filesList[i];
-					proxy.eval("normalize('" + inputFileName + "','"
+					proxy.eval("normalize_p1('" + inputFileName + "','"
 							+ normalizedFile + "')");
 				}
 			}
@@ -45,7 +45,7 @@ public class NormalizeData {
 			String currentDirectory = inputFileLocation.substring(0, position);
 			String normalizedOutputFile = currentDirectory + File.separator
 					+ IConstants.NORMALIZED_FILE + ".csv";
-			proxy.eval("normalize('" + inputFileLocation + "','"
+			proxy.eval("normalize_p1('" + inputFileLocation + "','"
 					+ normalizedOutputFile + "')");
 		} else {
 			logger.info("Error occurred while reading input directory, task not completed");

@@ -30,7 +30,7 @@ public class DataNormalizer {
 				String axisWFile = axisW + "/" + directoriesW[i];
 				String normalAxisWFile = sampleDataLoc + "/OUTPUTP1/normalize/"+directories.get(j).getName() + "/"
 						+ directoriesW[i];
-				proxy.eval("normalize('" + axisWFile + "','" + normalAxisWFile
+				proxy.eval("normalize_p1('" + axisWFile + "','" + normalAxisWFile
 						+ "')");
 			}
 		}

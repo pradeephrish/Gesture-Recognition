@@ -83,10 +83,11 @@ public class DriverMain {
 			/***/
 			
 			System.out.println("1. Task1a");
-			System.out.println("2. Task1b");
-			System.out.println("3. Task1c");
-			System.out.println("4. Task2b");
-			System.out.println("5. Task2c");
+			System.out.println("2. Task1a->All Components");
+			System.out.println("3. Task1b");
+			System.out.println("4. Task1c");
+			System.out.println("5. Task2b");
+			System.out.println("6. Task2c");
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String choice = in.readLine();
@@ -97,44 +98,37 @@ public class DriverMain {
 			case 1:
 				System.out.println("Enter component folder for Task 1a:");
 				String inputDirectory1a = in.readLine();
-				executeTask1a(inputDirectory1a);
+				executeTask1a(inputDirectory1a,false);
 				break;
 			case 2:
+				for (int i = 0; i < componentList.size(); i++) {
+					executeTask1a(componentList.get(i),true);
+				}
+				break;	
+			case 3:
 				System.out.println("Enter component folder for Task 1b:");
 				String inputDirectory = br.readLine();
-
 				executeTask1b(rBandValueRange, inputDirectory);
 				break;
-			case 3:
+			case 4:
 				executeTask1c(rBandValueRange, databaseDirectory);
 				break;
-			case 4:
+			case 5:
 				executeTask2b(componentList);
 				break;
-			case 5: 
+			case 6: 
 				executeTask2c(componentList);
 				break;
 			}
 			System.out.println("1. Task1a");
-			System.out.println("2. Task1b");
-			System.out.println("3. Task1c");
-			System.out.println("4. Task2b");
-			System.out.println("5. Task2c");
+			System.out.println("2. Task1a->All Components");
+			System.out.println("3. Task1b");
+			System.out.println("4. Task1c");
+			System.out.println("5. Task2b");
+			System.out.println("6. Task2c");
 			choice = in.readLine();
-			}while(!choice.equalsIgnoreCase("6"));
+			}while(!choice.equalsIgnoreCase("7"));
 			in.close();
-			/*System.out.println("Enter component folder for Task 1a:");
-			String inputDirectory1a = in.readLine();
-			executeTask1a(inputDirectory1a);*/
-			/***/
-
-			/*System.out.println("Enter component folder for Task 1b:");
-			String inputDirectory = br.readLine();
-
-			executeTask1b(rBandValueRange, inputDirectory);*/
-
-			executeTask1c(rBandValueRange, databaseDirectory);
-
 			// Disconnect the proxy from MATLAB
 			proxy.exit();
 			proxy.disconnect();
@@ -249,7 +243,7 @@ public class DriverMain {
 	
 	
 	
-	private static void executeTask1a(String inputDirectory)
+	private static void executeTask1a(String inputDirectory,boolean isAll)
 			throws IOException, MatlabConnectionException,
 			MatlabInvocationException {
 		MainWindow main = new MainWindow();
@@ -277,6 +271,10 @@ public class DriverMain {
 		List<List<String>> orderLDA = main.savewordstoCSV(computedScoresLDA,IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		main.transformDataForLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		/***************/
+		
+		
+		if(!isAll)
+		{
 		System.out.println("1. PCA");
 		System.out.println("2. SVD");
 		System.out.println("3. LDA");
@@ -305,11 +303,10 @@ public class DriverMain {
 			Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
 			break;
 		case 3:
-			main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3); // 3 latent semantics
-			
-			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+componentDir))
+			main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
+			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))
 				return;
-			Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+componentDir);
+			Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir);
 			break;
 		case 4: 
 			break;
@@ -319,6 +316,21 @@ public class DriverMain {
 		System.out.println("3. LDA");
 		System.out.println("4. GO Back");
 		choice = br.readLine();
+		}
+		}else
+		{
+			main.executePCA(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy); // 1a
+			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+ File.separator + componentDir))
+				return;
+			Utils.tranformData(IConstants.DATA+File.separator+IConstants.PCA_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+ File.separator + componentDir);
+			main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy);
+			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir))
+				return;
+			Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
+			main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
+			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))
+				return;
+			Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir);
 		}
 	}
 

@@ -1,4 +1,4 @@
-package com.asu.mwdb.task1a;
+/*package com.asu.mwdb.task1a;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,18 +28,18 @@ public class Task1a {
 		Map<Integer, Set<String>> variable1 = main
 				.createWordsPerSensor(getDictionary);
 		
-		/**************/ //for PCA and SVD
+		*//**************//* //for PCA and SVD
 		List<Map<String, Double[]>> computedScores = main
 				.createSensorWordScores(variable1, getDictionary,3);
 		List<List<String>> order = main.savewordstoCSV(computedScores,"data");
-		/***************/
+		*//***************//*
 		
-		/**************/ //for LDA
+		*//**************//* //for LDA
 		List<Map<String, Double[]>> computedScoresLDA = main
 				.createSensorWordScores(variable1, getDictionary,5);
 		List<List<String>> orderLDA = main.savewordstoCSV(computedScoresLDA,"data//lda//baseinput");
 		main.transformDataForLDA("data//lda//baseinput");  //this write data to "data/lda/input"
-		/***************/
+		*//***************//*
 		
 		
 
@@ -77,3 +77,4 @@ public class Task1a {
 	
 	
 }
+*/

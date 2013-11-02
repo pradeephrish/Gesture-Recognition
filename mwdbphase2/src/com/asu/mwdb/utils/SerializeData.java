@@ -89,7 +89,7 @@ public class SerializeData {
 //			serialize("data/test.obj", map);
             
            // main.transformDataForLDA("data");
-            main.executePCA("data",order);
+            main.executePCA("data",order,null);
             Utils.tranformData("data/pca-semantic", "data", "data/pca-transform");
             
             main.executeSVD("data", order);

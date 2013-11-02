@@ -22,4 +22,5 @@ public interface IConstants {
 		public static String ALL				= "all";
 		public static String RANGED_BAND		= "rangeBandFile";
 		public static String QUERY_MAPPED		= "queryMapped";
+		public static String BASE_DATA          = "basedata";
 }

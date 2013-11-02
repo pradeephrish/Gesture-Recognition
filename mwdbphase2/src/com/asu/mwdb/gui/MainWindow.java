@@ -54,6 +54,7 @@ import com.asu.mwdb.utils.DataNormalizer;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.ShowHeatpMap;
+import com.asu.mwdb.utils.Utils;
 
 /**
  * 
@@ -103,19 +104,12 @@ public class MainWindow extends javax.swing.JFrame {
 	 * @throws IOException
 	 ***/
 
-	public void executePCA(String inputLocation, List<List<String>> order)
+	public void executePCA(String inputLocation, List<List<String>> order,MatlabProxy proxy)
 			throws MatlabConnectionException, MatlabInvocationException,
 			IOException {
-		proxy = MatlabObject.getInstance();
 
-		String scriptLocation = CreateFileStructure.getScriptLocation();
-		scriptLocation = "." + File.separator + scriptLocation;
-		System.out.println("Script Location" + scriptLocation);
-
-		String path = "cd(\'" + scriptLocation + "')";
-
-		proxy.eval(path);
-
+		String component = inputLocation.substring(inputLocation.lastIndexOf(File.separator) + 1);
+		
 		File[] files = new File(inputLocation).listFiles(new FileFilter() {
 
 			@Override
@@ -126,23 +120,40 @@ public class MainWindow extends javax.swing.JFrame {
 			}
 		});
 		for (int i = 0; i < files.length; i++) {
-			System.out.println("path is " + files[i].getParent() + i
-					+ File.separator + files[i].getName());
+			
+			if(!Utils.isDirectoryCreated(files[i].getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator + IConstants.PCA_DIR+File.separator+ component)){
+				System.out.println("Failed Creation of Directory "+ files[i].getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator + IConstants.PCA_DIR+File.separator+ component);
+				return;
+			}
+			
 			proxy.eval("PCAFinder('" + files[i].getAbsolutePath() + "','"
-					+ files[i].getParentFile().getAbsolutePath()
-					+ File.separator + "pca" + File.separator
+					+ files[i].getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator + IConstants.PCA_DIR+File.separator+ component + File.separator
 					+ files[i].getName() + "')");
 		}
 
 		for (int i = 0; i < order.size(); i++) {
-
 			// read sensor 0 data and print
-			String pcaFileName = files[i].getParentFile().getAbsolutePath()
-					+ File.separator + "pca" + File.separator + i + ".csv";
-			String pcaSemanticFileName = files[i].getParentFile()
+			String pcaFileName = files[i].getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator + IConstants.PCA_DIR +File.separator+component+ File.separator + i + ".csv";
+			
+			if(!Utils.isDirectoryCreated(files[i].getParentFile().getParentFile()
 					.getAbsolutePath()
 					+ File.separator
-					+ "pca-semantic"
+					+ IConstants.PCA_SEMANTICS+File.separator+component)){
+				System.out.println("File Creation failed "+files[i].getParentFile().getParentFile()
+					.getAbsolutePath()
+					+ File.separator
+					+ IConstants.PCA_SEMANTICS+File.separator+component);
+				return;
+			}
+			
+			String pcaSemanticFileName = files[i].getParentFile().getParentFile()
+					.getAbsolutePath()
+					+ File.separator
+					+ IConstants.PCA_SEMANTICS+File.separator+component
 					+ File.separator + i + ".csv";
 
 			CSVReader csvReader = new CSVReader(new InputStreamReader(

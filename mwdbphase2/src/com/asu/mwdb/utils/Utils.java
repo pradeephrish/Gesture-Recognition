@@ -20,6 +20,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 import com.asu.mwdb.math.CosineSimilarity;
 import com.asu.mwdb.math.Task3FindSimilarData.Entity;
+import com.asu.mwdb.task1b.FileIOHelper;
 
 public class Utils {
 
@@ -267,6 +268,23 @@ public class Utils {
 			documentOrder.add(fileList[i].getName());
 		}
 		return documentOrder;
+	}
+	
+	public static boolean isDirectoryCreated(String path){
+		try {
+		File file = new File(path);
+		if(file.exists()){
+			FileIOHelper.delete(file);
+			}
+		if(!file.mkdir()){
+			System.out.println("File creation failed "+file.getAbsolutePath());
+			return false;
+		}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
 }

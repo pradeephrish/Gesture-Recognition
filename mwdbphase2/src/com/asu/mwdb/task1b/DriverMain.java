@@ -235,26 +235,36 @@ public class DriverMain {
 			MatlabInvocationException {
 		MainWindow main = new MainWindow();
 		List<List<Map<String, List<Double>>>> getDictionary = dictMap.get(inputDirectory).getTfMapArrayIDF();
+		
+		String componentDir = inputDirectory.substring(inputDirectory.lastIndexOf(File.separator) + 1);
 
+		if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir))
+			return;
+		
 		Map<Integer, Set<String>> variable1 = main
 				.createWordsPerSensor(getDictionary);
 		
 		/**************/ //for PCA and SVD
 		List<Map<String, Double[]>> computedScores = main
 				.createSensorWordScores(variable1, getDictionary,3);
-		List<List<String>> order = main.savewordstoCSV(computedScores,"data");
+		List<List<String>> order = main.savewordstoCSV(computedScores,IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		/***************/
 		
 		/**************/ //for LDA
 		List<Map<String, Double[]>> computedScoresLDA = main
 				.createSensorWordScores(variable1, getDictionary,5);
-		List<List<String>> orderLDA = main.savewordstoCSV(computedScoresLDA,"data//lda//baseinput");
-		main.transformDataForLDA("data//lda//baseinput");  //this write data to "data/lda/input"
+		
+		if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir))
+			return;
+	
+		
+		List<List<String>> orderLDA = main.savewordstoCSV(computedScoresLDA,IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
+		main.transformDataForLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);  //this write data to "data/lda/input"
 		/***************/
 		System.out.println("1. PCA");
 		System.out.println("2. SVD");
 		System.out.println("3. LDA");
-		System.out.println("4. Exit");
+		System.out.println("4. Go Back");
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String choice = br.readLine();
@@ -262,12 +272,21 @@ public class DriverMain {
 		while(!choice.equalsIgnoreCase("4")){
 		switch (Integer.parseInt(choice)) {
 		case 1:
-			main.executePCA("data", order); // 1a
-			Utils.tranformData("data/pca-semantic", "data", "data/pca-transform");
+			main.executePCA(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy); // 1a
+			//Directory creation
+			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+componentDir))
+				return;
+			// end
+			Utils.tranformData(IConstants.DATA+File.separator+IConstants.PCA_SEMANTICS+componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+componentDir);
 			break;
 		case 2:
-			main.executeSVD("data", order);
-			Utils.tranformData("data/svd-semantic", "data", "data/svd-transform");
+			main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order);
+			
+			//Directory creation
+			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+componentDir))
+				return;
+			
+			Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+componentDir);
 			break;
 		case 3:
 			main.exectuteLDA("data/lda/input", orderLDA, 3); // 3 latent semantics

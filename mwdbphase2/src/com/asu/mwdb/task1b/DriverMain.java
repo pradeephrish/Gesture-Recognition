@@ -438,11 +438,9 @@ public class DriverMain {
 		Map<Integer, Set<String>> queryWordMap = main.createWordsPerSensor(queryDictionary);
 		List<Map<String, Double[]>> queryWordScores = main.createSensorWordScores(queryWordMap, queryDictionary , 3);
 	
-		String queryFilePath = "." + File.separator + "data" + File.separator + "queryWords";
-		File file = new File(queryFilePath);
 		// TODO - Create folders for each component and fetch the semantic values from that location
-		String semanticDir = "." + File.separator + "data" + File.separator + "pca-semantic";
-		String semanticOutputDirectory = "." + File.separator + "data" + File.separator + "pca-semantic-mapped";
+		String semanticDir = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_SEMANTICS;
+		String semanticOutputDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_MAPPED;
 		
 		File semanticFileDirObj = new File(semanticDir);
 		File[] semanticFiles = semanticFileDirObj.listFiles();
@@ -473,7 +471,7 @@ public class DriverMain {
 			queryTransformList.add(xyz);
 			
 		}
-		 CSVWriter csvWriter = new CSVWriter(new FileWriter(semanticOutputDirectory + File.separator + "queryMapped.csv"), ',',
+		 CSVWriter csvWriter = new CSVWriter(new FileWriter(semanticOutputDirectory + File.separator +  IConstants.QUERY_MAPPED + ".csv"), ',',
 				CSVWriter.NO_QUOTE_CHARACTER,
 				CSVWriter.DEFAULT_LINE_END);
 		
@@ -484,14 +482,14 @@ public class DriverMain {
 		 
 		 File fileTemp = new File(inputDirectory);
 		 File[] listFiles = fileTemp.listFiles();
-		 String transformedDirectory = "." + File.separator + "data" + File.separator + "pca-transform";
+		 String transformedDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_TRANSFORM;
 		 List<List<String[]>> pcaTrasnsformData = Utils.convertDataForComparison(transformedDirectory, listFiles);
 		 
 		 HashMap<Integer, Double> pcaScores = searchForSimilarLSA(queryTransformList, pcaTrasnsformData);
 		 File fileObj = new File(inputDirectory);
 		 File[] files = fileObj.listFiles();
 			
-		System.out.println("Top 5 documents with similar PCA are as follows:");
+		System.out.println("Top 5 documents in PCA semantics are as follows:");
 		displayMapResults(pcaScores, files);
 		System.out.println();
 	}
@@ -512,7 +510,7 @@ public class DriverMain {
 		for (Entry<Integer, Double> entry : tfidfSimilarScores.entrySet()) { 
 		    Integer key = entry.getKey();		    
 		    File file = files[key];		    
-		    System.out.println((counter + 1) + "  " + file.getAbsolutePath() + "        ");
+		    System.out.println((counter + 1) + " - " + file.getAbsolutePath() + "        ");
 		    counter = counter + 1;
 		    if(counter == 5) {
 		    	break;
@@ -559,7 +557,7 @@ public class DriverMain {
 		AssignBandValues.assignGaussianCurveTask3(proxy, inputFileLocation,
 				rBandValueRange);
 		DictionaryBuilderPhase2 dictionary = dictMap.get(databaseDirectory
-				+ File.separator + "all");
+				+ File.separator + IConstants.ALL);
 		SearchDatabaseForSimilarity task3FindSimilarData = new SearchDatabaseForSimilarity(
 				dictionary.getTfIDFMapGlobal(), dictionary.getTfMapArrayIDF(),
 				dictionary.getTfMapArrayIDF2(), wordLength, shiftLength,

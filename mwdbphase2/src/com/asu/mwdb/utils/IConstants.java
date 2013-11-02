@@ -21,4 +21,5 @@ public interface IConstants {
 		public static String SVD_DIR_GG			= "svdgg";
 		public static String ALL				= "all";
 		public static String RANGED_BAND		= "rangeBandFile";
+		public static String QUERY_MAPPED		= "queryMapped";
 }

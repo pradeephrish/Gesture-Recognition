@@ -2069,15 +2069,15 @@ public class MainWindow extends javax.swing.JFrame {
 				+ "svd_" + file.getName() ;
 		proxy.eval("SVDFinder('" + fileLocation + "','" + new File(outputFile).getAbsolutePath()  + "')");
 
-		String pcaFileName = new File(outputFile).getAbsolutePath();
-		String pcaSemanticFileName = IConstants.DATA + File.separator
+		String svdFileName = new File(outputFile).getAbsolutePath();
+		String svdSemanticFileName = IConstants.DATA + File.separator
 				+ IConstants.SVD_DIR_GG + File.separator +componentName+File.separator+ "semanticgg_"
 				+ file.getName();
 
 		CSVReader csvReader = new CSVReader(new InputStreamReader(
-				new FileInputStream(pcaFileName)));
+				new FileInputStream(svdFileName)));
 		CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(
-				new FileOutputStream(pcaSemanticFileName)));
+				new FileOutputStream(svdSemanticFileName)));
 
 		String[] list = new String[docOrder.size()];
 

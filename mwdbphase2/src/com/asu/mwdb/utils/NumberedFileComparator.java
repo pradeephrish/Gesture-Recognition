@@ -10,7 +10,6 @@ public class NumberedFileComparator implements Comparator {
 		File file2 = (File) o2;
 		String f1 =  file1.getName();
 		String f2 =  file2.getName();
-		System.out.println(f1 + "   " + f2);
 		int val = f1.compareTo(f2);
 		if (val != 0) {
 			String number1 = f1.substring(0, f1.lastIndexOf("."));

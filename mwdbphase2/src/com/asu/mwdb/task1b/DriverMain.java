@@ -176,7 +176,7 @@ public class DriverMain {
 					 double[][] svdGGLS = Utils.getGestureGestureMatrixLSA(out1);
 					 
 					 //lda latent semantic
-					 List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					 List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+ IConstants.LDA_DIR + File.separator + IConstants.LDA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
 					 double[][] ldaGGLS = Utils.getGestureGestureMatrixLSA(out2);
 					//
 					 
@@ -203,7 +203,7 @@ public class DriverMain {
 		//pre-processing
 		System.out.println("Executing task2c   .....  ");
 		for (int i = 0; i < inputDirectoryKey.size(); i++) {
-			System.out.println("\tExecuting for task 2c: "+inputDirectoryKey.get(i));
+			System.out.println("\tExecuting for task : "+inputDirectoryKey.get(i));
 			if(!dictMap.containsKey(inputDirectoryKey.get(i))){
 				System.out.println("\tWrong inputDirectory given  ");
 			}else
@@ -212,32 +212,50 @@ public class DriverMain {
 				List<List<Map<String, List<Double>>>> currentDictionary = dictionaryHolder.getTfMapArrayIDF();
 				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
 				//make dir
-//				String path = IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir;
+				
 				File file = new File(IConstants.DATA+File.separator+IConstants.SVD_DIR_GG+File.separator+componentDir);
 				String path = file.getAbsolutePath();
-				if(file.exists()){
-						FileIOHelper.delete(file);
-				}
+
+				if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_DIR_GG+File.separator+componentDir))
+					return;
 				
-				if(!file.mkdir()){
-					System.out.println("File Creatation failed for "+file.getAbsolutePath());
-				}else{
+				{
 					//directory creation done
 					double[][] outputtfidf = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF);
 					double[][] outputtfidf2 = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF2);
 					//
 					//now implemented it for PCA, SVD, LDA latent semantics
+					
+					//pca latent semantic
+					 List<List<String[]>> out = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					 double[][] pcaGGLS = Utils.getGestureGestureMatrixLSA(out);
+					 
+					 //svd latent semantic
+					 List<List<String[]>> out1 = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					 double[][] svdGGLS = Utils.getGestureGestureMatrixLSA(out1);
+					 
+					 //lda latent semantic
+					 List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+ IConstants.LDA_DIR + File.separator + IConstants.LDA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					 double[][] ldaGGLS = Utils.getGestureGestureMatrixLSA(out2);
 					//
+					 
 					Utils.writeGestureGestureToFile(Entity.TFIDF, path, outputtfidf);
 					Utils.writeGestureGestureToFile(Entity.TFIDF2, path, outputtfidf2);
+					Utils.writeGestureGestureToFile(Entity.PCA_LSA, path, pcaGGLS);
+					Utils.writeGestureGestureToFile(Entity.SVD_LSA, path, svdGGLS);
+					Utils.writeGestureGestureToFile(Entity.LDA_LSA, path, ldaGGLS);
+					
 					MainWindow mainWindow = new MainWindow();
 					mainWindow.executeSVDGG(path+File.separator+"ggTFIDF.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
 					mainWindow.executeSVDGG(path+File.separator+"ggTFIDF2.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+					mainWindow.executeSVDGG(path+File.separator+"ggPCA.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+					mainWindow.executeSVDGG(path+File.separator+"ggSVD.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+					mainWindow.executeSVDGG(path+File.separator+"ggLDA.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
 				}
 			}
 		}
 		
-		System.out.println("Succefully executed task2b");
+		System.out.println("Succefully executed task2c");
 	}
 	
 	

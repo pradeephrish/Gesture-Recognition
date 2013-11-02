@@ -119,38 +119,42 @@ public class MainWindow extends javax.swing.JFrame {
 				return name.endsWith(".csv") && pathname.isFile();
 			}
 		});
+		
+		if(!Utils.isDirectoryCreated(files[0].getParentFile().getParentFile().getParentFile().getAbsolutePath()
+				+ File.separator + IConstants.PCA_DIR+File.separator+ component)){
+			System.out.println("Failed Creation of Directory "+ files[0].getParentFile().getParentFile().getParentFile().getAbsolutePath()
+				+ File.separator + IConstants.PCA_DIR+File.separator+ component);
+			return;
+		
+		}
 		for (int i = 0; i < files.length; i++) {
 			
-			if(!Utils.isDirectoryCreated(files[i].getParentFile().getParentFile().getAbsolutePath()
-					+ File.separator + IConstants.PCA_DIR+File.separator+ component)){
-				System.out.println("Failed Creation of Directory "+ files[i].getParentFile().getParentFile().getAbsolutePath()
-					+ File.separator + IConstants.PCA_DIR+File.separator+ component);
-				return;
-			}
-			
+			System.out.println(files[i].getParentFile().getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator + IConstants.PCA_DIR+File.separator+ component + File.separator
+					+ files[i].getName());
 			proxy.eval("PCAFinder('" + files[i].getAbsolutePath() + "','"
-					+ files[i].getParentFile().getParentFile().getAbsolutePath()
+					+ files[i].getParentFile().getParentFile().getParentFile().getAbsolutePath()
 					+ File.separator + IConstants.PCA_DIR+File.separator+ component + File.separator
 					+ files[i].getName() + "')");
+		}
+		
+		if(!Utils.isDirectoryCreated(files[0].getParentFile().getParentFile().getParentFile()
+				.getAbsolutePath()
+				+ File.separator
+				+ IConstants.PCA_SEMANTICS+File.separator+component)){
+			System.out.println("File Creation failed "+files[0].getParentFile().getParentFile().getParentFile()
+				.getAbsolutePath()
+				+ File.separator
+				+ IConstants.PCA_SEMANTICS+File.separator+component);
+			return;
 		}
 
 		for (int i = 0; i < order.size(); i++) {
 			// read sensor 0 data and print
-			String pcaFileName = files[i].getParentFile().getParentFile().getAbsolutePath()
+			String pcaFileName = files[i].getParentFile().getParentFile().getParentFile().getAbsolutePath()
 					+ File.separator + IConstants.PCA_DIR +File.separator+component+ File.separator + i + ".csv";
-			
-			if(!Utils.isDirectoryCreated(files[i].getParentFile().getParentFile()
-					.getAbsolutePath()
-					+ File.separator
-					+ IConstants.PCA_SEMANTICS+File.separator+component)){
-				System.out.println("File Creation failed "+files[i].getParentFile().getParentFile()
-					.getAbsolutePath()
-					+ File.separator
-					+ IConstants.PCA_SEMANTICS+File.separator+component);
-				return;
-			}
-			
-			String pcaSemanticFileName = files[i].getParentFile().getParentFile()
+				
+			String pcaSemanticFileName = files[i].getParentFile().getParentFile().getParentFile()
 					.getAbsolutePath()
 					+ File.separator
 					+ IConstants.PCA_SEMANTICS+File.separator+component

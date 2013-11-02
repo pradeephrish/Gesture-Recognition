@@ -99,20 +99,11 @@ public class Utils {
 		}
 
 		Double[][] C = new Double[aRows][bColumns];
-		/* for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                C[i][j] = 0.00000;
-            }
-        }*/
 
 		for (int i = 0; i < aRows; i++) { // aRow
 			for (int j = 0; j < bColumns; j++) { // bColumn
 				C[i][j]=0.0;
 				for (int k = 0; k < aColumns; k++) { // aColumn
-					System.out.println("LOL");
-					System.out.println(C[i][j]);
-					System.out.println(A[i][k]);
-					System.out.println(B[k][j]);
 					C[i][j] += A[i][k] * B[k][j];
 				}
 			}

@@ -18,4 +18,5 @@ public interface IConstants {
 		public static String SVD_SEMANTICS		= "svd-semantic";
 		public static String SVD_TRANSFORM		= "svd-transform";
 		public static String LDA_DIR			= "lda";
+		public static String SVD_DIR_GG =       "svdgg";
 }

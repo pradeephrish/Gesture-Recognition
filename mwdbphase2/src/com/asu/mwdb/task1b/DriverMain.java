@@ -109,7 +109,9 @@ public class DriverMain {
 			case 4:
 				executeTask2b(componentList);
 				break;
-			
+			case 5: 
+				executeTask2c(componentList);
+				break;
 			}
 			System.out.println("1. Task1a");
 			System.out.println("2. Task1b");
@@ -119,7 +121,6 @@ public class DriverMain {
 			choice = in.readLine();
 			}while(!choice.equalsIgnoreCase("6"));
 			in.close();
-			
 			/*System.out.println("Enter component folder for Task 1a:");
 			String inputDirectory1a = in.readLine();
 			executeTask1a(inputDirectory1a);*/
@@ -183,6 +184,49 @@ public class DriverMain {
 		
 		System.out.println("Succefully executed task2b");
 	}
+	
+	private static void executeTask2c(List<String> inputDirectoryKey) throws IOException, MatlabConnectionException, MatlabInvocationException{
+		//pre-processing
+		System.out.println("Executing task2c   .....  ");
+		for (int i = 0; i < inputDirectoryKey.size(); i++) {
+			System.out.println("\tExecuting for task 2c: "+inputDirectoryKey.get(i));
+			if(!dictMap.containsKey(inputDirectoryKey.get(i))){
+				System.out.println("\tWrong inputDirectory given  ");
+			}else
+			{
+				DictionaryBuilderPhase2 dictionaryHolder = dictMap.get(inputDirectoryKey.get(i));
+				List<List<Map<String, List<Double>>>> currentDictionary = dictionaryHolder.getTfMapArrayIDF();
+				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
+				//make dir
+//				String path = IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir;
+				File file = new File(IConstants.DATA+File.separator+IConstants.SVD_DIR_GG+File.separator+componentDir);
+				String path = file.getAbsolutePath();
+				if(file.exists()){
+						FileIOHelper.delete(file);
+				}
+				
+				if(!file.mkdir()){
+					System.out.println("File Creatation failed for "+file.getAbsolutePath());
+				}else{
+					//directory creation done
+					double[][] outputtfidf = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF);
+					double[][] outputtfidf2 = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF2);
+					//
+					//now implemented it for PCA, SVD, LDA latent semantics
+					//
+					Utils.writeGestureGestureToFile(Entity.TFIDF, path, outputtfidf);
+					Utils.writeGestureGestureToFile(Entity.TFIDF2, path, outputtfidf2);
+					MainWindow mainWindow = new MainWindow();
+					mainWindow.executeSVDGG(path+File.separator+"ggTFIDF.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+					mainWindow.executeSVDGG(path+File.separator+"ggTFIDF2.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
+				}
+			}
+		}
+		
+		System.out.println("Succefully executed task2b");
+	}
+	
+	
 	
 	
 	private static void executeTask1a(String inputDirectory)

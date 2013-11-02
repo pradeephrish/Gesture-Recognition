@@ -18,8 +18,10 @@ public interface IConstants {
 		public static String SVD_SEMANTICS		= "svd-semantic";
 		public static String SVD_TRANSFORM		= "svd-transform";
 		public static String LDA_DIR			= "lda";
+		public static String INPUT_DIR				= "input";
+		public static String OUTPUT_DIR				= "output";
 		public static String LDA_SEMANTICS		= "lda-semantic";
-		public static String LDA_TRANSFORM		= "lda-semantic";
+		public static String LDA_TRANSFORM		= "lda-transform";
 		public static String SVD_DIR_GG			= "svdgg";
 		public static String ALL				= "all";
 		public static String RANGED_BAND		= "rangeBandFile";

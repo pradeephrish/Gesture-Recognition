@@ -38,6 +38,7 @@ import javax.swing.table.DefaultTableModel;
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
+import matlabcontrol.MatlabProxyFactory;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -220,7 +221,11 @@ public class MainWindow extends javax.swing.JFrame {
 	public void exectuteLDA(String inputLocation, List<List<String>> order,
 			Integer ktopics) throws MatlabConnectionException,
 			MatlabInvocationException, IOException {
-		proxy = MatlabObject.getInstance();
+		
+		String component = inputLocation.substring(inputLocation.lastIndexOf(File.separator) + 1);
+		
+		
+		MatlabProxy proxy = new MatlabProxyFactory().getProxy();
 
 		String scriptLocation = CreateFileStructure.getScriptLocation();
 		scriptLocation = "." + File.separator + scriptLocation;
@@ -238,37 +243,39 @@ public class MainWindow extends javax.swing.JFrame {
 				return name.endsWith(".csv") && pathname.isFile();
 			}
 		});
+		
+		if(!Utils.isDirectoryCreated(files[0].getParentFile().getParentFile().getParentFile()
+							.getAbsolutePath() + File.separator + IConstants.OUTPUT_DIR+File.separator+component))
+			return;
+		
 		for (int i = 0; i < files.length; i++) {
-			System.out.println("path is " + files[i].getParent() + i
-					+ File.separator + files[i].getName());
-			System.out.println("Method call is ");
-			System.out.println("ldamain('"
-					+ files[i].getAbsolutePath()
-					+ "','"
-					+ files[i].getParentFile().getParentFile()
-							.getAbsolutePath() + File.separator + "output"
-					+ File.separator + files[i].getName() + "','" + ktopics
-					+ "')");
 			proxy.eval("ldamain('"
 					+ files[i].getAbsolutePath()
 					+ "','"
-					+ files[i].getParentFile().getParentFile()
-							.getAbsolutePath() + File.separator + "output"
+					+ files[i].getParentFile().getParentFile().getParentFile()
+							.getAbsolutePath() + File.separator + IConstants.OUTPUT_DIR+File.separator+component
 					+ File.separator + files[i].getName() + "'," + ktopics
 					+ ")"); // three for 3 topics
 		}
+		
+		if(!Utils.isDirectoryCreated(files[0].getParentFile()
+					.getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator
+					+ IConstants.LDA_SEMANTICS
+					+ File.separator+component))
+			return;
 
 		for (int i = 0; i < order.size(); i++) {
 			// read sensor 0 data and print
 
-			String ldaFileName = files[i].getParentFile().getParentFile()
-					.getAbsolutePath()
-					+ File.separator + "output" + File.separator + i + ".csv";
+			String ldaFileName = files[i].getParentFile().getParentFile().getParentFile()
+					.getAbsolutePath() + File.separator + IConstants.OUTPUT_DIR+File.separator+component
+			+ File.separator + i + ".csv";
 			String ldaSemanticFileName = files[i].getParentFile()
-					.getParentFile().getAbsolutePath()
+					.getParentFile().getParentFile().getAbsolutePath()
 					+ File.separator
-					+ "lda-semantic"
-					+ File.separator
+					+ IConstants.LDA_SEMANTICS
+					+ File.separator+component+File.separator
 					+ i
 					+ ".csv";
 
@@ -297,6 +304,8 @@ public class MainWindow extends javax.swing.JFrame {
 
 	public String[][][] transformDataForLDA(String inputLocation)
 			throws IOException {
+		
+		String component = inputLocation.substring(inputLocation.lastIndexOf(File.separator) + 1);
 
 		File[] files = new File(inputLocation).listFiles(new FileFilter() {
 			@Override
@@ -327,13 +336,21 @@ public class MainWindow extends javax.swing.JFrame {
 
 		data3D = transform(data3D);
 
+		
+		if(!Utils.isDirectoryCreated(new File(inputLocation).getParentFile()
+					.getParentFile().getParentFile()
+					+ File.separator
+					+ IConstants.LDA_DIR
+					+ File.separator + IConstants.INPUT_DIR+ File.separator + component))
+			return null;
+		
 		for (int i = 0; i < files.length; i++) {
 			String ldaOutputFile = new File(inputLocation).getParentFile()
-					.getParentFile()
+					.getParentFile().getParentFile()
 					+ File.separator
-					+ "lda"
-					+ File.separator
-					+ "input" + File.separator + files[i].getName();
+					+ IConstants.LDA_DIR
+					+ File.separator + IConstants.INPUT_DIR+ File.separator + component
+					+ File.separator + files[i].getName();
 			CSVWriter csvWrite = new CSVWriter(new OutputStreamWriter(
 					new FileOutputStream(ldaOutputFile)), '\t',
 					CSVWriter.NO_QUOTE_CHARACTER);
@@ -343,8 +360,7 @@ public class MainWindow extends javax.swing.JFrame {
 			csvWrite.close();
 		}
 		return data3D;
-		// note still need to transform whole data, to have Doucument vs Topic
-		// Distribution
+		// note still need to transform whole data, to have Doucument vs Topic Distribution
 	}
 
 	// tranpose tensor
@@ -363,19 +379,11 @@ public class MainWindow extends javax.swing.JFrame {
 		return data3D;
 	}
 
-	public void executeSVD(String inputLocation, List<List<String>> order)
+	public void executeSVD(String inputLocation, List<List<String>> order,MatlabProxy proxy)
 			throws MatlabConnectionException, MatlabInvocationException,
 			IOException {
-		proxy = MatlabObject.getInstance();
 
-		String scriptLocation = CreateFileStructure.getScriptLocation();
-		scriptLocation = "." + File.separator + scriptLocation;
-		System.out.println("Script Location" + scriptLocation);
-
-		String path = "cd(\'" + scriptLocation + "')";
-
-		proxy.eval(path);
-
+		String component = inputLocation.substring(inputLocation.lastIndexOf(File.separator) + 1);
 		File[] files = new File(inputLocation).listFiles(new FileFilter() {
 
 			@Override
@@ -385,44 +393,44 @@ public class MainWindow extends javax.swing.JFrame {
 				return name.endsWith(".csv") && pathname.isFile();
 			}
 		});
+		if(!Utils.isDirectoryCreated(files[0].getParentFile().getParentFile().getParentFile().getAbsolutePath()
+				+ File.separator + IConstants.SVD_DIR+File.separator+ component)){
+			System.out.println("Failed Creation of Directory "+ files[0].getParentFile().getParentFile().getParentFile().getAbsolutePath()
+				+ File.separator + IConstants.SVD_DIR+File.separator+ component);
+			return;
+		
+		}
 		for (int i = 0; i < files.length; i++) {
-			System.out.println("path is " + files[i].getParent() + i
-					+ File.separator + files[i].getName());
+			System.out.println(files[i].getParentFile().getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator + IConstants.SVD_DIR+File.separator+ component + File.separator
+					+ files[i].getName());
 			proxy.eval("SVDFinder('" + files[i].getAbsolutePath() + "','"
-					+ files[i].getParentFile().getAbsolutePath()
-					+ File.separator + "svd" + File.separator
+					+ files[i].getParentFile().getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator + IConstants.SVD_DIR + File.separator + component +File.separator
 					+ files[i].getName() + "')");
 		}
-		// ************************* now print top-3 latent semantics
 
-		/*
-		 * String newLineMark = System.getProperty("line.separator");
-		 * 
-		 * String leftAlignFormat = "| %-15s "; String topRow =
-		 * "+-----------------"; String columnName="| Column name     |"; String
-		 * bottomRow= "+-----------------+";
-		 */
-
+		
+		if(!Utils.isDirectoryCreated(files[0].getParentFile().getParentFile().getParentFile()
+				.getAbsolutePath()
+				+ File.separator
+				+ IConstants.SVD_SEMANTICS+File.separator+component)){
+			System.out.println("File Creation failed "+files[0].getParentFile().getParentFile().getParentFile()
+				.getAbsolutePath()
+				+ File.separator
+				+ IConstants.SVD_SEMANTICS+File.separator+component);
+			return;
+		}
+		
 		for (int i = 0; i < order.size(); i++) {
-			/*
-			 * for (int j = 0; j < order.get(i).size(); j++) {
-			 * leftAlignFormat+=" | %f"; topRow+="+--------";
-			 * columnName+="|"+order.get(i).get(j)+"|"; bottomRow+="+--------";
-			 * } leftAlignFormat+= "|" + newLineMark; topRow+="+" + newLineMark;
-			 * bottomRow+="+" + newLineMark; columnName+="|" + newLineMark;
-			 * 
-			 * System.out.format(topRow); System.out.printf(columnName);
-			 * System.out.format(bottomRow);
-			 */
-
 			// read sensor 0 data and print
 
-			String pcaFileName = files[i].getParentFile().getAbsolutePath()
-					+ File.separator + "svd" + File.separator + i + ".csv";
-			String pcaSemanticFileName = files[i].getParentFile()
+			String pcaFileName = files[i].getParentFile().getParentFile().getParentFile().getAbsolutePath()
+					+ File.separator + IConstants.SVD_DIR +File.separator+component+ File.separator + i + ".csv";
+			String pcaSemanticFileName = files[i].getParentFile().getParentFile().getParentFile()
 					.getAbsolutePath()
 					+ File.separator
-					+ "svd-semantic"
+					+ IConstants.SVD_SEMANTICS+File.separator+component
 					+ File.separator + i + ".csv";
 
 			CSVReader csvReader = new CSVReader(new InputStreamReader(
@@ -443,20 +451,7 @@ public class MainWindow extends javax.swing.JFrame {
 			}
 			csvWriter.close();
 			csvReader.close();
-
-			/*
-			 * for (int j = 0; j < 3; j++) { String[] array =
-			 * csvReader.readNext(); Object[] objectArray = new
-			 * Object[array.length+1]; objectArray[0]="Semantic "+(j+1); for
-			 * (int k = 0; k < array.length; k++) { objectArray[k]=new
-			 * Double(array[k]); } System.out.format(leftAlignFormat,
-			 * objectArray); }
-			 */
-
 		}
-
-		// System.out.format("+-----------------+------+" + newLineMark);
-
 	}
 
 	// Populates Map<String,List<String>> sensorWords

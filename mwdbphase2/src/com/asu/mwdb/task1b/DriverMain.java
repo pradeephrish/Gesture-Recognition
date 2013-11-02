@@ -270,15 +270,12 @@ public class DriverMain {
 		/***************/
 		
 		/**************/ //for LDA
-		List<Map<String, Double[]>> computedScoresLDA = main
-				.createSensorWordScores(variable1, getDictionary,5);
+		List<Map<String, Double[]>> computedScoresLDA = main.createSensorWordScores(variable1, getDictionary,5);
 		
 		if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir))
 			return;
-	
-		
-		//List<List<String>> orderLDA = main.savewordstoCSV(computedScoresLDA,IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
-		//main.transformDataForLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);  //this write data to "data/lda/input"
+		List<List<String>> orderLDA = main.savewordstoCSV(computedScoresLDA,IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
+		main.transformDataForLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		/***************/
 		System.out.println("1. PCA");
 		System.out.println("2. SVD");
@@ -299,7 +296,7 @@ public class DriverMain {
 			Utils.tranformData(IConstants.DATA+File.separator+IConstants.PCA_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+ File.separator + componentDir);
 			break;
 		case 2:
-			main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order);
+			main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy);
 			
 			//Directory creation
 			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir))
@@ -308,8 +305,11 @@ public class DriverMain {
 			Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
 			break;
 		case 3:
-			//main.exectuteLDA("data/lda/input", orderLDA, 3); // 3 latent semantics
-			//Utils.tranformData("data/lda/lda-semantic", "data", "data/lda/lda-transform");
+			main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3); // 3 latent semantics
+			
+			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+componentDir))
+				return;
+			Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+componentDir);
 			break;
 		case 4: 
 			break;

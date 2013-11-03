@@ -315,4 +315,31 @@ public class Utils {
 			csvWriter.close();
 		}
 	}
+	
+	/**
+	 * Function to read the latent semantic file and return it 
+	 * in a format required by the program
+	 * @param semanticFile
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<Map<String, Double>> getSemanticFileData(
+			File semanticFile) throws IOException {
+		List<Map<String, Double>> semanticData = new ArrayList<Map<String,Double>>();
+		CSVReader csvReader = new CSVReader(new InputStreamReader(
+				new FileInputStream(semanticFile.getAbsolutePath())));
+		String[] words = csvReader.readNext();
+		// read next 3 lines which have values and populate our map
+		for(int i=0; i<3; i++) {
+			Map<String, Double> vectorMap = new HashMap<String, Double>();
+			String[] vectorValuesStr = csvReader.readNext();
+			for(int j=0; j < words.length; j++) {
+				vectorMap.put(words[j], Double.parseDouble(vectorValuesStr[j]));
+			}
+			semanticData.add(vectorMap);
+
+		}
+		csvReader.close();
+		return semanticData;
+	}
 }

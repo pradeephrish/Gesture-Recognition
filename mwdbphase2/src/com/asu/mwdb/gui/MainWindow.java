@@ -11,23 +11,19 @@ import java.awt.Image;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,7 +34,6 @@ import javax.swing.table.DefaultTableModel;
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
-import matlabcontrol.MatlabProxyFactory;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -79,23 +74,9 @@ public class MainWindow extends javax.swing.JFrame {
 
 	private List<ConstructGestureWords> constructGestureWords = new ArrayList<ConstructGestureWords>();
 	private List<File> listOfDirectories;
-	private String inputFilePath;
-
 	private Image image; // heatmap image
 	private ShowHeatpMap heatMapVisualize;
 	private CreateFileStructure ss;
-
-	/*** Phase 2 Data Structure ***/
-	// Holds data of sensor against list of words/dimensions
-	private Map<Integer, List<String>> sensorWords = new HashMap<Integer, List<String>>();
-	/*
-	 * Below, (From Left to Right) First List corresponds to 20 sensors -assume
-	 * this is i Second Map corresponds to words/dimesnions for ith Sensor
-	 * -assume this is j Third List contains only two elements, first is TF-IDF
-	 * and second is TF-IDF2 , which correponds to jth word in ith sensor --
-	 * therefore size always 20
-	 */
-	private List<Map<String, Double[]>> sensorWordsScores = new ArrayList<Map<String, Double[]>>();
 
 	/***
 	 * Phase 2 Methods
@@ -229,7 +210,6 @@ public class MainWindow extends javax.swing.JFrame {
 
 			@Override
 			public boolean accept(File pathname) {
-				// TODO Auto-generated method stub
 				String name = pathname.getName().toLowerCase();
 				return name.endsWith(".csv") && pathname.isFile();
 			}
@@ -301,7 +281,6 @@ public class MainWindow extends javax.swing.JFrame {
 		File[] files = new File(inputLocation).listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File pathname) {
-				// TODO Auto-generated method stub
 				String name = pathname.getName().toLowerCase();
 				return name.endsWith(".csv") && pathname.isFile();
 			}
@@ -356,7 +335,6 @@ public class MainWindow extends javax.swing.JFrame {
 
 	// tranpose tensor
 	private String[][][] transform(String[][][] data3D) {
-		// TODO Auto-generated method stub
 		for (int i = 0; i < data3D.length; i++) {
 			String[][] data2D = data3D[i];
 			String[][] tranpose2D = new String[data2D[0].length][data2D.length];
@@ -379,7 +357,6 @@ public class MainWindow extends javax.swing.JFrame {
 
 			@Override
 			public boolean accept(File pathname) {
-				// TODO Auto-generated method stub
 				String name = pathname.getName().toLowerCase();
 				return name.endsWith(".csv") && pathname.isFile();
 			}
@@ -490,14 +467,10 @@ public class MainWindow extends javax.swing.JFrame {
 				Iterator<Entry<String, Double[]>> iterator = sensorWordsScores
 						.get(i).entrySet().iterator();
 
-				System.out.println("***************************");
-				System.out.println("\tSensor\t" + i);
 				List<String> wordOrder = new ArrayList<String>();
 				while (iterator.hasNext()) {
 					Entry<String, Double[]> entry = iterator.next();
 					List<String> list = new ArrayList<String>();
-					// list.add(entry.getKey()); //for testing, not needed,
-					// since matlab will need only values of dimensions
 
 					wordOrder.add(entry.getKey());
 
@@ -505,14 +478,10 @@ public class MainWindow extends javax.swing.JFrame {
 					for (int j = 0; j < array.length; j++) {
 						list.add(String.valueOf(array[j]));
 					}
-					// System.out.println(list);
 					String[] stringList = list.toArray(new String[list.size()]);
-					// System.out.println(Arrays.toString(stringList));
 					csvWriter.writeNext(stringList);
 				}
 				orderofDimenions.add(wordOrder);
-
-				System.out.println("***************************");
 				csvWriter.close();
 			}
 		} catch (Exception e) {
@@ -1465,23 +1434,18 @@ public class MainWindow extends javax.swing.JFrame {
 	}// </editor-fold>//GEN-END:initComponents
 
 	private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField1ActionPerformed
-		// TODO add your handling code here:
 	}// GEN-LAST:event_jTextField1ActionPerformed
 
 	private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField2ActionPerformed
-		// TODO add your handling code here:
 	}// GEN-LAST:event_jTextField2ActionPerformed
 
 	private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField3ActionPerformed
-		// TODO add your handling code here:
 	}// GEN-LAST:event_jTextField3ActionPerformed
 
 	private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField4ActionPerformed
-		// TODO add your handling code here:
 	}// GEN-LAST:event_jTextField4ActionPerformed
 
 	private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jTextField5ActionPerformed
-		// TODO add your handling code here:
 	}// GEN-LAST:event_jTextField5ActionPerformed
 
 	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButton2ActionPerformed
@@ -1489,7 +1453,6 @@ public class MainWindow extends javax.swing.JFrame {
 		jToggleButton1.setEnabled(false);
 		listOfDirectories = null;
 		try {
-			// TODO add your handling code here:
 			// Check all input values
 			if (dialog != null) {
 				inputDirectoryPath = dialog.getjFileChooser1()
@@ -1692,10 +1655,9 @@ public class MainWindow extends javax.swing.JFrame {
 			return;
 		}
 
-		// TODO add your handling code here:
+
 		String fileChooser = null;
 		try {
-			// TODO add your handling code here:
 			// Check all input values
 			if (dialog != null) {
 				fileChooser = dialog.getjFileChooser1().getSelectedFile()
@@ -2059,7 +2021,6 @@ public class MainWindow extends javax.swing.JFrame {
 	public void executeSVDGG(String fileLocation, List<String> docOrder, MatlabProxy proxy)
 			throws MatlabConnectionException, MatlabInvocationException,
 			IOException {
-		// TODO Auto-generated method stub
 		File file = new File(fileLocation);
 		
 		String temp = fileLocation.substring(0,fileLocation.lastIndexOf(File.separator));

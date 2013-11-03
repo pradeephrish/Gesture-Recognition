@@ -2,21 +2,17 @@ package com.asu.mwdb.task1b;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
-
-import com.asu.mwdb.utils.IConstants;
-
 
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 
-public class NormalizeData {
+import com.asu.mwdb.utils.IConstants;
 
-	private static Logger logger = new MyLogger().getupLogger();
+public class NormalizeData {
 
 	public static void NormalizeTask1Data(MatlabProxy proxy,
 			String inputDirectory) throws IOException, MatlabInvocationException {
-		logger.info("Starting normalization for Task 1");
+		System.out.println("Normalizing files for " + inputDirectory);
 		File file = new File(inputDirectory);
 		String[] filesList = file.list();
 		String outputDirectory = inputDirectory + File.separator + IConstants.NORMALIZED_FILE;
@@ -34,7 +30,7 @@ public class NormalizeData {
 				}
 			}
 		} else {
-			logger.info("Error while creating directory for normalized files, task not completed");
+			System.out.println("Error while creating directory for normalized files, task not completed");
 		}
 	}
 	
@@ -48,7 +44,7 @@ public class NormalizeData {
 			proxy.eval("normalize_p1('" + inputFileLocation + "','"
 					+ normalizedOutputFile + "')");
 		} else {
-			logger.info("Error occurred while reading input directory, task not completed");
+			System.out.println("Error occurred while reading input directory, task not completed");
 		}
 	}
 }

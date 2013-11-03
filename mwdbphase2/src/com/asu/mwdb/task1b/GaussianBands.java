@@ -1,10 +1,6 @@
 package com.asu.mwdb.task1b;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 
@@ -17,15 +13,13 @@ import org.apache.commons.math3.distribution.NormalDistribution;
  */
 public class GaussianBands {
 
-	private Logger logger = new MyLogger().getupLogger();
-
 	public double[][] getGaussianBands(double r,
 			double mean, double std) throws IOException {
 		
 		// find the normal distribution
 		NormalDistribution nd = new NormalDistribution(mean, std);
 		double rBandValue[] = new double[(int) (r)];
-		logger.info("Finding out band ranges");
+		System.out.println("Finding out band ranges");
 		for (int i = 0; i < r; i++) {
 			// this will give us an array containing the possible lengths of each band
 			// note that these will be from 0 to 1

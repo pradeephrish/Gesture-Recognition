@@ -3,11 +3,11 @@ package com.asu.mwdb.task1b;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -15,9 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Logger;
 
-import javax.swing.Icon;
 
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
@@ -26,20 +24,18 @@ import matlabcontrol.MatlabProxyFactory;
 
 import org.apache.commons.io.FileUtils;
 
-import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.asu.mwdb.gui.MainWindow;
 import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
-import com.asu.mwdb.utils.SerializeData;
+import com.asu.mwdb.utils.NumberedFileComparator;
 import com.asu.mwdb.utils.Utils;
 
 public class DriverMain {
 
 	private static MatlabProxy proxy;
-	private static Logger logger = new MyLogger().getupLogger();
 	private static Integer wordLength = 0;
 	private static Integer shiftLength = 0;
 	private static Double rValue = 0.0;
@@ -81,15 +77,16 @@ public class DriverMain {
 			shiftLength = Integer.parseInt(br.readLine());
 			List<String> componentList = indexFiles(rBandValueRange, databaseDirectory);
 
-			/***/
-
-			System.out.println("1. Task1a");
-			System.out.println("2. Task1a->All Components");
-			System.out.println("3. Task1b");
-			System.out.println("4. Task1c");
-			System.out.println("5. Task2b");
-			System.out.println("6. Task2c");
-			System.out.println("7. Task3a");
+			
+			System.out.println("Please enter choice for task you want to execute:");
+			System.out.println("1. Task1a - Identify Top 3 Latent Semantics");
+			System.out.println("2. Task1a - Run Task 1a On All Components");
+			System.out.println("3. Task1b - Search Similar Gestures For Given Component");
+			System.out.println("4. Task1c - Search Similar Gestures In Entire Database");
+			System.out.println("5. Task2b - Create Gesture-Gesture Matrix and Run PCA");
+			System.out.println("6. Task2c - Create Gesture-Gesture Matrix and Run SVD");
+			System.out.println("7. Task3a - Partition Gestures into 3 Groups");
+			System.out.println("8. Exit");
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String choice = in.readLine();
@@ -127,15 +124,17 @@ public class DriverMain {
 					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
 					break;
 				}
-				System.out.println("1. Task1a");
-				System.out.println("2. Task1a->All Components");
-				System.out.println("3. Task1b");
-				System.out.println("4. Task1c");
-				System.out.println("5. Task2b");
-				System.out.println("6. Task2c");
-				System.out.println("7. Task3a");
+				System.out.println("Please enter choice for task you want to execute:");
+				System.out.println("1. Task1a - Identify Top 3 Latent Semantics");
+				System.out.println("2. Task1a - Run Task 1a On All Components");
+				System.out.println("3. Task1b - Search Similar Gestures For Given Component");
+				System.out.println("4. Task1c - Search Similar Gestures In Entire Database");
+				System.out.println("5. Task2b - Create Gesture-Gesture Matrix and Run PCA");
+				System.out.println("6. Task2c - Create Gesture-Gesture Matrix and Run SVD");
+				System.out.println("7. Task3a - Partition Gestures into 3 Groups");
+				System.out.println("8. Exit");
 				choice = in.readLine();
-			}while(!choice.equalsIgnoreCase("8"));
+			} while(!choice.equalsIgnoreCase("8"));
 			in.close();
 			// Disconnect the proxy from MATLAB
 			proxy.exit();
@@ -155,16 +154,12 @@ public class DriverMain {
 			System.out.println("\tExecuting for task : "+inputDirectoryKey.get(i));
 			if(!dictMap.containsKey(inputDirectoryKey.get(i))){
 				System.out.println("\tWrong inputDirectory given  ");
-			}else
-			{
+			} else 	{
 				DictionaryBuilderPhase2 dictionaryHolder = dictMap.get(inputDirectoryKey.get(i));
 				List<List<Map<String, List<Double>>>> currentDictionary = dictionaryHolder.getTfMapArrayIDF();
 				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
-				//make dir
-
 				File file = new File(IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir);
 				String path = file.getAbsolutePath();
-
 				if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir))
 					return;
 
@@ -172,9 +167,8 @@ public class DriverMain {
 					//directory creation done
 					double[][] outputtfidf = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF);
 					double[][] outputtfidf2 = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF2);
-					//
 					//now implemented it for PCA, SVD, LDA latent semantics
-
+					
 					//pca latent semantic
 					List<List<String[]>> out = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
 					double[][] pcaGGLS = Utils.getGestureGestureMatrixLSA(out);
@@ -186,8 +180,6 @@ public class DriverMain {
 					//lda latent semantic
 					List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+ IConstants.LDA_DIR + File.separator + IConstants.LDA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
 					double[][] ldaGGLS = Utils.getGestureGestureMatrixLSA(out2);
-					//
-
 					Utils.writeGestureGestureToFile(Entity.TFIDF, path, outputtfidf);
 					Utils.writeGestureGestureToFile(Entity.TFIDF2, path, outputtfidf2);
 					Utils.writeGestureGestureToFile(Entity.PCA_LSA, path, pcaGGLS);
@@ -476,10 +468,6 @@ public class DriverMain {
 				cleanData(inputDirectory + File.separator + "Z");
 			} 
 		}
-
-		// now clean ./data directory here
-		File dataDirObj = new File("." + File.separator + IConstants.DATA);
-
 	}
 
 
@@ -576,10 +564,11 @@ public class DriverMain {
 			String semanticOutputDirectory, List<Map<String, Double[]>> queryWordScores) throws IOException {
 		File semanticFileDirObj = new File(semanticDir);
 		File[] semanticFiles = semanticFileDirObj.listFiles();
+		Arrays.sort(semanticFiles, new NumberedFileComparator());
 		Iterator<Map<String, Double[]>> queryIt = queryWordScores.iterator();
 		List<String[]> queryTransformList = new ArrayList<String[]>();
 		for(File semanticFile : semanticFiles) {
-			List<Map<String, Double>> semanticData = getSemanticFileData(semanticFile);
+			List<Map<String, Double>> semanticData = Utils.getSemanticFileData(semanticFile);
 			Map<String, Double[]> queryMap =null;
 			if(queryIt.hasNext()){
 				queryMap=queryIt.next();
@@ -638,51 +627,4 @@ public class DriverMain {
 		}
 		System.out.println("******************************************************************");
 	}
-
-	private static List<Map<String, Double>> getSemanticFileData(
-			File semanticFile) throws IOException {
-		List<Map<String, Double>> semanticData = new ArrayList<Map<String,Double>>();
-		CSVReader csvReader = new CSVReader(new InputStreamReader(
-				new FileInputStream(semanticFile.getAbsolutePath())));
-		String[] words = csvReader.readNext();
-		// read next 3 lines which have values and populate our map
-		for(int i=0; i<3; i++) {
-			Map<String, Double> vectorMap = new HashMap<String, Double>();
-			String[] vectorValuesStr = csvReader.readNext();
-			for(int j=0; j < words.length; j++) {
-				vectorMap.put(words[j], Double.parseDouble(vectorValuesStr[j]));
-			}
-			semanticData.add(vectorMap);
-
-		}
-		csvReader.close();
-		return semanticData;
-	}
-
-	/**
-	 * Task 3: Given a query file - find 10 most similar gesture files based on
-	 * TF/IDF/TD-IDF etc values. The user will specify parameter for comparison.
-	 * 
-	 * @throws IOException
-	 * @throws MatlabInvocationException
-	 */
-	private static void executeTask1c(double[][] rBandValueRange,
-			String databaseDirectory) throws IOException,
-			MatlabInvocationException {
-		System.out.println("Enter input file name for Task 1c::");
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String inputFileLocation = br.readLine();
-		NormalizeData.NormalizeDataForSingleFile(proxy, inputFileLocation);
-		logger.info("Done normalization for Task 1c");
-		AssignBandValues.assignGaussianCurveTask3(proxy, inputFileLocation,
-				rBandValueRange);
-		DictionaryBuilderPhase2 dictionary = dictMap.get(databaseDirectory
-				+ File.separator + IConstants.ALL);
-		SearchDatabaseForSimilarity task3FindSimilarData = new SearchDatabaseForSimilarity(
-				dictionary.getTfIDFMapGlobal(), dictionary.getTfMapArrayIDF(),
-				dictionary.getTfMapArrayIDF2(), wordLength, shiftLength,
-				inputFileLocation, dictionary);
-
-	}
-
 }

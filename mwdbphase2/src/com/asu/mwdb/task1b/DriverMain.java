@@ -71,7 +71,7 @@ public class DriverMain {
 			// get all inputs needed for task 1
 			System.out.println("Enter database directory:");
 			String databaseDirectory = br.readLine();
-			
+
 			cleanData(databaseDirectory);
 
 			System.out.println("Enter value of word length (w):");
@@ -82,7 +82,7 @@ public class DriverMain {
 			List<String> componentList = indexFiles(rBandValueRange, databaseDirectory);
 
 			/***/
-			
+
 			System.out.println("1. Task1a");
 			System.out.println("2. Task1a->All Components");
 			System.out.println("3. Task1b");
@@ -95,46 +95,46 @@ public class DriverMain {
 			String choice = in.readLine();
 
 			do{
-			switch (Integer.parseInt(choice)) {
-				
-			case 1:
-				System.out.println("Enter component folder for Task 1a:");
-				String inputDirectory1a = in.readLine();
-				executeTask1a(inputDirectory1a,false);
-				break;
-			case 2:
-				for (int i = 0; i < componentList.size(); i++) {
-					executeTask1a(componentList.get(i),true);
+				switch (Integer.parseInt(choice)) {
+
+				case 1:
+					System.out.println("Enter component folder for Task 1a:");
+					String inputDirectory1a = in.readLine();
+					executeTask1a(inputDirectory1a,false);
+					break;
+				case 2:
+					for (int i = 0; i < componentList.size(); i++) {
+						executeTask1a(componentList.get(i),true);
+					}
+					break;	
+				case 3:
+					System.out.println("Enter component folder for Task 1b:");
+					String inputDirectory = br.readLine();
+					executeTask1b(rBandValueRange, inputDirectory);
+					break;
+				case 4:
+					String inputDirectory1c = databaseDirectory + File.separator + IConstants.ALL;
+					executeTask1b(rBandValueRange, inputDirectory1c);
+					break;
+				case 5:
+					executeTask2b(componentList);
+					break;
+				case 6: 
+					executeTask2c(componentList);
+					break;
+				case 7: 
+					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG, componentList);
+					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
+					break;
 				}
-				break;	
-			case 3:
-				System.out.println("Enter component folder for Task 1b:");
-				String inputDirectory = br.readLine();
-				executeTask1b(rBandValueRange, inputDirectory);
-				break;
-			case 4:
-				String inputDirectory1c = databaseDirectory + File.separator + IConstants.ALL;
-				executeTask1b(rBandValueRange, inputDirectory1c);
-				break;
-			case 5:
-				executeTask2b(componentList);
-				break;
-			case 6: 
-				executeTask2c(componentList);
-				break;
-			case 7: 
-				Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG, componentList);
-				Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
-				break;
-			}
-			System.out.println("1. Task1a");
-			System.out.println("2. Task1a->All Components");
-			System.out.println("3. Task1b");
-			System.out.println("4. Task1c");
-			System.out.println("5. Task2b");
-			System.out.println("6. Task2c");
-			System.out.println("7. Task3a");
-			choice = in.readLine();
+				System.out.println("1. Task1a");
+				System.out.println("2. Task1a->All Components");
+				System.out.println("3. Task1b");
+				System.out.println("4. Task1c");
+				System.out.println("5. Task2b");
+				System.out.println("6. Task2c");
+				System.out.println("7. Task3a");
+				choice = in.readLine();
 			}while(!choice.equalsIgnoreCase("8"));
 			in.close();
 			// Disconnect the proxy from MATLAB
@@ -161,39 +161,39 @@ public class DriverMain {
 				List<List<Map<String, List<Double>>>> currentDictionary = dictionaryHolder.getTfMapArrayIDF();
 				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
 				//make dir
-				
+
 				File file = new File(IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir);
 				String path = file.getAbsolutePath();
 
 				if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+File.separator+componentDir))
 					return;
-				
+
 				{
 					//directory creation done
 					double[][] outputtfidf = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF);
 					double[][] outputtfidf2 = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF2);
 					//
 					//now implemented it for PCA, SVD, LDA latent semantics
-					
+
 					//pca latent semantic
-					 List<List<String[]>> out = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
-					 double[][] pcaGGLS = Utils.getGestureGestureMatrixLSA(out);
-					 
-					 //svd latent semantic
-					 List<List<String[]>> out1 = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
-					 double[][] svdGGLS = Utils.getGestureGestureMatrixLSA(out1);
-					 
-					 //lda latent semantic
-					 List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+ IConstants.LDA_DIR + File.separator + IConstants.LDA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
-					 double[][] ldaGGLS = Utils.getGestureGestureMatrixLSA(out2);
+					List<List<String[]>> out = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					double[][] pcaGGLS = Utils.getGestureGestureMatrixLSA(out);
+
+					//svd latent semantic
+					List<List<String[]>> out1 = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					double[][] svdGGLS = Utils.getGestureGestureMatrixLSA(out1);
+
+					//lda latent semantic
+					List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+ IConstants.LDA_DIR + File.separator + IConstants.LDA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					double[][] ldaGGLS = Utils.getGestureGestureMatrixLSA(out2);
 					//
-					 
+
 					Utils.writeGestureGestureToFile(Entity.TFIDF, path, outputtfidf);
 					Utils.writeGestureGestureToFile(Entity.TFIDF2, path, outputtfidf2);
 					Utils.writeGestureGestureToFile(Entity.PCA_LSA, path, pcaGGLS);
 					Utils.writeGestureGestureToFile(Entity.SVD_LSA, path, svdGGLS);
 					Utils.writeGestureGestureToFile(Entity.LDA_LSA, path, ldaGGLS);
-					
+
 					MainWindow mainWindow = new MainWindow();
 					mainWindow.executePCAGG(path+File.separator+"ggTFIDF.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
 					mainWindow.executePCAGG(path+File.separator+"ggTFIDF2.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
@@ -203,10 +203,10 @@ public class DriverMain {
 				}
 			}
 		}
-		
+
 		System.out.println("Succefully executed task2b");
 	}
-	
+
 	private static void executeTask2c(List<String> inputDirectoryKey) throws IOException, MatlabConnectionException, MatlabInvocationException{
 		//pre-processing
 		System.out.println("Executing task2c   .....  ");
@@ -220,39 +220,39 @@ public class DriverMain {
 				List<List<Map<String, List<Double>>>> currentDictionary = dictionaryHolder.getTfMapArrayIDF();
 				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
 				//make dir
-				
+
 				File file = new File(IConstants.DATA+File.separator+IConstants.SVD_DIR_GG+File.separator+componentDir);
 				String path = file.getAbsolutePath();
 
 				if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_DIR_GG+File.separator+componentDir))
 					return;
-				
+
 				{
 					//directory creation done
 					double[][] outputtfidf = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF);
 					double[][] outputtfidf2 = Utils.computeSimilarilty(currentDictionary, Entity.TFIDF2);
 					//
 					//now implemented it for PCA, SVD, LDA latent semantics
-					
+
 					//pca latent semantic
-					 List<List<String[]>> out = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
-					 double[][] pcaGGLS = Utils.getGestureGestureMatrixLSA(out);
-					 
-					 //svd latent semantic
-					 List<List<String[]>> out1 = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
-					 double[][] svdGGLS = Utils.getGestureGestureMatrixLSA(out1);
-					 
-					 //lda latent semantic
-					 List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+ IConstants.LDA_DIR + File.separator + IConstants.LDA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
-					 double[][] ldaGGLS = Utils.getGestureGestureMatrixLSA(out2);
+					List<List<String[]>> out = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					double[][] pcaGGLS = Utils.getGestureGestureMatrixLSA(out);
+
+					//svd latent semantic
+					List<List<String[]>> out1 = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					double[][] svdGGLS = Utils.getGestureGestureMatrixLSA(out1);
+
+					//lda latent semantic
+					List<List<String[]>> out2 = Utils.convertDataForComparison(IConstants.DATA+File.separator+ IConstants.LDA_DIR + File.separator + IConstants.LDA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
+					double[][] ldaGGLS = Utils.getGestureGestureMatrixLSA(out2);
 					//
-					 
+
 					Utils.writeGestureGestureToFile(Entity.TFIDF, path, outputtfidf);
 					Utils.writeGestureGestureToFile(Entity.TFIDF2, path, outputtfidf2);
 					Utils.writeGestureGestureToFile(Entity.PCA_LSA, path, pcaGGLS);
 					Utils.writeGestureGestureToFile(Entity.SVD_LSA, path, svdGGLS);
 					Utils.writeGestureGestureToFile(Entity.LDA_LSA, path, ldaGGLS);
-					
+
 					MainWindow mainWindow = new MainWindow();
 					mainWindow.executeSVDGG(path+File.separator+"ggTFIDF.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
 					mainWindow.executeSVDGG(path+File.separator+"ggTFIDF2.csv", Utils.convertList(dictionaryHolder.getFileNames()), proxy);
@@ -262,87 +262,87 @@ public class DriverMain {
 				}
 			}
 		}
-		
+
 		System.out.println("Succefully executed task2c");
 	}
-	
-	
-	
-	
+
+
+
+
 	private static void executeTask1a(String inputDirectory,boolean isAll)
 			throws IOException, MatlabConnectionException,
 			MatlabInvocationException {
 		MainWindow main = new MainWindow();
 		List<List<Map<String, List<Double>>>> getDictionary = dictMap.get(inputDirectory).getTfMapArrayIDF();
-		
+
 		String componentDir = inputDirectory.substring(inputDirectory.lastIndexOf(File.separator) + 1);
 
 		if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir))
 			return;
-		
+
 		Map<Integer, Set<String>> variable1 = main
 				.createWordsPerSensor(getDictionary);
-		
+
 		/**************/ //for PCA and SVD
 		List<Map<String, Double[]>> computedScores = main
 				.createSensorWordScores(variable1, getDictionary,3);
 		List<List<String>> order = main.savewordstoCSV(computedScores,IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		/***************/
-		
+
 		/**************/ //for LDA
 		List<Map<String, Double[]>> computedScoresLDA = main.createSensorWordScores(variable1, getDictionary,5);
-		
+
 		if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir))
 			return;
 		List<List<String>> orderLDA = main.savewordstoCSV(computedScoresLDA,IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		main.transformDataForLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		/***************/
-		
-		
+
+
 		if(!isAll)
 		{
-		System.out.println("1. PCA");
-		System.out.println("2. SVD");
-		System.out.println("3. LDA");
-		System.out.println("4. Go Back");
+			System.out.println("1. PCA");
+			System.out.println("2. SVD");
+			System.out.println("3. LDA");
+			System.out.println("4. Go Back");
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String choice = br.readLine();
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			String choice = br.readLine();
 
-		while(!choice.equalsIgnoreCase("4")){
-		switch (Integer.parseInt(choice)) {
-		case 1:
-			main.executePCA(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy); // 1a
-			//Directory creation
-			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+ File.separator + componentDir))
-				return;
-			// end
-			Utils.tranformData(IConstants.DATA+File.separator+IConstants.PCA_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+ File.separator + componentDir);
-			break;
-		case 2:
-			main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy);
-			
-			//Directory creation
-			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir))
-				return;
-			
-			Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
-			break;
-		case 3:
-			main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
-			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))
-				return;
-			Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir);
-			break;
-		case 4: 
-			break;
-		}
-		System.out.println("1. PCA");
-		System.out.println("2. SVD");
-		System.out.println("3. LDA");
-		System.out.println("4. GO Back");
-		choice = br.readLine();
-		}
+			while(!choice.equalsIgnoreCase("4")){
+				switch (Integer.parseInt(choice)) {
+				case 1:
+					main.executePCA(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy); // 1a
+					//Directory creation
+					if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+ File.separator + componentDir))
+						return;
+					// end
+					Utils.tranformData(IConstants.DATA+File.separator+IConstants.PCA_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+ File.separator + componentDir);
+					break;
+				case 2:
+					main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy);
+
+					//Directory creation
+					if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir))
+						return;
+
+					Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
+					break;
+				case 3:
+					main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
+					if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))
+						return;
+					Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir);
+					break;
+				case 4: 
+					break;
+				}
+				System.out.println("1. PCA");
+				System.out.println("2. SVD");
+				System.out.println("3. LDA");
+				System.out.println("4. GO Back");
+				choice = br.readLine();
+			}
 		}else
 		{
 			main.executePCA(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy); // 1a
@@ -373,7 +373,7 @@ public class DriverMain {
 			MatlabInvocationException {
 
 		List<String> componentList = new ArrayList<String>();
-		
+
 		File dir = new File(databaseDirectory);
 		File allFiles = new File(databaseDirectory + File.separator + "all");
 		if (allFiles.exists()) {
@@ -388,7 +388,7 @@ public class DriverMain {
 
 		if (!allFiles.mkdir()) {
 			System.out
-					.println("Error while creating intermediate directory, task not complete");
+			.println("Error while creating intermediate directory, task not complete");
 			return null;
 		}
 
@@ -398,9 +398,9 @@ public class DriverMain {
 			// Normalize data between -1 and 1
 			buildDictionary(new File(databaseDirectory), rBandValueRange);
 		} else {
-			
+
 			copyAllFiles(new File(databaseDirectory), allFiles);
-					
+
 			for (File folder : gestureFolders) {
 				componentList.add(folder.getAbsolutePath());
 				copyAllFiles(folder, allFiles);
@@ -476,12 +476,12 @@ public class DriverMain {
 				cleanData(inputDirectory + File.separator + "Z");
 			} 
 		}
-		
+
 		// now clean ./data directory here
 		File dataDirObj = new File("." + File.separator + IConstants.DATA);
-		
+
 	}
-	
+
 
 	/**
 	 * Task 3: Given a query file - find 10 most similar gesture files based on
@@ -500,33 +500,33 @@ public class DriverMain {
 		AssignBandValues.assignGaussianCurveTask3(proxy, inputFileLocation,
 				rBandValueRange);
 		DictionaryBuilderPhase2 componentDictionary = dictMap.get(inputDirectory);
-		
+
 		// this will construct query dictionary and also print top 3 similar documents based on TF-IDF/TF-IDF2 space
 		SearchDatabaseForSimilarity task3FindSimilarData = new SearchDatabaseForSimilarity(
 				componentDictionary.getTfIDFMapGlobal(), componentDictionary.getTfMapArrayIDF(),
 				componentDictionary.getTfMapArrayIDF2(), wordLength, shiftLength,
 				inputFileLocation, componentDictionary);
-		
+
 		// get the dictionary that you just created
 		List<List<Map<String,List<Double>>>> queryDictionary = task3FindSimilarData.getInputDictionary();
 		MainWindow main = new MainWindow();
 		Map<Integer, Set<String>> queryWordMap = main.createWordsPerSensor(queryDictionary);
 		List<Map<String, Double[]>> queryWordScores = main.createSensorWordScores(queryWordMap, queryDictionary , 3);
-		
+
 		String componentDir = inputDirectory.substring(inputDirectory.lastIndexOf(File.separator) + 1);
-		
+
 		String pcaSemanticDir = IConstants.DATA + File.separator + IConstants.PCA_SEMANTICS + File.separator + componentDir;
 		String svdSematicDir  = IConstants.DATA + File.separator + IConstants.SVD_SEMANTICS + File.separator + componentDir;
 		String ldaSemanticDir = IConstants.DATA + File.separator + IConstants.LDA_DIR + File.separator + IConstants.LDA_SEMANTICS + File.separator + componentDir;
-	
+
 		String pcaSemanticOpDir = IConstants.DATA + File.separator + IConstants.PCA_MAPPED + File.separator + componentDir;
 		String svdSemanticOpDir = IConstants.DATA + File.separator + IConstants.SVD_MAPPED + File.separator + componentDir;
 		String ldaSemanticOpDir = IConstants.DATA + File.separator + IConstants.LDA_MAPPED + File.separator + componentDir;
-		
+
 		if(!Utils.isDirectoryCreated(pcaSemanticOpDir)) return;
 		if(!Utils.isDirectoryCreated(svdSemanticOpDir)) return;
 		if(!Utils.isDirectoryCreated(ldaSemanticOpDir)) return;
-		
+
 		List<String[]> pcaQueryTransformList = null;
 		List<String[]> svdQueryTransformList = null;
 		List<String[]> ldaQueryTransformList = null;
@@ -537,24 +537,33 @@ public class DriverMain {
 		} catch(Exception e) {
 			System.out.println("Error while processing top 3 latent semantic file");
 		}
-		 
-		
-		 String pcaTransformDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_TRANSFORM + File.separator + componentDir;
-		 String svdTransformDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.SVD_TRANSFORM + File.separator + componentDir;
-		 String ldaTransformDirectory = "." + File.separator + IConstants.DATA + File.separator +IConstants.LDA_DIR +File.separator+ IConstants.LDA_TRANSFORM + File.separator + componentDir;
-		 
-		 File pcaTransformedDirFile = new File(pcaTransformDirectory);
-		 File svdTransformedDirFile = new File(svdTransformDirectory);
-		 File ldaTransformedDirFile = new File(ldaTransformDirectory);
-		 
-		 List<List<String[]>> pcaTrasnsformData = Utils.convertDataForComparison(pcaTransformDirectory, pcaTransformedDirFile.listFiles());
-		 List<List<String[]>> svdTrasnsformData = Utils.convertDataForComparison(svdTransformDirectory, svdTransformedDirFile.listFiles());
-		 List<List<String[]>> ldaTrasnsformData = Utils.convertDataForComparison(ldaTransformDirectory, ldaTransformedDirFile.listFiles());
-		 
-		 HashMap<Integer, Double> pcaScores = searchForSimilarLSA(pcaQueryTransformList, pcaTrasnsformData);
-		 HashMap<Integer, Double> svdScores = searchForSimilarLSA(svdQueryTransformList, svdTrasnsformData);
-		 HashMap<Integer, Double> ldaScores = searchForSimilarLSA(ldaQueryTransformList, ldaTrasnsformData);
-			
+
+		// per Sensor
+		String pcaTransformDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_TRANSFORM + File.separator + componentDir;
+		String svdTransformDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.SVD_TRANSFORM + File.separator + componentDir;
+		String ldaTransformDirectory = "." + File.separator + IConstants.DATA + File.separator +IConstants.LDA_DIR +File.separator+ IConstants.LDA_TRANSFORM + File.separator + componentDir;
+
+		File pcaTransformedDirFile = new File(pcaTransformDirectory);
+		File svdTransformedDirFile = new File(svdTransformDirectory);
+		File ldaTransformedDirFile = new File(ldaTransformDirectory);
+
+		List<List<String[]>> pcaTrasnsformData = Utils.convertDataForComparison(pcaTransformDirectory, pcaTransformedDirFile.listFiles());
+		List<List<String[]>> svdTrasnsformData = Utils.convertDataForComparison(svdTransformDirectory, svdTransformedDirFile.listFiles());
+		List<List<String[]>> ldaTrasnsformData = Utils.convertDataForComparison(ldaTransformDirectory, ldaTransformedDirFile.listFiles());
+
+		// Sensor to Gesture
+		String pcaTransformToFileDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_TRANSFORM_GESTURE + File.separator + componentDir;
+		String svdTransformToFileDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.SVD_TRANSFORM_GESTURE + File.separator + componentDir;
+		String ldaTransformToFileDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.LDA_TRANSFORM_GESTURE + File.separator + componentDir;
+
+		Utils.writeListOfListToDir(pcaTrasnsformData, pcaTransformToFileDirectory, new File(inputDirectory).listFiles());
+		Utils.writeListOfListToDir(svdTrasnsformData, svdTransformToFileDirectory, new File(inputDirectory).listFiles());
+		Utils.writeListOfListToDir(ldaTrasnsformData, ldaTransformToFileDirectory, new File(inputDirectory).listFiles());
+
+		HashMap<Integer, Double> pcaScores = searchForSimilarLSA(pcaQueryTransformList, pcaTrasnsformData);
+		HashMap<Integer, Double> svdScores = searchForSimilarLSA(svdQueryTransformList, svdTrasnsformData);
+		HashMap<Integer, Double> ldaScores = searchForSimilarLSA(ldaQueryTransformList, ldaTrasnsformData);
+
 		System.out.println("Top 5 documents in PCA semantics are as follows:");
 		displayMapResults(pcaScores, new File(inputDirectory).listFiles());
 		System.out.println("Top 5 documents in SVD semantics are as follows:");
@@ -592,17 +601,17 @@ public class DriverMain {
 				k++;
 			}
 			queryTransformList.add(xyz);
-			
+
 		}
-		 CSVWriter csvWriter = new CSVWriter(new FileWriter(semanticOutputDirectory + File.separator +  IConstants.QUERY_MAPPED + ".csv"), ',',
+		CSVWriter csvWriter = new CSVWriter(new FileWriter(semanticOutputDirectory + File.separator +  IConstants.QUERY_MAPPED + ".csv"), ',',
 				CSVWriter.NO_QUOTE_CHARACTER,
 				CSVWriter.DEFAULT_LINE_END);
-		
-		 for(int i =0; i< queryTransformList.size(); i++) {
-			 csvWriter.writeNext(queryTransformList.get(i));
-		 }
-		 csvWriter.close();
-		 return queryTransformList;
+
+		for(int i =0; i< queryTransformList.size(); i++) {
+			csvWriter.writeNext(queryTransformList.get(i));
+		}
+		csvWriter.close();
+		return queryTransformList;
 	}
 
 	private static LinkedHashMap<Integer, Double> searchForSimilarLSA(
@@ -615,17 +624,17 @@ public class DriverMain {
 		}
 		return SearchDatabaseForSimilarity.sortHashMapByValuesD(scores);
 	}
-	
+
 	private static void displayMapResults(HashMap<Integer, Double> tfidfSimilarScores, File[] files) {
 		int counter = 0;
 		for (Entry<Integer, Double> entry : tfidfSimilarScores.entrySet()) { 
-		    Integer key = entry.getKey();		    
-		    File file = files[key];		    
-		    System.out.println((counter + 1) + " - " + file.getAbsolutePath() + "        " + entry.getValue());
-		    counter = counter + 1;
-		    if(counter == 5) {
-		    	break;
-		    }
+			Integer key = entry.getKey();		    
+			File file = files[key];		    
+			System.out.println((counter + 1) + " - " + file.getAbsolutePath() + "        " + entry.getValue());
+			counter = counter + 1;
+			if(counter == 5) {
+				break;
+			}
 		}
 		System.out.println("******************************************************************");
 	}
@@ -644,7 +653,7 @@ public class DriverMain {
 				vectorMap.put(words[j], Double.parseDouble(vectorValuesStr[j]));
 			}
 			semanticData.add(vectorMap);
-			
+
 		}
 		csvReader.close();
 		return semanticData;

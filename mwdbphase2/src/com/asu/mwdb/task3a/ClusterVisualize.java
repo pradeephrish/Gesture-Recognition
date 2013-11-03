@@ -9,15 +9,58 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.io.FileUtils;
 
 public class ClusterVisualize {
-	static int count = 0;
-	public static  void createSetsJS(String inputDirectory) throws IOException{;
+	static int countScript = 0;
+	static int countHtml = 0;
+	
+	public static String createHTML(String inputDirectory,String covername){
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append("<div style=\"border:2px solid; border-radius:25px; margin: 20px; float:left;\">");
 		File file = new File(inputDirectory);
 		File[] listFiles = file.listFiles();
 		
-		System.out.println("<script>");
+		for (int i = 0; i < listFiles.length; i++) {
+			String compon = listFiles[i].getAbsolutePath();
+			compon = compon.substring(compon.lastIndexOf(File.separator)+1);
+			//<div class="dynamic0" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+			stringBuffer.append("<div style=\"border:2px solid; border-radius:25px; margin: 5px; float:left;\">");
+			String htmlScript="";
+			htmlScript = getHtmlScript("PCA");
+			htmlScript+= getHtmlScript("SVD");
+			htmlScript+= getHtmlScript("LDA");
+			htmlScript+= getHtmlScript("TFIDF");
+			htmlScript+= getHtmlScript("TFIDF2");
+			stringBuffer.append(htmlScript);
+			stringBuffer.append("<center>"+compon+"<center>");
+			stringBuffer.append("</div>");
+		}
+		stringBuffer.append("<center>"+covername+"</center>");
+		stringBuffer.append("</div>");
+		stringBuffer.append("</div>");
+		
+		return stringBuffer.toString();
+	}
+	
+	private static String getHtmlScript(String string) {
+		// TODO Auto-generated method stub
+		String outputString = "";
+		outputString += "<div class=\"dynamic"+countHtml+"\" style=\"border:2px solid; border-radius:25px; float:left; margin: 5px\">";
+		outputString+="<center>"+string+"<center></div>";
+		++countHtml;
+		return outputString;
+	}
+
+	public static  String createSetsJS(String inputDirectory) throws IOException{;
+		File file = new File(inputDirectory);
+		File[] listFiles = file.listFiles();
+		
+		StringBuffer stringBuffer = new StringBuffer();
+		
+		stringBuffer.append("<script>");
 		for (int i = 0; i < listFiles.length; i++) {
 			String compon = listFiles[i].getAbsolutePath();
 			compon = compon.substring(compon.lastIndexOf(File.separator)+1);
@@ -63,15 +106,16 @@ public class ClusterVisualize {
 			script+=getScript(listSetLDA);
 			script+=getScript(listSetTFIDF);
 			script+=getScript(listSetTFIDF2);
-			System.out.println(script);
+			stringBuffer.append(script);
 		}
-		System.out.println("</script>");
+		stringBuffer.append("</script>");
+		return stringBuffer.toString();
 	}
 	private static String getScript(List<HashSet<String>> listSet) {
 		
 		String outputString = "";
 		// TODO Auto-generated method stub
-		String string = "var sets"+count+" = [";
+		String string = "var sets"+countScript+" = [";
 		String next = "";
 		for (int j = 0; j < listSet.size()-1; j++) {
 			//var sets = [{label: "G1", size: 10}, {label: "G2", size: 5}];
@@ -80,7 +124,7 @@ public class ClusterVisualize {
 
 		next+="{label: 'G3', size:"+ listSet.get(2).size()+"}];";
 		outputString = string+next;
-		String overlap = "var overlaps"+count+" = ["; 
+		String overlap = "var overlaps"+countScript+" = ["; 
 		int overlap1 = getIntersectionCount(listSet.get(0), listSet.get(1)); //0,1
 		overlap+="{sets: ["+0+","+1+"], size:"+overlap1+"},";
 		int overlap2 = getIntersectionCount(listSet.get(0), listSet.get(2)); //0,2
@@ -92,11 +136,11 @@ public class ClusterVisualize {
 		outputString += overlap;
 		//sets1 = venn.venn(sets1, overlaps1);
 //		System.out.println("sets"+count+" = venn.venn(sets"+count+", overlaps"+count+");");
-		outputString+="sets"+count+" = venn.venn(sets"+count+", overlaps"+count+");";
+		outputString+="sets"+countScript+" = venn.venn(sets"+countScript+", overlaps"+countScript+");";
 		//venn.drawD3Diagram(d3.select(".dynamic0"), sets, w, h);
 //		System.out.println("venn.drawD3Diagram(d3.select(\".dynamic"+count+"\"), sets"+count+", 200, 200);");
-		outputString+="venn.drawD3Diagram(d3.select(\".dynamic"+count+"\"), sets"+count+", 200, 200);";
-		count++;
+		outputString+="venn.drawD3Diagram(d3.select(\".dynamic"+countScript+"\"), sets"+countScript+", 200, 200);";
+		countScript++;
 		return outputString;
 	}
 	public static Integer getIntersectionCount(Set<String> s1,Set<String> s2){
@@ -105,6 +149,35 @@ public class ClusterVisualize {
 		return intersection.size();
 	}
 	public static void main(String[] args) throws IOException {
-		ClusterVisualize.createSetsJS("data/pcagg-clusters");
+		
+		try{
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Clusters</title></head><body></body><script src=\"http://d3js.org/d3.v2.min.js\"></script><script src=\"venn.js\"></script><body>");
+//		System.out.println("**********");
+		buffer.append(ClusterVisualize.createHTML("data/pcagg-clusters", "PCAGG"));
+		buffer.append(ClusterVisualize.createHTML("data/svdgg-clusters", "SVDGG"));
+		buffer.append("</body>");
+		buffer.append(ClusterVisualize.createSetsJS("data/pcagg-clusters"));
+		buffer.append(ClusterVisualize.createSetsJS("data/svdgg-clusters"));
+		buffer.append("<html>");
+		
+//		System.out.println(buffer.toString());
+		FileUtils.write(new File("visualizeclusters/graph.html"), buffer.toString());
+		
+		String osName = System.getProperty("os.name"); 
+		try{ 
+		    if (osName.startsWith("Windows")) 
+		        Runtime.getRuntime().exec( "rundll32 url.dll,FileProtocolHandler " + "file:///C:/Users/paddy/git/mwdbn1/mwdbphase2/visualizeclusters/graph.html");
+		}catch(Exception e){
+		    JOptionPane.showMessageDialog(null, e.toString());
+		}
+		
+		
+		}catch(Exception e){
+			System.out.println("Please run task 3a, before running visualization");
+		}
+		
+		
 	}
 }

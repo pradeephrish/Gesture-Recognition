@@ -13,15 +13,19 @@ public interface IConstants {
 		public static String DATA 				= "data";
 		public static String PCA_SEMANTICS		= "pca-semantic";
 		public static String PCA_TRANSFORM		= "pca-transform";
+		public static String PCA_TRANSFORM_GESTURE		= "pca-transform-gesture";
+		
 		public static String PCA_MAPPED			= "pca-query-mapped";
 		public static String SVD_DIR			= "svd";
 		public static String SVD_SEMANTICS		= "svd-semantic";
 		public static String SVD_TRANSFORM		= "svd-transform";
+		public static String SVD_TRANSFORM_GESTURE		= "svd-transform-gesture";
 		public static String LDA_DIR			= "lda";
 		public static String INPUT_DIR				= "input";
 		public static String OUTPUT_DIR				= "output";
 		public static String LDA_SEMANTICS		= "lda-semantic";
 		public static String LDA_TRANSFORM		= "lda-transform";
+		public static String LDA_TRANSFORM_GESTURE		= "lda-transform-gesture";
 		public static String SVD_DIR_GG			= "svdgg";
 		public static String ALL				= "all";
 		public static String RANGED_BAND		= "rangeBandFile";

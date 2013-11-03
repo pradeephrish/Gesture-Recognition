@@ -1,0 +1,73 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Clusters</title>
+</head>
+
+<body>
+<div style="border:2px solid; border-radius:25px; margin: 20px; float:left;">
+<div style="border:2px solid; border-radius:25px; margin: 5px; float:left;">
+<div class="dynamic0" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+<center>PCA<center>
+</div>
+<div class="dynamic1" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+<center>SVD<center>
+</div>
+<center>X</center>
+</div>
+<div style="border:2px solid; border-radius:25px; margin: 5px; float:left;">
+<div class="dynamic2" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+<center>PCA<center>
+</div>
+<div class="dynamic3" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+<center>SVD<center>
+</div>
+<center>Y</center>
+</div>
+<center>PCAGG</center>
+</div>
+
+
+<div style="border:2px solid; border-radius:25px; margin: 20px; float:left;">
+<div style="border:2px solid; border-radius:25px; margin: 5px; float:left;">
+<div class="dynamic4" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+<center>PCA<center>
+</div>
+<div class="dynamic5" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+<center>SVD<center>
+</div>
+<center>X</center>
+</div>
+<div style="border:2px solid; border-radius:25px; margin: 5px; float:left;">
+<div class="dynamic6" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+<center>PCA<center>
+</div>
+<div class="dynamic7" style="border:2px solid; border-radius:25px; float:left; margin: 5px">
+<center>SVD<center>
+</div>
+<center>Y</center>
+</div>
+<center>SVDGG</center>
+</div>
+
+
+</body>
+<script src="http://d3js.org/d3.v2.min.js"></script>
+<script src="venn.js"></script>
+<script>
+var sets0 = [{label: 'G1', size:91},{label: 'G2', size:91},{label: 'G3', size:91}];
+var overlaps0 = [{sets: [0,1], size:84},{sets: [0,2], size:39},{sets: [0,2], size:39}];
+sets0 = venn.venn(sets0, overlaps0);
+venn.drawD3Diagram(d3.select(".dynamic0"), sets0, 200, 200);
+var sets1 = [{label: 'G1', size:10},{label: 'G2', size:10},{label: 'G3', size:10}];
+var overlaps1 = [{sets: [0,1], size:10},{sets: [0,2], size:16},{sets: [0,2], size:10}];
+sets1 = venn.venn(sets1, overlaps1);
+venn.drawD3Diagram(d3.select(".dynamic1"), sets1, 200, 200);
+var sets2 = [{label: 'G1', size:11},{label: 'G2', size:11},{label: 'G3', size:11}];
+var overlaps2 = [{sets: [0,1], size:20},{sets: [0,2], size:11},{sets: [0,2], size:11}];
+sets2 = venn.venn(sets2, overlaps2);
+venn.drawD3Diagram(d3.select(".dynamic2"), sets2, 200, 200);
+</script>
+</html>

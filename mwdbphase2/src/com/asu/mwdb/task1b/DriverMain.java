@@ -111,7 +111,8 @@ public class DriverMain {
 				executeTask1b(rBandValueRange, inputDirectory);
 				break;
 			case 4:
-				executeTask1c(rBandValueRange, databaseDirectory);
+				String inputDirectory1c = databaseDirectory + File.separator + IConstants.ALL;
+				executeTask1b(rBandValueRange, inputDirectory1c);
 				break;
 			case 5:
 				executeTask2b(componentList);
@@ -485,11 +486,10 @@ public class DriverMain {
 	private static void executeTask1b(double[][] rBandValueRange,
 			String inputDirectory) throws IOException,
 			MatlabInvocationException {
-		System.out.println("Enter query file name for Task 1b::");
+		System.out.println("Enter query file name:");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String inputFileLocation = br.readLine();
 		NormalizeData.NormalizeDataForSingleFile(proxy, inputFileLocation);
-		logger.info("Done normalization for Task 1b");
 		AssignBandValues.assignGaussianCurveTask3(proxy, inputFileLocation,
 				rBandValueRange);
 		DictionaryBuilderPhase2 componentDictionary = dictMap.get(inputDirectory);
@@ -554,7 +554,6 @@ public class DriverMain {
 		displayMapResults(svdScores, new File(inputDirectory).listFiles());
 		System.out.println("Top 5 documents in LDA semantics are as follows:");
 		displayMapResults(ldaScores, new File(inputDirectory).listFiles());
-		System.out.println();
 	}
 
 	private static List<String[]> mapQueryToLSASpace(String semanticDir,

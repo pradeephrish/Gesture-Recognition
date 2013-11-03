@@ -30,4 +30,12 @@ public interface IConstants {
 		public static String LDA_DIR_GG			= "ldagg";
 		public static String SVD_MAPPED 		= "svd-query-mapped";
 		public static String LDA_MAPPED			= "lda-query-mapped";
+		
+		public static String SEMANTICGG_LDA      ="semanticgg_ggLDA.csv";
+		public static String SEMANTICGG_PCA      ="semanticgg_ggPCA.csv";
+		public static String SEMANTICGG_SVD      ="semanticgg_ggSVD.csv";
+		public static String SEMANTICGG_TFIDF    ="semanticgg_ggTFIDF.csv";
+		public static String SEMANTICGG_TFIDF2   ="semanticgg_ggTFIDF2.csv";	
+		
+		public static String TEMPFILE	         ="tempin";
 }

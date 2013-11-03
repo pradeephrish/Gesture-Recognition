@@ -31,6 +31,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 import com.asu.mwdb.gui.MainWindow;
 import com.asu.mwdb.math.Task3FindSimilarData.Entity;
+import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.Utils;
@@ -88,6 +89,7 @@ public class DriverMain {
 			System.out.println("4. Task1c");
 			System.out.println("5. Task2b");
 			System.out.println("6. Task2c");
+			System.out.println("7. Task3a");
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String choice = in.readLine();
@@ -120,6 +122,10 @@ public class DriverMain {
 			case 6: 
 				executeTask2c(componentList);
 				break;
+			case 7: 
+				Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG, componentList);
+				Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
+				break;
 			}
 			System.out.println("1. Task1a");
 			System.out.println("2. Task1a->All Components");
@@ -127,8 +133,9 @@ public class DriverMain {
 			System.out.println("4. Task1c");
 			System.out.println("5. Task2b");
 			System.out.println("6. Task2c");
+			System.out.println("7. Task3a");
 			choice = in.readLine();
-			}while(!choice.equalsIgnoreCase("7"));
+			}while(!choice.equalsIgnoreCase("8"));
 			in.close();
 			// Disconnect the proxy from MATLAB
 			proxy.exit();

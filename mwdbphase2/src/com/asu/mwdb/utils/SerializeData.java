@@ -37,7 +37,7 @@ public class SerializeData {
 	
 	
 	
-	private  static Object deserialize(String inputFileName) throws ClassNotFoundException, IOException{
+	public  static Object deserialize(String inputFileName) throws ClassNotFoundException, IOException{
 		FileInputStream fileInputStream = new FileInputStream(inputFileName);
 		ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 		

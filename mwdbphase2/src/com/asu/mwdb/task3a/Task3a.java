@@ -22,7 +22,8 @@ public class Task3a {
 	
 	public static void executeTask3a(MatlabProxy proxy,String semanticInputDirectory,List<String> listOfComponents){
 		for (int i = 0; i < listOfComponents.size(); i++) {
-			String path =  semanticInputDirectory+File.separator+listOfComponents.get(i);
+			String componentDir = listOfComponents.get(i).substring(listOfComponents.get(i).lastIndexOf(File.separator) + 1);
+			String path =  semanticInputDirectory+File.separator+ componentDir;
 			try {
 				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF);
 				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF2);
@@ -43,8 +44,8 @@ public class Task3a {
 	private static void executeTask3aAtomic(MatlabProxy proxy,String targetFile) throws IOException, MatlabInvocationException{
 		File targetFileHandle = new File(targetFile);
 		
-		
-		String parent = targetFileHandle.getParentFile().getParentFile().getAbsolutePath().substring(targetFileHandle.getParentFile().getAbsolutePath().lastIndexOf(File.separator+1));
+		String temp = targetFileHandle.getParentFile().getParentFile().getAbsolutePath();
+		String parent = temp.substring(temp.lastIndexOf(File.separator)+1);
 
 		String outputDirectory = targetFileHandle.getParentFile().getParentFile().getParentFile().getAbsolutePath()+File.separator+parent+"-clusters";
 		if(!Utils.isDirectoryCreated(outputDirectory))

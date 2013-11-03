@@ -300,4 +300,19 @@ public class Utils {
 		return output;
 	}
 	
+	public static void writeListOfListToDir(List<List<String[]>> listOfList, String fileName, File fileList[]) throws IOException{
+		Iterator<List<String[]>> listOfListIterator = listOfList.iterator();
+		File fileNameHandle = new File(fileName);
+		if(!fileNameHandle.exists()){
+			fileNameHandle.mkdir();
+		}
+		for(int i =0 ;i< listOfList.size();i++){
+			List<String[]> singleList = listOfList.get(i);
+			CSVWriter csvWriter = new CSVWriter(new FileWriter(fileName + File.separator +  fileList[i].getName()), ',',
+					CSVWriter.NO_QUOTE_CHARACTER,
+					CSVWriter.DEFAULT_LINE_END);
+			csvWriter.writeAll(singleList);
+			csvWriter.close();
+		}
+	}
 }

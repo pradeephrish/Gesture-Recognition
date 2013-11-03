@@ -534,6 +534,8 @@ public class DriverMain {
 		File pcaTransformedDirFile = new File(pcaTransformDirectory);
 		File svdTransformedDirFile = new File(svdTransformDirectory);
 		File ldaTransformedDirFile = new File(ldaTransformDirectory);
+		
+		
 
 		List<List<String[]>> pcaTrasnsformData = Utils.convertDataForComparison(pcaTransformDirectory, pcaTransformedDirFile.listFiles());
 		List<List<String[]>> svdTrasnsformData = Utils.convertDataForComparison(svdTransformDirectory, svdTransformedDirFile.listFiles());
@@ -544,20 +546,20 @@ public class DriverMain {
 		String svdTransformToFileDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.SVD_TRANSFORM_GESTURE + File.separator + componentDir;
 		String ldaTransformToFileDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.LDA_TRANSFORM_GESTURE + File.separator + componentDir;
 
-		Utils.writeListOfListToDir(pcaTrasnsformData, pcaTransformToFileDirectory, new File(inputDirectory).listFiles());
-		Utils.writeListOfListToDir(svdTrasnsformData, svdTransformToFileDirectory, new File(inputDirectory).listFiles());
-		Utils.writeListOfListToDir(ldaTrasnsformData, ldaTransformToFileDirectory, new File(inputDirectory).listFiles());
+		Utils.writeListOfListToDir(pcaTrasnsformData, pcaTransformToFileDirectory, Utils.getCSVFiles(new File(inputDirectory)));
+		Utils.writeListOfListToDir(svdTrasnsformData, svdTransformToFileDirectory, Utils.getCSVFiles(new File(inputDirectory)));
+		Utils.writeListOfListToDir(ldaTrasnsformData, ldaTransformToFileDirectory, Utils.getCSVFiles(new File(inputDirectory)));
 
 		HashMap<Integer, Double> pcaScores = searchForSimilarLSA(pcaQueryTransformList, pcaTrasnsformData);
 		HashMap<Integer, Double> svdScores = searchForSimilarLSA(svdQueryTransformList, svdTrasnsformData);
 		HashMap<Integer, Double> ldaScores = searchForSimilarLSA(ldaQueryTransformList, ldaTrasnsformData);
 
 		System.out.println("Top 5 documents in PCA semantics are as follows:");
-		displayMapResults(pcaScores, new File(inputDirectory).listFiles());
+		displayMapResults(pcaScores, Utils.getCSVFiles(new File(inputDirectory)));
 		System.out.println("Top 5 documents in SVD semantics are as follows:");
-		displayMapResults(svdScores, new File(inputDirectory).listFiles());
+		displayMapResults(svdScores, Utils.getCSVFiles(new File(inputDirectory)));
 		System.out.println("Top 5 documents in LDA semantics are as follows:");
-		displayMapResults(ldaScores, new File(inputDirectory).listFiles());
+		displayMapResults(ldaScores, Utils.getCSVFiles(new File(inputDirectory)));
 	}
 
 	private static List<String[]> mapQueryToLSASpace(String semanticDir,

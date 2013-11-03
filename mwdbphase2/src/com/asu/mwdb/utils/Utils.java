@@ -342,4 +342,16 @@ public class Utils {
 		csvReader.close();
 		return semanticData;
 	}
+	
+	public static File [] getCSVFiles(File dirFile){
+		File[] fileList = dirFile.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File path) {
+				String name = path.getName().toLowerCase();
+				return name.endsWith(".csv") && path.isFile();
+			}
+		});
+		return fileList;
+	}
+	
 }

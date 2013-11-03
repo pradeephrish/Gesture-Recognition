@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.Utils;
 
@@ -21,15 +23,22 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class Task3a {
 	
 	public static void executeTask3a(MatlabProxy proxy,String semanticInputDirectory,List<String> listOfComponents){
+		
+
 		for (int i = 0; i < listOfComponents.size(); i++) {
 			String componentDir = listOfComponents.get(i).substring(listOfComponents.get(i).lastIndexOf(File.separator) + 1);
 			String path =  semanticInputDirectory+File.separator+ componentDir;
+			String parent = semanticInputDirectory.substring(semanticInputDirectory.lastIndexOf(File.separator)+1);
+			String outputDirectory = new File(path).getParentFile().getParentFile().getAbsolutePath()+File.separator+parent+"-clusters"+File.separator+componentDir;
+			if(!Utils.isDirectoryCreated(outputDirectory))
+				return;
+			
 			try {
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF);
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF2);
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_PCA);
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_SVD);
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_LDA);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF,componentDir);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF2,componentDir);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_PCA,componentDir);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_SVD,componentDir);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_LDA,componentDir);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -41,15 +50,13 @@ public class Task3a {
 	}
 	
 
-	private static void executeTask3aAtomic(MatlabProxy proxy,String targetFile) throws IOException, MatlabInvocationException{
+	private static void executeTask3aAtomic(MatlabProxy proxy,String targetFile,String component) throws IOException, MatlabInvocationException{
 		File targetFileHandle = new File(targetFile);
 		
 		String temp = targetFileHandle.getParentFile().getParentFile().getAbsolutePath();
 		String parent = temp.substring(temp.lastIndexOf(File.separator)+1);
 
 		String outputDirectory = targetFileHandle.getParentFile().getParentFile().getParentFile().getAbsolutePath()+File.separator+parent+"-clusters";
-		if(!Utils.isDirectoryCreated(outputDirectory))
-			return;
 		
 		CSVReader csvReader = new CSVReader(new InputStreamReader(
 				new FileInputStream(targetFileHandle.getAbsolutePath())));
@@ -83,10 +90,11 @@ public class Task3a {
 			csvWriter.writeNext(line);
 			csvWriter.close();
 
-
-
-			proxy.eval("findElbow('" + tempFileHandle.getAbsolutePath() + "','" + tempFinalResult+ "')");
-
+		
+			String imagePath = outputDirectory+File.separator+component+File.separator+"elbow-"+targetFileHandle.getName()+"_"+j+".png";
+			System.out.println(imagePath);
+			proxy.eval("findElbow('" + tempFileHandle.getAbsolutePath() + "','" + tempFinalResult+ "','" + imagePath+ "')");
+			
 			csvReader = new CSVReader(new InputStreamReader(
 					new FileInputStream(tempFinalResult)));
 			List<String[]> tempFileList = csvReader.readAll();
@@ -95,12 +103,19 @@ public class Task3a {
 			Double elbowValue = Double.parseDouble(tempFileList.get(0)[0]);
 			String [] actualLine = targetFileList.get(j);
 
-			System.out.println("Clusters for eigen vector : "+j);
+//			System.out.println("Clusters for eigen vector : "+j);
+			
+			StringBuffer stringBuffer = new StringBuffer();
+			
 			for(int i =0 ;i<actualLine.length;i++){
 				if(elbowValue <= Double.parseDouble(actualLine[i])){
-					System.out.print(docArr[i] + "   ");
+//					System.out.print(docArr[i] + "   ");
+					stringBuffer.append(docArr[i]+ "  ");
 				}
 			}
+			
+			FileUtils.writeStringToFile(new File(outputDirectory+File.separator+component+File.separator+"cluster-"+targetFileHandle.getName()+"_"+j+"_group.txt"),stringBuffer.toString());
+			
 			tempFileHandle.delete();
 			new File(tempFinalResult).delete();
 		}

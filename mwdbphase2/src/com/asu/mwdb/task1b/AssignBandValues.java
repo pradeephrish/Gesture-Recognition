@@ -60,7 +60,7 @@ public class AssignBandValues {
 			String currentDirectory = inputFileLocation.substring(0, position);
 			String gaussianFileOutput = currentDirectory + File.separator
 					+  IConstants.GAUSSIAN_FILE + ".csv";
-			String normalizedFileLocation = currentDirectory + File.separator + IConstants.NORMALIZED_FILE;
+			String normalizedFileLocation = currentDirectory + File.separator + IConstants.NORMALIZED_FILE + ".csv";
 			assignLetterToValue(normalizedFileLocation, gaussianFileOutput, rBandValueRange);
 			logger.info("Done with assigning band letters for Task 3");
 		} else {

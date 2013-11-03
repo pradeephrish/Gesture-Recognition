@@ -505,11 +505,60 @@ public class DriverMain {
 		MainWindow main = new MainWindow();
 		Map<Integer, Set<String>> queryWordMap = main.createWordsPerSensor(queryDictionary);
 		List<Map<String, Double[]>> queryWordScores = main.createSensorWordScores(queryWordMap, queryDictionary , 3);
-	
-		// TODO - Create folders for each component and fetch the semantic values from that location
-		String semanticDir = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_SEMANTICS;
-		String semanticOutputDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_MAPPED;
 		
+		String componentDir = inputDirectory.substring(inputDirectory.lastIndexOf(File.separator) + 1);
+		
+		String pcaSemanticDir = IConstants.DATA + File.separator + IConstants.PCA_SEMANTICS + File.separator + componentDir;
+		String svdSematicDir  = IConstants.DATA + File.separator + IConstants.SVD_SEMANTICS + File.separator + componentDir;
+		String ldaSemanticDir = IConstants.DATA + File.separator + IConstants.LDA_DIR + File.separator + IConstants.LDA_SEMANTICS + File.separator + componentDir;
+	
+		String pcaSemanticOpDir = IConstants.DATA + File.separator + IConstants.PCA_MAPPED + File.separator + componentDir;
+		String svdSemanticOpDir = IConstants.DATA + File.separator + IConstants.SVD_MAPPED + File.separator + componentDir;
+		String ldaSemanticOpDir = IConstants.DATA + File.separator + IConstants.LDA_MAPPED + File.separator + componentDir;
+		
+		if(!Utils.isDirectoryCreated(pcaSemanticOpDir)) return;
+		if(!Utils.isDirectoryCreated(svdSemanticOpDir)) return;
+		if(!Utils.isDirectoryCreated(ldaSemanticOpDir)) return;
+		
+		List<String[]> pcaQueryTransformList = null;
+		List<String[]> svdQueryTransformList = null;
+		List<String[]> ldaQueryTransformList = null;
+		try {
+			pcaQueryTransformList = mapQueryToLSASpace(pcaSemanticDir, pcaSemanticOpDir, queryWordScores);
+			svdQueryTransformList = mapQueryToLSASpace(svdSematicDir, svdSemanticOpDir, queryWordScores);
+			ldaQueryTransformList = mapQueryToLSASpace(ldaSemanticDir, ldaSemanticOpDir, queryWordScores);
+		} catch(Exception e) {
+			System.out.println("Error while processing top 3 latent semantic file");
+		}
+		 
+		
+		 String pcaTransformDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_TRANSFORM + File.separator + componentDir;
+		 String svdTransformDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.SVD_TRANSFORM + File.separator + componentDir;
+		 String ldaTransformDirectory = "." + File.separator + IConstants.DATA + File.separator +IConstants.LDA_DIR +File.separator+ IConstants.LDA_TRANSFORM + File.separator + componentDir;
+		 
+		 File pcaTransformedDirFile = new File(pcaTransformDirectory);
+		 File svdTransformedDirFile = new File(svdTransformDirectory);
+		 File ldaTransformedDirFile = new File(ldaTransformDirectory);
+		 
+		 List<List<String[]>> pcaTrasnsformData = Utils.convertDataForComparison(pcaTransformDirectory, pcaTransformedDirFile.listFiles());
+		 List<List<String[]>> svdTrasnsformData = Utils.convertDataForComparison(svdTransformDirectory, svdTransformedDirFile.listFiles());
+		 List<List<String[]>> ldaTrasnsformData = Utils.convertDataForComparison(ldaTransformDirectory, ldaTransformedDirFile.listFiles());
+		 
+		 HashMap<Integer, Double> pcaScores = searchForSimilarLSA(pcaQueryTransformList, pcaTrasnsformData);
+		 HashMap<Integer, Double> svdScores = searchForSimilarLSA(svdQueryTransformList, svdTrasnsformData);
+		 HashMap<Integer, Double> ldaScores = searchForSimilarLSA(ldaQueryTransformList, ldaTrasnsformData);
+			
+		System.out.println("Top 5 documents in PCA semantics are as follows:");
+		displayMapResults(pcaScores, new File(inputDirectory).listFiles());
+		System.out.println("Top 5 documents in SVD semantics are as follows:");
+		displayMapResults(svdScores, new File(inputDirectory).listFiles());
+		System.out.println("Top 5 documents in LDA semantics are as follows:");
+		displayMapResults(ldaScores, new File(inputDirectory).listFiles());
+		System.out.println();
+	}
+
+	private static List<String[]> mapQueryToLSASpace(String semanticDir,
+			String semanticOutputDirectory, List<Map<String, Double[]>> queryWordScores) throws IOException {
 		File semanticFileDirObj = new File(semanticDir);
 		File[] semanticFiles = semanticFileDirObj.listFiles();
 		Iterator<Map<String, Double[]>> queryIt = queryWordScores.iterator();
@@ -547,19 +596,7 @@ public class DriverMain {
 			 csvWriter.writeNext(queryTransformList.get(i));
 		 }
 		 csvWriter.close();
-		 
-		 File fileTemp = new File(inputDirectory);
-		 File[] listFiles = fileTemp.listFiles();
-		 String transformedDirectory = "." + File.separator + IConstants.DATA + File.separator + IConstants.PCA_TRANSFORM;
-		 List<List<String[]>> pcaTrasnsformData = Utils.convertDataForComparison(transformedDirectory, listFiles);
-		 
-		 HashMap<Integer, Double> pcaScores = searchForSimilarLSA(queryTransformList, pcaTrasnsformData);
-		 File fileObj = new File(inputDirectory);
-		 File[] files = fileObj.listFiles();
-			
-		System.out.println("Top 5 documents in PCA semantics are as follows:");
-		displayMapResults(pcaScores, files);
-		System.out.println();
+		 return queryTransformList;
 	}
 
 	private static LinkedHashMap<Integer, Double> searchForSimilarLSA(
@@ -578,13 +615,13 @@ public class DriverMain {
 		for (Entry<Integer, Double> entry : tfidfSimilarScores.entrySet()) { 
 		    Integer key = entry.getKey();		    
 		    File file = files[key];		    
-		    System.out.println((counter + 1) + " - " + file.getAbsolutePath() + "        ");
+		    System.out.println((counter + 1) + " - " + file.getAbsolutePath() + "        " + entry.getValue());
 		    counter = counter + 1;
 		    if(counter == 5) {
 		    	break;
 		    }
 		}
-		System.out.println("**********************");
+		System.out.println("******************************************************************");
 	}
 
 	private static List<Map<String, Double>> getSemanticFileData(

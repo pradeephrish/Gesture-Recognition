@@ -101,15 +101,15 @@ public class SearchDatabaseForSimilarity {
 		for (Entry<Integer, Double> entry : tfidfSimilarScores.entrySet()) { 
 		    Integer key = entry.getKey();		    
 		    File file = dictionaryCreator.getFileNames()[key];
-		    String fileName = file.getPath().substring(file.getPath().lastIndexOf(File.separator) + 1);
+		    String fileName = file.getAbsolutePath();
 		    fileName = fileName.replace("letters" + File.separator, "");		    
-		    System.out.println(fileName + "        " + entry.getValue());
+		    System.out.println((counter + 1)+ " - " + fileName + "        " + entry.getValue());
 		    counter = counter + 1;
 		    if(counter == 5) {
 		    	break;
 		    }
 		}
-		System.out.println("End");
+		System.out.println("******************************************************************");
 	}
 
 	/**

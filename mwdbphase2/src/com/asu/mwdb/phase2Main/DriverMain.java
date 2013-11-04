@@ -57,27 +57,36 @@ public class DriverMain {
 			String path = "cd(\'" + matlabScriptLoc + "')";
 			proxy.eval(path);
 
+			// Read the Band size - r
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					System.in));
 			System.out.println("Enter the value for r (gaussian bands):");
 			rValue = Double.parseDouble(br.readLine());
 
+			// Create a Gaussian bands of size r
 			GaussianBands gb = new GaussianBands();
 			double rBandValueRange[][] = gb.getGaussianBands(rValue, mean,
 					stdDeviation);
-			// get all inputs needed for task 1
+			
+			// Read the database directory
 			System.out.println("Enter database directory:");
 			String databaseDirectory = br.readLine();
 
+			// Clean Data 
 			cleanData(databaseDirectory);
 
+			// Read window length w
 			System.out.println("Enter value of word length (w):");
 			wordLength = Integer.parseInt(br.readLine());
 
+			// Read shift length s
 			System.out.println("Enter value of shift length (s):");
 			shiftLength = Integer.parseInt(br.readLine());
+			
+			// Index files based on TF, IDF, IDF2, TF-IDF, TF-IDF2
 			List<String> componentList = indexFiles(rBandValueRange, databaseDirectory);
 
+			// Options to run the tasks in Phase 2
 			
 			System.out.println("Please enter choice for task you want to execute:");
 			System.out.println("1. Task1a - Identify Top 3 Latent Semantics");
@@ -94,32 +103,39 @@ public class DriverMain {
 
 			do{
 				switch (Integer.parseInt(choice)) {
-
+				// Task1a
 				case 1:
 					System.out.println("Enter component folder for Task 1a:");
 					String inputDirectory1a = in.readLine();
 					executeTask1a(inputDirectory1a,false);
 					break;
+				// Task1a- for all components					
 				case 2:
 					for (int i = 0; i < componentList.size(); i++) {
 						executeTask1a(componentList.get(i),true);
 					}
-					break;	
+					break;
+				// Task1b
 				case 3:
 					System.out.println("Enter component folder for Task 1b:");
 					String inputDirectory = br.readLine();
 					executeTask1b(rBandValueRange, inputDirectory);
 					break;
+					
+				// Task1c
 				case 4:
 					String inputDirectory1c = databaseDirectory + File.separator + IConstants.ALL;
 					executeTask1b(rBandValueRange, inputDirectory1c);
 					break;
+				// Task2b
 				case 5:
 					executeTask2b(componentList);
 					break;
+				// Task2c
 				case 6: 
 					executeTask2c(componentList);
 					break;
+				// Task3a
 				case 7: 
 					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG, componentList);
 					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
@@ -148,6 +164,13 @@ public class DriverMain {
 
 	}
 
+	/**
+	 * Task 2b execution
+	 * @param inputDirectoryKey
+	 * @throws IOException
+	 * @throws MatlabConnectionException
+	 * @throws MatlabInvocationException
+	 */
 	private static void executeTask2b(List<String> inputDirectoryKey) throws IOException, MatlabConnectionException, MatlabInvocationException{
 		//pre-processing
 		System.out.println("Executing task2b   .....  ");
@@ -200,6 +223,13 @@ public class DriverMain {
 		System.out.println("Succefully executed task2b");
 	}
 
+	/**
+	 * Task 2c execution
+	 * @param inputDirectoryKey
+	 * @throws IOException
+	 * @throws MatlabConnectionException
+	 * @throws MatlabInvocationException
+	 */
 	private static void executeTask2c(List<String> inputDirectoryKey) throws IOException, MatlabConnectionException, MatlabInvocationException{
 		//pre-processing
 		System.out.println("Executing task2c   .....  ");
@@ -261,7 +291,14 @@ public class DriverMain {
 
 
 
-
+	/**
+	 * Task 1a execution
+	 * @param inputDirectory
+	 * @param isAll
+	 * @throws IOException
+	 * @throws MatlabConnectionException
+	 * @throws MatlabInvocationException
+	 */
 	private static void executeTask1a(String inputDirectory,boolean isAll)
 			throws IOException, MatlabConnectionException,
 			MatlabInvocationException {
@@ -406,6 +443,13 @@ public class DriverMain {
 		return componentList;
 	}
 
+	/**
+	 * Build Dictoionary
+	 * @param folder
+	 * @param rBandValueRange
+	 * @throws IOException
+	 * @throws MatlabInvocationException
+	 */
 	private static void buildDictionary(File folder, double[][] rBandValueRange)
 			throws IOException, MatlabInvocationException {
 		// Normalize data between -1 and 1
@@ -420,6 +464,12 @@ public class DriverMain {
 		dictMap.put(folder.getAbsolutePath(), dictionary);
 	}
 
+	/**
+	 * Copy all files from all the components and create a ALL folder for task 1c 
+	 * @param source
+	 * @param dest
+	 * @throws IOException
+	 */
 	private static void copyAllFiles(File source, File dest) throws IOException {
 
 		File[] fileNames = source.listFiles(new FileFilter() {
@@ -438,6 +488,11 @@ public class DriverMain {
 		}
 	}
 
+	/**
+	 * Clean data from data base folder
+	 * @param inputDirectory
+	 * @throws IOException
+	 */
 	private static void cleanData(String inputDirectory)
 			throws IOException {
 		File fileObj = new File(inputDirectory);
@@ -473,9 +528,9 @@ public class DriverMain {
 
 
 	/**
-	 * Task 3: Given a query file - find 10 most similar gesture files based on
-	 * TF/IDF/TD-IDF etc values. The user will specify parameter for comparison.
-	 * 
+	 * Task 1b execution
+	 * @param rBandValueRange
+	 * @param inputDirectory
 	 * @throws IOException
 	 * @throws MatlabInvocationException
 	 */
@@ -563,6 +618,14 @@ public class DriverMain {
 		displayMapResults(ldaScores, Utils.getCSVFiles(new File(inputDirectory)));
 	}
 
+	/**
+	 * Map the query file to LSA space
+	 * @param semanticDir
+	 * @param semanticOutputDirectory
+	 * @param queryWordScores
+	 * @return
+	 * @throws IOException
+	 */
 	private static List<String[]> mapQueryToLSASpace(String semanticDir,
 			String semanticOutputDirectory, List<Map<String, Double[]>> queryWordScores) throws IOException {
 		File semanticFileDirObj = new File(semanticDir);
@@ -606,6 +669,12 @@ public class DriverMain {
 		return queryTransformList;
 	}
 
+	/**
+	 * Similarity of files in LSA space
+	 * @param queryData
+	 * @param pcaTrasnsformData
+	 * @return
+	 */
 	private static LinkedHashMap<Integer, Double> searchForSimilarLSA(
 			List<String[]> queryData, List<List<String[]>> pcaTrasnsformData) {
 		HashMap<Integer,Double> scores = new HashMap<Integer, Double>();
@@ -617,6 +686,11 @@ public class DriverMain {
 		return SearchDatabaseForSimilarity.sortHashMapByValuesD(scores);
 	}
 
+	/**
+	 * Display top 5 similar files based on score
+	 * @param tfidfSimilarScores
+	 * @param files
+	 */
 	private static void displayMapResults(HashMap<Integer, Double> tfidfSimilarScores, File[] files) {
 		int counter = 0;
 		for (Entry<Integer, Double> entry : tfidfSimilarScores.entrySet()) { 

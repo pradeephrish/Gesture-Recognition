@@ -18,9 +18,9 @@ import java.util.Map.Entry;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.asu.mwdb.task1b.CosineSimilarity;
-import com.asu.mwdb.math.Task3FindSimilarData.Entity;
-import com.asu.mwdb.task1b.FileIOHelper;
+import com.asu.mwdb.phase2Main.CosineSimilarity;
+import com.asu.mwdb.phase2Main.FileIOHelper;
+import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
 
 public class Utils {
 
@@ -190,7 +190,7 @@ public class Utils {
 	 * @param entity
 	 * @throws IOException
 	 */
-	public static void writeGestureGestureToFile(Entity entity,String folderPath,double[][] doubleValues) throws IOException {
+	public static void writeGestureGestureToFile(UserChoice entity,String folderPath,double[][] doubleValues) throws IOException {
 		String fileName = folderPath+ File.separator;
 		switch(entity) {
 			case TFIDF:
@@ -224,7 +224,7 @@ public class Utils {
 	}
 	
 	
-	public static double[][] computeSimilarilty(List<List<Map<String, List<Double>>>> dictionary, Entity entity) {
+	public static double[][] computeSimilarilty(List<List<Map<String, List<Double>>>> dictionary, UserChoice entity) {
 		double[][] doubleValues= null;
 		doubleValues = new double[dictionary.size()][dictionary.size()];
 		for (int currentFileIndex = 0; currentFileIndex < dictionary.size(); currentFileIndex++) {
@@ -252,7 +252,7 @@ public class Utils {
 	}
 	
 	private static Map<String, Double> convertMap(Map<String, List<Double>> map,
-			Entity entity) {
+			UserChoice entity) {
 			Map<String,Double> values = new HashMap<String, Double>(); 
 			Iterator<Entry<String, List<Double>>> iterator = map.entrySet().iterator();
 			while(iterator.hasNext()){
@@ -290,7 +290,6 @@ public class Utils {
 
 
 	public static double[][] getGestureGestureMatrixLSA(List<List<String[]>> out) {
-		// TODO Auto-generated method stub
 		double[][] output = new double[out.size()][out.size()];
 		for (int i = 0; i < out.size(); i++) {
 			for (int j = 0; j < out.size();j++) {

@@ -168,7 +168,7 @@ public class ClusterVisualize {
 		String osName = System.getProperty("os.name"); 
 		try{ 
 		    if (osName.startsWith("Windows")) 
-		        Runtime.getRuntime().exec( "rundll32 url.dll,FileProtocolHandler " + "file:///C:/Users/paddy/git/mwdbn1/mwdbphase2/visualizeclusters/graph.html");
+		        Runtime.getRuntime().exec( "rundll32 url.dll,FileProtocolHandler " + "file:///C:/Users/Kedar%20Joshi/git/mwdb/mwdbphase2/visualizeclusters/graph.html");
 		}catch(Exception e){
 		    JOptionPane.showMessageDialog(null, e.toString());
 		}

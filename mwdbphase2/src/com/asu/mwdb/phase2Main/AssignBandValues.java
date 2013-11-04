@@ -7,18 +7,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
-import com.asu.mwdb.utils.IConstants;
-
 
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.asu.mwdb.utils.IConstants;
+
 public class AssignBandValues {
 
-	private static Logger logger = new MyLogger().getupLogger();
 
 	/**
 	 * Given a key value, assign it to corresponding band in Gaussian
@@ -49,7 +46,7 @@ public class AssignBandValues {
 				}
 			}
 		} else {
-			logger.info("Error while creating directory for gaussian files");
+			System.out.println("Error while creating directory for gaussian files");
 		}
 	}
 
@@ -62,9 +59,9 @@ public class AssignBandValues {
 					+  IConstants.GAUSSIAN_FILE + ".csv";
 			String normalizedFileLocation = currentDirectory + File.separator + IConstants.NORMALIZED_FILE + ".csv";
 			assignLetterToValue(normalizedFileLocation, gaussianFileOutput, rBandValueRange);
-			logger.info("Done with assigning band letters for Task 3");
+			System.out.println("Done with assigning band letters for Task 3");
 		} else {
-			logger.info("Error while assigning band letters for Task 3");
+			System.out.println("Error while assigning band letters for Task 3");
 		}
 	}
 

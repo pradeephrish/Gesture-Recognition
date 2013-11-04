@@ -51,6 +51,12 @@ public class CosineSimilarity {
 		return (double) (ans / (hash2Length * hashLength));
 	}
 	
+	/**
+	 * Cosine similarity for LSA space files with query file 
+	 * @param queryData
+	 * @param documentData
+	 * @return
+	 */
 	public static double compareLSADocument(List<String[]> queryData, List<String[]> documentData) {
 		double sum = 0.0;
 		for(int i=0; i< queryData.size(); i++) {

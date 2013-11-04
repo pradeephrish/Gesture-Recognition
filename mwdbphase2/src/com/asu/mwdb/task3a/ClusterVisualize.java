@@ -114,11 +114,10 @@ public class ClusterVisualize {
 	private static String getScript(List<HashSet<String>> listSet) {
 		
 		String outputString = "";
-		// TODO Auto-generated method stub
 		String string = "var sets"+countScript+" = [";
 		String next = "";
 		for (int j = 0; j < listSet.size()-1; j++) {
-			//var sets = [{label: "G1", size: 10}, {label: "G2", size: 5}];
+			
 			next+="{label: 'G"+(j+1)+"', size:"+ listSet.get(j).size()+"},";
 		}
 
@@ -131,14 +130,8 @@ public class ClusterVisualize {
 		overlap+="{sets: ["+0+","+2+"], size:"+overlap2+"},";
 		int overlap3 = getIntersectionCount(listSet.get(1), listSet.get(2)); //1,2
 		overlap+="{sets: ["+1+","+2+"], size:"+overlap3+"}];";
-		//var overlaps = [{sets: [0,1], size: 2}];
-//		System.out.println(overlap);
 		outputString += overlap;
-		//sets1 = venn.venn(sets1, overlaps1);
-//		System.out.println("sets"+count+" = venn.venn(sets"+count+", overlaps"+count+");");
 		outputString+="sets"+countScript+" = venn.venn(sets"+countScript+", overlaps"+countScript+");";
-		//venn.drawD3Diagram(d3.select(".dynamic0"), sets, w, h);
-//		System.out.println("venn.drawD3Diagram(d3.select(\".dynamic"+count+"\"), sets"+count+", 200, 200);");
 		outputString+="venn.drawD3Diagram(d3.select(\".dynamic"+countScript+"\"), sets"+countScript+", 200, 200);";
 		countScript++;
 		return outputString;
@@ -154,26 +147,13 @@ public class ClusterVisualize {
 		StringBuffer buffer = new StringBuffer();
 		
 		buffer.append("<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Clusters</title></head><body></body><script src=\"http://d3js.org/d3.v2.min.js\"></script><script src=\"venn.js\"></script><body>");
-//		System.out.println("**********");
 		buffer.append(ClusterVisualize.createHTML("data/pcagg-clusters", "PCAGG"));
 		buffer.append(ClusterVisualize.createHTML("data/svdgg-clusters", "SVDGG"));
 		buffer.append("</body>");
 		buffer.append(ClusterVisualize.createSetsJS("data/pcagg-clusters"));
 		buffer.append(ClusterVisualize.createSetsJS("data/svdgg-clusters"));
 		buffer.append("<html>");
-		
-//		System.out.println(buffer.toString());
 		FileUtils.write(new File("visualizeclusters/graph.html"), buffer.toString());
-		
-		String osName = System.getProperty("os.name"); 
-		try{ 
-		    if (osName.startsWith("Windows")) 
-		        Runtime.getRuntime().exec( "rundll32 url.dll,FileProtocolHandler " + "file:///C:/Users/Kedar%20Joshi/git/mwdb/mwdbphase2/visualizeclusters/graph.html");
-		}catch(Exception e){
-		    JOptionPane.showMessageDialog(null, e.toString());
-		}
-		
-		
 		}catch(Exception e){
 			System.out.println("Please run task 3a, before running visualization");
 		}

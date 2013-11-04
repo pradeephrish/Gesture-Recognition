@@ -24,6 +24,13 @@ import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
 
 public class Utils {
 
+	/**
+	 * Get matrix from the file
+	 * @param filePath
+	 * @param offset
+	 * @return
+	 * @throws IOException
+	 */
 	public static Double[][]  getMatrix(String filePath,Integer offset) throws IOException //offset to skip first row in case of pca  
 	{
 		CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(filePath)));
@@ -43,7 +50,14 @@ public class Utils {
 	}
 
 
-	//inputDirectoryOne is always latent semantics 
+	/**
+	 * Transform data 
+	 * inputDirectoryOne is always latent semantics 
+	 * @param inputDirectoryOne
+	 * @param inputDirectoryTwo
+	 * @param outputDirectory
+	 * @throws IOException
+	 */
 	public static void tranformData(String inputDirectoryOne,String inputDirectoryTwo,String outputDirectory) throws IOException{
 		File[] filesOne = new File(inputDirectoryOne).listFiles(new FileFilter() {
 
@@ -74,6 +88,13 @@ public class Utils {
 	}
 
 
+	/**
+	 * Save matrix to file
+	 * @param outputMatrix
+	 * @param outputDirectory
+	 * @param name
+	 * @throws IOException
+	 */
 	public static void saveMatrixFile(Double[][] outputMatrix,
 			String outputDirectory, String name) throws IOException {
 		CSVWriter writer = new CSVWriter(new FileWriter(new File(outputDirectory+File.separator+name)), ',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
@@ -87,6 +108,12 @@ public class Utils {
 		writer.close();
 	}
 
+	/**
+	 * Multiple two matrix
+	 * @param A
+	 * @param B
+	 * @return
+	 */
 	public static Double[][] multiplicar(Double[][] A, Double[][] B) {
 
 		int aRows = A.length;
@@ -111,6 +138,11 @@ public class Utils {
 
 		return C;
 	}
+	
+	/**
+	 * Print results
+	 * @param results
+	 */
 	public static void print(Double[][] results)
 	{
 		for (int i = 0; i < results.length; i++) {
@@ -120,20 +152,14 @@ public class Utils {
 			System.out.println();
 		}
 	}
-	public static void main(String[] args) throws IOException {
-		Double[][] data1 = Utils.getMatrix("data\\pca-semantic\\X\\13.csv",1);
-		//print(data1);
-		Double[][] data2 = Utils.getMatrix("data\\basedata\\X\\13.csv",0);
-		//sprint(data2);
-
-		//mutliply matrix
-		Double[][] results = Utils.multiplicar(data1, data2);
-//		print(transposeMatrix(results));
-		saveMatrixFile(transposeMatrix(results), "D:\\", "1.csv");
-	}
+	
 
 
-	//tranpose tensor
+	/**
+	 * Transpose a matrix
+	 * @param data2D
+	 * @return
+	 */
 	public static Double[][] transposeMatrix(Double[][] data2D) {
 		Double[][] tranpose2D = new Double[data2D[0].length][data2D.length];
 		for (int j = 0; j < data2D.length; j++) {
@@ -223,7 +249,12 @@ public class Utils {
 		writer.close();
 	}
 	
-	
+	/**
+	 * COmpute similarity for TF-IDF and TF-IDF2
+	 * @param dictionary
+	 * @param entity
+	 * @return
+	 */
 	public static double[][] computeSimilarilty(List<List<Map<String, List<Double>>>> dictionary, UserChoice entity) {
 		double[][] doubleValues= null;
 		doubleValues = new double[dictionary.size()][dictionary.size()];
@@ -251,6 +282,12 @@ public class Utils {
 		return doubleValues;
 	}
 	
+	/**
+	 * Convert map into single dimension
+	 * @param map
+	 * @param entity
+	 * @return
+	 */
 	private static Map<String, Double> convertMap(Map<String, List<Double>> map,
 			UserChoice entity) {
 			Map<String,Double> values = new HashMap<String, Double>(); 
@@ -263,6 +300,9 @@ public class Utils {
 		return values;
 	}
 	
+	/**
+	 * Convert file to required format
+	 */
 	public static List<String> convertList(File[] fileList){
 		List<String> documentOrder = new ArrayList<String>();
 		for (int i = 0; i < fileList.length; i++) {
@@ -271,6 +311,11 @@ public class Utils {
 		return documentOrder;
 	}
 	
+	/**
+	 * Check if its a directory
+	 * @param path
+	 * @return
+	 */
 	public static boolean isDirectoryCreated(String path){
 		try {
 		File file = new File(path);
@@ -289,6 +334,11 @@ public class Utils {
 	}
 
 
+	/**
+	 * Prepare Gesture-Gesture matrix LSA
+	 * @param out
+	 * @return
+	 */
 	public static double[][] getGestureGestureMatrixLSA(List<List<String[]>> out) {
 		double[][] output = new double[out.size()][out.size()];
 		for (int i = 0; i < out.size(); i++) {
@@ -299,6 +349,13 @@ public class Utils {
 		return output;
 	}
 	
+	/**
+	 * Write a List<List<String[]>> type data to disk
+	 * @param listOfList
+	 * @param fileName
+	 * @param fileList
+	 * @throws IOException
+	 */
 	public static void writeListOfListToDir(List<List<String[]>> listOfList, String fileName, File fileList[]) throws IOException{
 		Iterator<List<String[]>> listOfListIterator = listOfList.iterator();
 		File fileNameHandle = new File(fileName);
@@ -342,6 +399,11 @@ public class Utils {
 		return semanticData;
 	}
 	
+	/**
+	 * Get only csv files from the directory
+	 * @param dirFile
+	 * @return
+	 */
 	public static File [] getCSVFiles(File dirFile){
 		File[] fileList = dirFile.listFiles(new FileFilter() {
 			@Override

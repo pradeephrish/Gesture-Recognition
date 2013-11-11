@@ -17,14 +17,25 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 
+
+
+
+
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
+import org.apache.commons.math3.ode.MainStateJacobianProvider;
 
 import au.com.bytecode.opencsv.CSVWriter;
+
+
+
+
 
 
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
@@ -163,6 +174,61 @@ public class DriverMain {
 		}
 
 	}
+	
+	//ggDirectory = IConstants.PCA_DIR_GG or SVD_DIR_GG
+	private static void executeTask2bForCombinedData(List<String> inputDirectoryKey,String ggDirectory) throws IOException, MatlabConnectionException, MatlabInvocationException{
+		System.out.println("Executing task2b combination  .....  ");
+		
+		File[] fileNames = dictMap.get(inputDirectoryKey.get(0)).getFileNames();
+		Integer documentSize = fileNames.length;
+		Double[][] tfidfCombined = new Double[documentSize][documentSize];
+		Double [][] tfidf2Combined = new Double[documentSize][documentSize];
+		Double [][] pcaCombined = new Double[documentSize][documentSize];
+		Double [][] svdCombined = new Double[documentSize][documentSize];
+		Double [][] ldaCombined = new Double[documentSize][documentSize];
+		
+		String path = null;
+		
+		for (int i = 0; i < inputDirectoryKey.size(); i++) {
+			if(!inputDirectoryKey.contains(IConstants.ALL)){
+
+				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
+				File file = new File(IConstants.DATA+File.separator+ggDirectory+File.separator+componentDir);
+				path = file.getAbsolutePath();
+				
+				tfidfCombined=Utils.addMatrix(tfidfCombined, Utils.getMatrix(path+File.separator+"ggTFIDF.csv",0));
+				tfidf2Combined=Utils.addMatrix(tfidf2Combined, Utils.getMatrix(path+File.separator+"ggTFIDF2.csv",0));
+				pcaCombined=Utils.addMatrix(pcaCombined, Utils.getMatrix(path+File.separator+"ggPCA.csv",0));
+				svdCombined=Utils.addMatrix(svdCombined, Utils.getMatrix(path+File.separator+"ggSVD.csv",0));
+				ldaCombined=Utils.addMatrix(ldaCombined, Utils.getMatrix(path+File.separator+"ggLDA.csv",0));
+			}
+		}
+		
+		String parentPath = new File(path).getParentFile().getParentFile()+File.separator+ggDirectory+"-combined";
+		
+		Utils.saveMatrixFile(tfidfCombined, parentPath+File.separator,"ggTFIDF.csv");
+		Utils.saveMatrixFile(tfidf2Combined, parentPath+File.separator,"ggTFIDF2.csv");
+		Utils.saveMatrixFile(pcaCombined, parentPath+File.separator,"ggPCA.csv");
+		Utils.saveMatrixFile(svdCombined, parentPath+File.separator,"ggSVD.csv");
+		Utils.saveMatrixFile(ldaCombined, parentPath+File.separator,"ggLDA.csv");
+		
+		Phase2Utils mainWindow = new Phase2Utils();
+		if(ggDirectory.equals(IConstants.PCA_DIR_GG)){
+			mainWindow.executePCAGG(parentPath+File.separator+"ggTFIDF.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGG(parentPath+File.separator+"ggTFIDF2.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGG(parentPath+File.separator+"ggPCA.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGG(parentPath+File.separator+"ggSVD.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGG(parentPath+File.separator+"ggLDA.csv", Utils.convertList(fileNames), proxy);
+		}else {
+			mainWindow.executeSVDGG(parentPath+File.separator+"ggTFIDF.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGG(parentPath+File.separator+"ggTFIDF2.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGG(parentPath+File.separator+"ggPCA.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGG(parentPath+File.separator+"ggSVD.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGG(parentPath+File.separator+"ggLDA.csv", Utils.convertList(fileNames), proxy);
+		}
+
+	}
+	
 
 	/**
 	 * Task 2b execution
@@ -220,6 +286,10 @@ public class DriverMain {
 			}
 		}
 
+		
+		System.out.println("Comibing data for task2b");
+		executeTask2bForCombinedData(inputDirectoryKey,IConstants.PCA_DIR_GG);
+		
 		System.out.println("Succefully executed task2b");
 	}
 
@@ -285,6 +355,9 @@ public class DriverMain {
 				}
 			}
 		}
+		System.out.println("Comibing data for task2c");
+		
+		executeTask2bForCombinedData(inputDirectoryKey,IConstants.SVD_DIR_GG);
 
 		System.out.println("Succefully executed task2c");
 	}

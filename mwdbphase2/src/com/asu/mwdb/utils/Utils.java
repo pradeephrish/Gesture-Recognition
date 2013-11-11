@@ -23,6 +23,18 @@ import com.asu.mwdb.phase2Main.FileIOHelper;
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
 
 public class Utils {
+	
+	
+	public static Double[][] addMatrix(Double[][] matrixOne,Double[][] matrixTwo){
+		for (int i = 0; i < matrixOne.length; i++) {
+			for (int j = 0; j < matrixOne[i].length; j++) {
+				matrixOne[i][j]=matrixOne[i][j]+matrixTwo[i][j];
+//				matrixOne[i][j]=matrixOne[i][j]/normalizeFactor;
+			}
+		}
+		return matrixOne;
+	}
+	
 
 	public static Double[][]  getMatrix(String filePath,Integer offset) throws IOException //offset to skip first row in case of pca  
 	{

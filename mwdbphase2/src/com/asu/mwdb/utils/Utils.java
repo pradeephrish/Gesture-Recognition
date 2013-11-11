@@ -28,6 +28,9 @@ public class Utils {
 	public static Double[][] addMatrix(Double[][] matrixOne,Double[][] matrixTwo){
 		for (int i = 0; i < matrixOne.length; i++) {
 			for (int j = 0; j < matrixOne[i].length; j++) {
+				if(matrixOne[i][j] == null) {
+					matrixOne[i][j] = 0.0;
+				}
 				matrixOne[i][j]=matrixOne[i][j]+matrixTwo[i][j];
 //				matrixOne[i][j]=matrixOne[i][j]/normalizeFactor;
 			}
@@ -425,6 +428,17 @@ public class Utils {
 			}
 		});
 		return fileList;
+	}
+	
+	public static Double[][] scaleDownMatrix(Double[][] inputMatrix, int scaleDownFactor) {
+		Double[][] scaledDownMatrix = new Double[inputMatrix.length][inputMatrix.length]; 
+		for(int i = 0; i < inputMatrix.length; i++) {
+			for(int j = 0; j < inputMatrix.length; j++) {
+				scaledDownMatrix[i][j] = inputMatrix[i][j] / scaleDownFactor;
+			}
+			scaledDownMatrix[i][i] = 1.0;
+		}
+		return scaledDownMatrix;
 	}
 	
 }

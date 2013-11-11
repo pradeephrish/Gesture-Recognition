@@ -158,6 +158,42 @@ public class Phase2Utils extends javax.swing.JFrame {
 		csvWriter.close();
 		csvReader.close();
 	}
+	
+	public void executePCAGGCombined(String fileLocation, List<String> docOrder, MatlabProxy proxy)
+			throws MatlabConnectionException, MatlabInvocationException,
+			IOException {
+		File file = new File(fileLocation);
+		
+		String temp = fileLocation.substring(0,fileLocation.lastIndexOf(File.separator));
+		String componentName = temp.substring(temp.lastIndexOf(File.separator) + 1);
+		String outputFile =IConstants.DATA
+				+ File.separator + componentName + File.separator
+				+ "pca_" + file.getName() ;
+		proxy.eval("PCAFinder('" + fileLocation + "','" + new File(outputFile).getAbsolutePath()  + "')");
+
+		String pcaFileName = new File(outputFile).getAbsolutePath();
+		String pcaSemanticFileName = IConstants.DATA + File.separator
+				+ componentName+File.separator+ "semanticgg_"
+				+ file.getName();
+
+		CSVReader csvReader = new CSVReader(new InputStreamReader(
+				new FileInputStream(pcaFileName)));
+		CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(
+				new FileOutputStream(pcaSemanticFileName)));
+
+		String[] list = new String[docOrder.size()];
+
+		for (int j = 0; j < docOrder.size(); j++) {
+			list[j] = docOrder.get(j);
+		}
+		csvWriter.writeNext(list);
+
+		for (int j = 0; j < 3; j++) { // consider top 3
+			csvWriter.writeNext(csvReader.readNext());
+		}
+		csvWriter.close();
+		csvReader.close();
+	}
 
 	public void exectuteLDA(String inputLocation, List<List<String>> order,
 			Integer ktopics,MatlabProxy proxy) throws MatlabConnectionException,
@@ -525,6 +561,42 @@ public class Phase2Utils extends javax.swing.JFrame {
 		String svdFileName = new File(outputFile).getAbsolutePath();
 		String svdSemanticFileName = IConstants.DATA + File.separator
 				+ IConstants.SVD_DIR_GG + File.separator +componentName+File.separator+ "semanticgg_"
+				+ file.getName();
+
+		CSVReader csvReader = new CSVReader(new InputStreamReader(
+				new FileInputStream(svdFileName)));
+		CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(
+				new FileOutputStream(svdSemanticFileName)));
+
+		String[] list = new String[docOrder.size()];
+
+		for (int j = 0; j < docOrder.size(); j++) {
+			list[j] = docOrder.get(j);
+		}
+		csvWriter.writeNext(list);
+
+		for (int j = 0; j < 3; j++) { // consider top 3
+			csvWriter.writeNext(csvReader.readNext());
+		}
+		csvWriter.close();
+		csvReader.close();
+	}
+	
+	public void executeSVDGGCombined(String fileLocation, List<String> docOrder, MatlabProxy proxy)
+			throws MatlabConnectionException, MatlabInvocationException,
+			IOException {
+		File file = new File(fileLocation);
+		
+		String temp = fileLocation.substring(0,fileLocation.lastIndexOf(File.separator));
+		String componentName = temp.substring(temp.lastIndexOf(File.separator) + 1);
+		String outputFile =IConstants.DATA
+				+ File.separator + componentName + File.separator
+				+ "svd_" + file.getName() ;
+		proxy.eval("SVDFinder('" + fileLocation + "','" + new File(outputFile).getAbsolutePath()  + "')");
+
+		String svdFileName = new File(outputFile).getAbsolutePath();
+		String svdSemanticFileName = IConstants.DATA + File.separator
+				+ componentName+File.separator+ "semanticgg_"
 				+ file.getName();
 
 		CSVReader csvReader = new CSVReader(new InputStreamReader(

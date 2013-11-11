@@ -190,7 +190,7 @@ public class DriverMain {
 		String path = null;
 		
 		for (int i = 0; i < inputDirectoryKey.size(); i++) {
-			if(!inputDirectoryKey.contains(IConstants.ALL)){
+			if(!inputDirectoryKey.get(i).contains(IConstants.ALL)){
 
 				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
 				File file = new File(IConstants.DATA+File.separator+ggDirectory+File.separator+componentDir);
@@ -205,26 +205,26 @@ public class DriverMain {
 		}
 		
 		String parentPath = new File(path).getParentFile().getParentFile()+File.separator+ggDirectory+"-combined";
-		
-		Utils.saveMatrixFile(tfidfCombined, parentPath+File.separator,"ggTFIDF.csv");
-		Utils.saveMatrixFile(tfidf2Combined, parentPath+File.separator,"ggTFIDF2.csv");
-		Utils.saveMatrixFile(pcaCombined, parentPath+File.separator,"ggPCA.csv");
-		Utils.saveMatrixFile(svdCombined, parentPath+File.separator,"ggSVD.csv");
-		Utils.saveMatrixFile(ldaCombined, parentPath+File.separator,"ggLDA.csv");
+		int scalingFactor = inputDirectoryKey.size() - 1;
+		Utils.saveMatrixFile(Utils.scaleDownMatrix(tfidfCombined,scalingFactor), parentPath+File.separator,"ggTFIDF.csv");
+		Utils.saveMatrixFile(Utils.scaleDownMatrix(tfidf2Combined,scalingFactor), parentPath+File.separator,"ggTFIDF2.csv");
+		Utils.saveMatrixFile(Utils.scaleDownMatrix(pcaCombined,scalingFactor), parentPath+File.separator,"ggPCA.csv");
+		Utils.saveMatrixFile(Utils.scaleDownMatrix(svdCombined,scalingFactor), parentPath+File.separator,"ggSVD.csv");
+		Utils.saveMatrixFile(Utils.scaleDownMatrix(ldaCombined,scalingFactor), parentPath+File.separator,"ggLDA.csv");
 		
 		Phase2Utils mainWindow = new Phase2Utils();
 		if(ggDirectory.equals(IConstants.PCA_DIR_GG)){
-			mainWindow.executePCAGG(parentPath+File.separator+"ggTFIDF.csv", Utils.convertList(fileNames), proxy);
-			mainWindow.executePCAGG(parentPath+File.separator+"ggTFIDF2.csv", Utils.convertList(fileNames), proxy);
-			mainWindow.executePCAGG(parentPath+File.separator+"ggPCA.csv", Utils.convertList(fileNames), proxy);
-			mainWindow.executePCAGG(parentPath+File.separator+"ggSVD.csv", Utils.convertList(fileNames), proxy);
-			mainWindow.executePCAGG(parentPath+File.separator+"ggLDA.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGGCombined(parentPath+File.separator+"ggTFIDF.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGGCombined(parentPath+File.separator+"ggTFIDF2.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGGCombined(parentPath+File.separator+"ggPCA.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGGCombined(parentPath+File.separator+"ggSVD.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executePCAGGCombined(parentPath+File.separator+"ggLDA.csv", Utils.convertList(fileNames), proxy);
 		}else {
-			mainWindow.executeSVDGG(parentPath+File.separator+"ggTFIDF.csv", Utils.convertList(fileNames), proxy);
-			mainWindow.executeSVDGG(parentPath+File.separator+"ggTFIDF2.csv", Utils.convertList(fileNames), proxy);
-			mainWindow.executeSVDGG(parentPath+File.separator+"ggPCA.csv", Utils.convertList(fileNames), proxy);
-			mainWindow.executeSVDGG(parentPath+File.separator+"ggSVD.csv", Utils.convertList(fileNames), proxy);
-			mainWindow.executeSVDGG(parentPath+File.separator+"ggLDA.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGGCombined(parentPath+File.separator+"ggTFIDF.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGGCombined(parentPath+File.separator+"ggTFIDF2.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGGCombined(parentPath+File.separator+"ggPCA.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGGCombined(parentPath+File.separator+"ggSVD.csv", Utils.convertList(fileNames), proxy);
+			mainWindow.executeSVDGGCombined(parentPath+File.separator+"ggLDA.csv", Utils.convertList(fileNames), proxy);
 		}
 
 	}

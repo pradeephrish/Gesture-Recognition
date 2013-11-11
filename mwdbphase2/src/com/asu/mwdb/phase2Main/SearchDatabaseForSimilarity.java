@@ -37,7 +37,6 @@ public class SearchDatabaseForSimilarity {
 	private List<Map<String,Double>> dictionaryPerDocument; //per documents means per row
 	private DictionaryBuilderPhase2 dictionaryCreator;
 	private Double maxTF;
-	private static Logger logger = new MyLogger().getupLogger();
 	
 	/**
 	 * Can be used later on to find similarity 
@@ -264,7 +263,7 @@ public class SearchDatabaseForSimilarity {
 		if(distanceFunction.equals(DistanceFunction.CosineFunction)) {
 			
 			if (inputDictionary.get(0).size() != dictionary.get(0).size()) {
-				logger.log(Level.SEVERE,
+				System.out.println(
 						"** Something wrong with data or Calculations **");
 			}
 			for (int i = 0; i < dictionary.size(); i++) {
@@ -281,7 +280,7 @@ public class SearchDatabaseForSimilarity {
 				} catch (Exception e) {
 					e.printStackTrace();
 					System.out.println("There are no 20 rows/same number of rows in the input file");
-					logger.log(Level.SEVERE,
+					System.out.println(
 							"There are no 20 rows/same number of rows in the input file");
 				}
 				scores.put(i, sum);

@@ -10,6 +10,7 @@ public interface IConstants {
 		public static String LETTERS_FILE		= "letters";
 		public static String PCA_DIR			= "pca";
 		public static String PCA_DIR_GG			= "pcagg";
+		public static String COMBINED			= "combined";
 		public static String DATA 				= "data";
 		public static String PCA_SEMANTICS		= "pca-semantic";
 		public static String PCA_TRANSFORM		= "pca-transform";

@@ -148,8 +148,8 @@ public class DriverMain {
 					break;
 				// Task3a
 				case 7: 
-					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG, componentList);
-					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
+					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG+"-"+IConstants.COMBINED);
+					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG+"-"+IConstants.COMBINED);
 					break;
 				}
 				System.out.println("Please enter choice for task you want to execute:");

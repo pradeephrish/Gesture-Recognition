@@ -22,23 +22,20 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public class Task3a {
 	
-	public static void executeTask3a(MatlabProxy proxy,String semanticInputDirectory,List<String> listOfComponents){
-		
-
-		for (int i = 0; i < listOfComponents.size(); i++) {
-			String componentDir = listOfComponents.get(i).substring(listOfComponents.get(i).lastIndexOf(File.separator) + 1);
-			String path =  semanticInputDirectory+File.separator+ componentDir;
+	public static void executeTask3a(MatlabProxy proxy,String semanticInputDirectory){
+			String path =  semanticInputDirectory;
 			String parent = semanticInputDirectory.substring(semanticInputDirectory.lastIndexOf(File.separator)+1);
-			String outputDirectory = new File(path).getParentFile().getParentFile().getAbsolutePath()+File.separator+parent+"-clusters"+File.separator+componentDir;
+			parent = parent.substring(0,parent.indexOf("-"));
+			String outputDirectory = new File(path).getParentFile().getAbsolutePath()+File.separator+parent+"-clusters";
 			if(!Utils.isDirectoryCreated(outputDirectory))
 				return;
 			
 			try {
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF,componentDir);
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF2,componentDir);
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_PCA,componentDir);
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_SVD,componentDir);
-				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_LDA,componentDir);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF,outputDirectory);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_TFIDF2,outputDirectory);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_PCA,outputDirectory);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_SVD,outputDirectory);
+				executeTask3aAtomic(proxy, path+File.separator+IConstants.SEMANTICGG_LDA,outputDirectory);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -46,18 +43,12 @@ public class Task3a {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
 	}
 	
 
-	private static void executeTask3aAtomic(MatlabProxy proxy,String targetFile,String component) throws IOException, MatlabInvocationException{
+	private static void executeTask3aAtomic(MatlabProxy proxy,String targetFile,String outputDirectory) throws IOException, MatlabInvocationException{
 		File targetFileHandle = new File(targetFile);
-		
-		String temp = targetFileHandle.getParentFile().getParentFile().getAbsolutePath();
-		String parent = temp.substring(temp.lastIndexOf(File.separator)+1);
-
-		String outputDirectory = targetFileHandle.getParentFile().getParentFile().getParentFile().getAbsolutePath()+File.separator+parent+"-clusters";
-		
+				
 		CSVReader csvReader = new CSVReader(new InputStreamReader(
 				new FileInputStream(targetFileHandle.getAbsolutePath())));
 
@@ -91,7 +82,7 @@ public class Task3a {
 			csvWriter.close();
 
 		
-			String imagePath = outputDirectory+File.separator+component+File.separator+"elbow-"+targetFileHandle.getName()+"_"+j+".png";
+			String imagePath = outputDirectory+File.separator+"elbow-"+targetFileHandle.getName()+"_"+j+".png";
 			System.out.println(imagePath);
 			proxy.eval("findElbow('" + tempFileHandle.getAbsolutePath() + "','" + tempFinalResult+ "','" + imagePath+ "')");
 			
@@ -114,7 +105,7 @@ public class Task3a {
 				}
 			}
 			
-			FileUtils.writeStringToFile(new File(outputDirectory+File.separator+component+File.separator+"cluster-"+targetFileHandle.getName()+"_"+j+"_group.txt"),stringBuffer.toString());
+			FileUtils.writeStringToFile(new File(outputDirectory+File.separator+"cluster-"+targetFileHandle.getName()+"_"+j+"_group.txt"),stringBuffer.toString());
 			
 			tempFileHandle.delete();
 			new File(tempFinalResult).delete();

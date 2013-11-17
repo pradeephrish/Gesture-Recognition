@@ -41,5 +41,22 @@ public interface IConstants {
 		public static String SEMANTICGG_TFIDF    ="semanticgg_ggTFIDF.csv";
 		public static String SEMANTICGG_TFIDF2   ="semanticgg_ggTFIDF2.csv";	
 		
-		public static String TEMPFILE	         ="tempin";
+		public static String TEMPFILE	         = "tempin";
+		public static String EUCLIDEAN_DIST      = "euclidean";
+		public static String NEAREST			 = "nearest";
+		
+		public static String PCA_GG_COMBINED	 = "pcagg-combined";
+		public static String SVD_GG_COMBINED     = "svdgg-combined";
+		public static String GG_PCA_FILE_NAME	 = "ggPCA.csv";
+		public static String GG_SVD_FILE_NAME	 = "ggSVD.csv";
+		public static String GG_LDA_FILE_NAME	 = "ggLDA.csv";
+		public static String GG_TFIDF_FILE_NAME  = "ggTFIDF.csv";
+		public static String GG_TFIDF2_FILE_NAME = "ggTFIDF2.csv";
+		
+		public static String TRAINING_FILE_NAME  = "training.csv";
+		public static String LABELS_FILE_NAME	 = "labels.csv";
+		public static String TESTING_FILE_NAME	 = "testing.csv";
+		public static String OUTPUT_LABELS_TEMP_KNN  = "knn_temp_output_labels.csv";
+		public static String OUTPUT_LABELS_KNN		 = "knn_output_labels.csv";
+		
 }

@@ -39,6 +39,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
+import com.asu.mwdb.phase3.task3.KNNClassification;
 import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.NumberedFileComparator;
@@ -163,8 +164,15 @@ public class DriverMain {
 				System.out.println("8. Exit");
 				choice = in.readLine();
 			} while(!choice.equalsIgnoreCase("8"));
+			
+			System.out.println("Enter the file for labels:");
+			String gesturesLabels = br.readLine();
+			while(!Utils.isFilePresent(gesturesLabels)) {
+				System.out.println("File not found, please check the input");
+				gesturesLabels = br.readLine();
+			}
+			KNNClassification.knnClassify(proxy, databaseDirectory, gesturesLabels);
 			in.close();
-			// Disconnect the proxy from MATLAB
 			proxy.exit();
 			proxy.disconnect();
 		} catch (Exception e) {

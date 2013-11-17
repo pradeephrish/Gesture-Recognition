@@ -15,9 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import matlabcontrol.MatlabInvocationException;
+import matlabcontrol.MatlabProxy;
+
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
+import com.asu.mwdb.matlab.MatlabObject;
 import com.asu.mwdb.phase2Main.CosineSimilarity;
 import com.asu.mwdb.phase2Main.FileIOHelper;
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
@@ -63,6 +67,15 @@ public class Utils {
 		csvReader.close();
 		return matrix;
 	}
+	
+	
+	public static void kNNClassify(MatlabProxy proxy, String testDataPath, String trainingDataPath, String labelsPath, int kValue, String outputPath) throws MatlabInvocationException {
+		String arg = "KNNClassifier('" + testDataPath + "','" + trainingDataPath + "','"
+				+ labelsPath + "'," + kValue + ",'" + IConstants.EUCLIDEAN_DIST + "','" 
+			    +  IConstants.NEAREST + "','" + outputPath + "')";
+		proxy.eval(arg);
+	}
+	
 
 
 	/**
@@ -439,6 +452,24 @@ public class Utils {
 			scaledDownMatrix[i][i] = 1.0;
 		}
 		return scaledDownMatrix;
+	}
+	
+	public static boolean isFilePresent(String filePath) {
+		File file = new File(filePath);
+		if(file.exists()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static int getFileIndex(File[] fileNames, String fileName) {
+		for(int i=0 ; i < fileNames.length; i++) {
+			if(fileNames[i].getName().equals(fileName)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 }

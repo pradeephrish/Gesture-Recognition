@@ -69,13 +69,6 @@ public class Utils {
 	}
 	
 	
-	public static void kNNClassify(MatlabProxy proxy, String testDataPath, String trainingDataPath, String labelsPath, int kValue, String outputPath) throws MatlabInvocationException {
-		String arg = "KNNClassifier('" + testDataPath + "','" + trainingDataPath + "','"
-				+ labelsPath + "'," + kValue + ",'" + IConstants.EUCLIDEAN_DIST + "','" 
-			    +  IConstants.NEAREST + "','" + outputPath + "')";
-		proxy.eval(arg);
-	}
-	
 
 
 	/**
@@ -470,6 +463,27 @@ public class Utils {
 			}
 		}
 		return -1;
+	}
+	
+	public static File[] getFileOrder(String databaseDirectoy) {
+		// just go to any component folder and get the file name order
+		File[] dirs = new File(databaseDirectoy).listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				String name = pathname.getName().toLowerCase();
+				return pathname.isDirectory() && !name.contains(IConstants.ALL);
+			}
+		});
+		File componentDir = dirs[0];
+		File[] fileNames = componentDir.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				String name = pathname.getName().toLowerCase();
+				return name.endsWith(".csv") && pathname.isFile() && !name.contains(IConstants.GAUSSIAN_FILE) 
+						&& !name.contains(IConstants.NORMALIZED_FILE);
+			}
+		});
+		return fileNames;
 	}
 	
 }

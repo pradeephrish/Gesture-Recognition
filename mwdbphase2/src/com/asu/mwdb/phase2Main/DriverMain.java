@@ -39,7 +39,9 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
+import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
 import com.asu.mwdb.phase3.task3.KNNClassification;
+import com.asu.mwdb.phase3.task3.TrainingDataMaker;
 import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.NumberedFileComparator;
@@ -165,13 +167,21 @@ public class DriverMain {
 				choice = in.readLine();
 			} while(!choice.equalsIgnoreCase("8"));
 			
-			System.out.println("Enter the file for labels:");
+			System.out.println("Enter the file for gestures and labels:");
 			String gesturesLabels = br.readLine();
 			while(!Utils.isFilePresent(gesturesLabels)) {
 				System.out.println("File not found, please check the input");
 				gesturesLabels = br.readLine();
 			}
-			KNNClassification.knnClassify(proxy, databaseDirectory, gesturesLabels);
+			System.out.println("Enter value of K for KNN Classification:");
+			int kValue = Integer.parseInt(br.readLine());
+			TrainingDataMaker trainingDataMaker = new TrainingDataMaker();
+			// return the test data files just to display results in output file in the following format
+			// filename - label
+			File[] fileNames = Utils.getFileOrder(databaseDirectory);
+			List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gesturesLabels);
+			KNNClassification.knnClassify(proxy, databaseDirectory, gesturesLabels, kValue, fileNames, testDataFiles);
+			DecisionTreeClassification.dtClassify(proxy, databaseDirectory, gesturesLabels, fileNames, testDataFiles);
 			in.close();
 			proxy.exit();
 			proxy.disconnect();

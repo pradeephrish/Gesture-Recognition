@@ -24,37 +24,16 @@ import com.asu.mwdb.utils.Utils;
 
 public class KNNClassification {
 	
-	public static void knnClassify(MatlabProxy proxy, String databaseDirectoy, String gestureLabels) throws IOException, MatlabInvocationException{
-		
-		// just go to any component folder and get the file name order
-		File[] dirs = new File(databaseDirectoy).listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				String name = pathname.getName().toLowerCase();
-				return pathname.isDirectory() && !name.contains(IConstants.ALL);
-			}
-		});
-		File componentDir = dirs[0];
-		File[] fileNames = componentDir.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				String name = pathname.getName().toLowerCase();
-				return name.endsWith(".csv") && pathname.isFile() && !name.contains(IConstants.GAUSSIAN_FILE) 
-					   && !name.contains(IConstants.NORMALIZED_FILE);
-			}
-		});
-		
-		TrainingDataMaker trainingDataMaker = new TrainingDataMaker();
-		// return the test data files just to display results in output file in the following format
-		// filename - label
-		List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gestureLabels);
+	public static void knnClassify(MatlabProxy proxy, String databaseDirectoy, String gestureLabels, int kValue, File[] fileNames, List<String> testDataFiles) throws IOException, MatlabInvocationException{
 		String trainingFile   = IConstants.DATA + File.separator + IConstants.TRAINING_FILE_NAME;
 		String labelsFile     = IConstants.DATA + File.separator + IConstants.LABELS_FILE_NAME;
 		String testingFile    = IConstants.DATA + File.separator + IConstants.TESTING_FILE_NAME;
 		String tempOutputPath = IConstants.DATA + File.separator + IConstants.OUTPUT_LABELS_TEMP_KNN;
 		String knnOutputPath  = IConstants.DATA + File.separator + IConstants.OUTPUT_LABELS_KNN;
-		Utils.kNNClassify(proxy, new File(testingFile).getAbsolutePath() , new File(trainingFile).getAbsolutePath(), 
-				new File(labelsFile).getAbsolutePath(), 2, new File(tempOutputPath).getAbsolutePath());
+		String arg = "KNNClassifier('" + new File(testingFile).getAbsolutePath() + "','" + new File(trainingFile).getAbsolutePath() + "','"
+				+ new File(labelsFile).getAbsolutePath() + "'," + kValue + ",'" + IConstants.EUCLIDEAN_DIST + "','" 
+			    +  IConstants.NEAREST + "','" + new File(tempOutputPath).getAbsolutePath() + "')";
+		proxy.eval(arg);
 		
 
 		List<String> tempLabels = FileUtils.readLines(new File(tempOutputPath));

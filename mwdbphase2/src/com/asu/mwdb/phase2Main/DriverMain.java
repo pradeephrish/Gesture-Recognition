@@ -21,6 +21,10 @@ import java.util.Set;
 
 
 
+
+
+
+
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
@@ -38,7 +42,12 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 
 
+
+
+
+
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
+import com.asu.mwdb.phase3.task2.QueryMapper;
 import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
 import com.asu.mwdb.phase3.task3.KNNClassification;
 import com.asu.mwdb.phase3.task3.TrainingDataMaker;
@@ -79,8 +88,7 @@ public class DriverMain {
 
 			// Create a Gaussian bands of size r
 			GaussianBands gb = new GaussianBands();
-			double rBandValueRange[][] = gb.getGaussianBands(rValue, mean,
-					stdDeviation);
+			double rBandValueRange[][] = gb.getGaussianBands(rValue, mean,stdDeviation);
 			
 			// Read the database directory
 			System.out.println("Enter database directory:");
@@ -167,24 +175,16 @@ public class DriverMain {
 				choice = in.readLine();
 			} while(!choice.equalsIgnoreCase("8"));
 			
-			System.out.println("Enter the file for gestures and labels:");
-			String gesturesLabels = br.readLine();
-			while(!Utils.isFilePresent(gesturesLabels)) {
-				System.out.println("File not found, please check the input");
-				gesturesLabels = br.readLine();
+			
+			//excecutePhase3Task3();  ,  to be tested later --- Pradeep
+			while(true){
+			try{
+				 executePhase3Task2(rBandValueRange,databaseDirectory); 
+			}catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
 			}
-			System.out.println("Enter value of K for KNN Classification:");
-			int kValue = Integer.parseInt(br.readLine());
-			TrainingDataMaker trainingDataMaker = new TrainingDataMaker();
-			// return the test data files just to display results in output file in the following format
-			// filename - label
-			File[] fileNames = Utils.getFileOrder(databaseDirectory);
-			List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gesturesLabels);
-			KNNClassification.knnClassify(proxy, databaseDirectory, gesturesLabels, kValue, fileNames, testDataFiles);
-			DecisionTreeClassification.dtClassify(proxy, databaseDirectory, gesturesLabels, fileNames, testDataFiles);
-			in.close();
-			proxy.exit();
-			proxy.disconnect();
+			}
 		} catch (Exception e) {
 			// print the stack trace so that it will be easy to debug
 			e.printStackTrace();
@@ -193,6 +193,39 @@ public class DriverMain {
 
 	}
 	
+	private static void executePhase3Task2(double[][] rBandValueRange, String sampleInputDirectory) throws IOException {
+		// TODO Auto-generated method stub
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Please enter gesture input directory:");
+		String gestureInputDirectory = br.readLine();
+		
+		cleanData(gestureInputDirectory);
+	
+		QueryMapper queryMapper = new QueryMapper(dictMap,wordLength, shiftLength, matlabScriptLoc, rBandValueRange, proxy, gestureInputDirectory, sampleInputDirectory);
+		System.out.println("Succesfully mapped");
+	}
+
+	private static void excecutePhase3Task3(String databaseDirectory) throws IOException, MatlabInvocationException {
+		// TODO Auto-generated method stub
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Enter the file for gestures and labels:");
+		String gesturesLabels = br.readLine();
+		while(!Utils.isFilePresent(gesturesLabels)) {
+			System.out.println("File not found, please check the input");
+			gesturesLabels = br.readLine();
+		}
+		System.out.println("Enter value of K for KNN Classification:");
+		int kValue = Integer.parseInt(br.readLine());
+		TrainingDataMaker trainingDataMaker = new TrainingDataMaker();
+		// return the test data files just to display results in output file in the following format
+		// filename - label
+		File[] fileNames = Utils.getFileOrder(databaseDirectory);
+		List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gesturesLabels);
+		KNNClassification.knnClassify(proxy, databaseDirectory, gesturesLabels, kValue, fileNames, testDataFiles);
+		DecisionTreeClassification.dtClassify(proxy, databaseDirectory, gesturesLabels, fileNames, testDataFiles);
+	}
+
 	//ggDirectory = IConstants.PCA_DIR_GG or SVD_DIR_GG
 	private static void executeTask2bForCombinedData(List<String> inputDirectoryKey,String ggDirectory) throws IOException, MatlabConnectionException, MatlabInvocationException{
 		System.out.println("Executing task2b combination  .....  ");
@@ -717,7 +750,7 @@ public class DriverMain {
 	 * @return
 	 * @throws IOException
 	 */
-	private static List<String[]> mapQueryToLSASpace(String semanticDir,
+	public static List<String[]> mapQueryToLSASpace(String semanticDir,
 			String semanticOutputDirectory, List<Map<String, Double[]>> queryWordScores) throws IOException {
 		File semanticFileDirObj = new File(semanticDir);
 		File[] semanticFiles = semanticFileDirObj.listFiles();

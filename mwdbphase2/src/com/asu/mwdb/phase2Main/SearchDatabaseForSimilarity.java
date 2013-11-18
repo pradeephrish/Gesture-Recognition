@@ -92,6 +92,25 @@ public class SearchDatabaseForSimilarity {
 		System.out.println("Top 5 documents with similar TF-IDF2 values are as follows:");
 		displayMapResults(tfIDF2Scores);
 	}
+	
+	/********For Phase III , Task 2*****/
+	
+	public SearchDatabaseForSimilarity(Map<String,Integer> tfGlobalMap,List<List<Map<String,List<Double>>>> dictionary,List<Map<String,Double>> dictionaryPerDocument,Integer wordLength,Integer shiftLength,String inputFilePath) throws IOException{
+		this.tfGlobalMap = tfGlobalMap;
+		this.dictionary=dictionary;
+		this.inputDictionary = new ArrayList<List<Map<String,List<Double>>>>();
+		this.dictionaryPerDocument=dictionaryPerDocument;
+		inputFileGesturewords = new ArrayList<Map<String,List<Double>>>();
+		// calculate new dictionary for query file
+		init(wordLength,shiftLength,inputFilePath);
+		
+		//note this will just index query and it will that value in  inputDictionary
+	}
+	
+	/**********/
+	
+	
+	
 
 	/**
 	 * Print the results onto screen displaying top 10 similar values
@@ -361,7 +380,7 @@ public class SearchDatabaseForSimilarity {
 						idf2PerDocument.put(pairs.getKey(), 1.0);
 			}
 		}
-		dictionaryPerDocument.add(idf2PerDocument);
+		//dictionaryPerDocument.add(idf2PerDocument);
 		
 		List<Map<String,List<Double>>> oneFile = inputDictionary.get(0); // only single element in list 
 		for (int i = 0; i < oneFile.size(); i++) {

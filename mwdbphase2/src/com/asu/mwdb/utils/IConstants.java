@@ -61,5 +61,7 @@ public interface IConstants {
 		public static String OUTPUT_LABELS_TEMP_DT   = "dt_temp_output_labels.csv";
 		public static String OUTPUT_LABELS_DT        = "dt_output_labels.csv";
 		public static String DATA_PHASE3 = "dataPhase3";
+		public static String TASK2 = "task2";
+		public static String QUERY_GESTURE = "combinedQueryGesture.csv"; //phase3 task2
 		
 }

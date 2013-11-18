@@ -79,7 +79,6 @@ public class DriverMain {
 			matlabScriptLoc = "." + File.separator + "MatlabScripts";
 			String path = "cd(\'" + matlabScriptLoc + "')";
 			proxy.eval(path);
-
 			// Read the Band size - r
 			BufferedReader br = new BufferedReader(new InputStreamReader(
 					System.in));
@@ -799,7 +798,7 @@ public class DriverMain {
 	 * @param pcaTrasnsformData
 	 * @return
 	 */
-	private static LinkedHashMap<Integer, Double> searchForSimilarLSA(
+	public static LinkedHashMap<Integer, Double> searchForSimilarLSA(
 			List<String[]> queryData, List<List<String[]>> pcaTrasnsformData) {
 		HashMap<Integer,Double> scores = new HashMap<Integer, Double>();
 		for(int i =0; i<pcaTrasnsformData.size(); i++) {

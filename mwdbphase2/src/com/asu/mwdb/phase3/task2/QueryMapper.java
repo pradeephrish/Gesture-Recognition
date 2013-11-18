@@ -1,11 +1,18 @@
 package com.asu.mwdb.phase3.task2;
 
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.ode.MainStateJacobianProvider;
 
 import matlabcontrol.MatlabConnectionException;
@@ -25,6 +33,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.asu.mwdb.phase2Main.AssignBandValues;
 import com.asu.mwdb.phase2Main.DictionaryBuilderPhase2;
 import com.asu.mwdb.phase2Main.DriverMain;
+import com.asu.mwdb.phase2Main.FileIOHelper;
 import com.asu.mwdb.phase2Main.NormalizeData;
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity;
 import com.asu.mwdb.utils.IConstants;
@@ -39,7 +48,7 @@ public class QueryMapper {
 	private static Map<String, DictionaryBuilderPhase2> dictMap;
 	private static double rBandValueRange[][];
 	private String gestureInputDirectory;
-	private String sampleInputDirectory;
+	private static String sampleInputDirectory;
 	private Map<String,List<List<Map<String, List<Double>>>>> dictMapOfQuery = new HashMap<String, List<List<Map<String, List<Double>>>>>();
 
 	
@@ -60,6 +69,16 @@ public class QueryMapper {
 			//*******Integer corresponds to Index of File while Reading the Component Directory --  and Double corresponds to Score
 			List<LinkedHashMap<Integer, Double>> scoresPerQueryComponent = tranform(); //this will transform all query documents using SVD principle components  
 			addAll(scoresPerQueryComponent); //sums up query against all database components
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("Enter k :");
+			Integer k = Integer.parseInt(br.readLine());
+			System.out.println("Enter l :");
+			Integer l = Integer.parseInt(br.readLine());
+			System.out.println("Enter gestureCount :");
+			Integer gestureCount = Integer.parseInt(br.readLine());
+			performLocalitySensitiveHashing(this.proxy, k, l,gestureCount);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,6 +108,7 @@ public class QueryMapper {
 
 	private void writeLinkedHashMapToFile(LinkedHashMap<Integer, Double> sum) { //remember these integers later for getting file names, these are indexes
 		// TODO Auto-generated method stub
+		 Double factor = gestureInputDirectory.length() * 20.0; // number of components * 20 
 		
 		 Set<Integer> keyset = sum.keySet();
 		 Iterator iterator = keyset.iterator();
@@ -97,7 +117,7 @@ public class QueryMapper {
 				
 			while(iterator.hasNext()){
 				String[] array = new String[1];
-				array[0]=String.valueOf(sum.get(iterator.next()));
+				array[0]=String.valueOf(sum.get(iterator.next())/factor);
 				csvWriter.writeNext(array);
 			}
 			csvWriter.close();	
@@ -189,11 +209,16 @@ public class QueryMapper {
 		
 	}
 	
-	public static void performLocalitySensitiveHashing(MatlabProxy proxy,Integer k,Integer l,String outputPath){
+	public static void performLocalitySensitiveHashing(MatlabProxy proxy,Integer k,Integer l,Integer gestureCount) throws IOException{
 		
 		String inputQueryFile = new File(IConstants.DATA_PHASE3 + File.separator+IConstants.TASK2+File.separator+IConstants.QUERY_GESTURE).getAbsolutePath();
 		String svdFile = new File(IConstants.DATA+File.separator+IConstants.SVD_GG_COMBINED+File.separator+IConstants.GG_SVD_FILE_NAME).getAbsolutePath();
 
+		String outputPath = IConstants.DATA_PHASE3 + File.separator+IConstants.TASK2+File.separator+"lsaResults.csv";
+		
+		outputPath = new File(outputPath).getAbsolutePath();
+		
+		
 		String inputQueryFileNCSV = inputQueryFile.substring(0,inputQueryFile.lastIndexOf(".csv"));
 		inputQueryFileNCSV=inputQueryFileNCSV.substring(inputQueryFileNCSV.lastIndexOf(File.separator)+1);
 		System.out.println(inputQueryFileNCSV);
@@ -205,26 +230,62 @@ public class QueryMapper {
 		
 		try {
 			//(type,l,k,d,x,varargin)
-			System.out.println("final_lsh('" + svdFile + "','"+ inputQueryFile + "','"+ svdFileNSCSV + "','" + inputQueryFileNCSV + "',"+ k  +","+l+",'"+ outputPath+ "')"); 
-			proxy.eval("final_lsh('" + svdFile + "','"+ inputQueryFile + "','"+ svdFileNSCSV + "','" + inputQueryFileNCSV + "',"+ k  +","+l+",'"+ outputPath+ "')");
+			System.out.println("final_lsh('" + svdFile + "','"+ inputQueryFile + "','"+ svdFileNSCSV + "','" + inputQueryFileNCSV + "',"+ k  +","+l+",'"+ outputPath +"',"+gestureCount+")"); 
+			proxy.eval("final_lsh('" + svdFile + "','"+ inputQueryFile + "','"+ svdFileNSCSV + "','" + inputQueryFileNCSV + "',"+ k  +","+l+",'"+ outputPath +"',"+gestureCount+")");
 		} catch (MatlabInvocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}	
-	
-	public static void main(String[] args) throws MatlabConnectionException, MatlabInvocationException {
 		
+		getMatchedFileNames(outputPath);
+	}	
+
+	public static List<String> getMatchedFileNames(String outputPath) throws IOException{ 
+		
+		String[] matchedFilesIndex = FileUtils.readFileToString(new File(outputPath)).replace("\n","").split(",");
+		
+		
+		if(matchedFilesIndex.length==0){
+			System.out.println("There are not matched files, Please try agian with different value of k and l");
+			return new ArrayList<String>();
+		}
+		
+		
+		List<String> fileNames = new ArrayList<String>();
+		
+		//for testing purpose - remote later
+		sampleInputDirectory=(sampleInputDirectory==null)?"C:\\Users\\paddy\\Desktop\\sampleData":sampleInputDirectory;
+		
+		File[] list = Utils.getCSVFiles(new File(sampleInputDirectory+File.separator+'X'));
+		
+		Arrays.sort(list, new Comparator<File>() {
+	        NumberFormat f = NumberFormat.getInstance();
+	        public int compare(File f1, File f2) {
+	            try {
+	                return Double.compare(f.parse(f1.getName()).longValue(), f.parse(f2.getName()).longValue());
+	            } catch (ParseException e) {
+	                throw new IllegalArgumentException(f1 + "|" + f2);
+	            }
+	        }
+	    });
+		for (int i = 0; i < matchedFilesIndex.length; i++) {
+			System.out.println("Matched File is "+ list[Integer.parseInt(matchedFilesIndex[i])-1].getName());
+			fileNames.add(list[Integer.parseInt(matchedFilesIndex[i])-1].getName());
+		}
+		
+		
+		return fileNames;
+	}
+	
+	
+	public static void main(String[] args) throws MatlabConnectionException, MatlabInvocationException, IOException {	
 		MatlabProxyFactory factory = new MatlabProxyFactory();
 		proxy = factory.getProxy();
 		String matlabScriptLoc = "." + File.separator + "MatlabScripts";
 		String path = "cd(\'" + matlabScriptLoc + "')";
 		proxy.eval(path);
-		
-		
-		String output = IConstants.DATA_PHASE3 + File.separator+IConstants.TASK2+File.separator+"lsaResults.csv";
-		
-		performLocalitySensitiveHashing(proxy, 4, 5,new File(output).getAbsolutePath());
+	
+		performLocalitySensitiveHashing(proxy, 4, 5,2);
 	}
 	
 	

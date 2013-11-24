@@ -25,6 +25,8 @@ import java.util.Set;
 
 
 
+
+
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
@@ -34,8 +36,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.MainStateJacobianProvider;
+import org.omg.CORBA.OMGVMCID;
 
 import au.com.bytecode.opencsv.CSVWriter;
+
+
 
 
 
@@ -55,6 +60,7 @@ import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.NumberedFileComparator;
 import com.asu.mwdb.utils.Phase2Utils;
+import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.Utils;
 
 public class DriverMain {
@@ -439,6 +445,11 @@ public class DriverMain {
 		/**************/ //for PCA and SVD
 		List<Map<String, Double[]>> computedScores = main
 				.createSensorWordScores(variable1, getDictionary,3);
+		
+		//Debugging
+		SerializeData.serialize("E:\\"+componentDir, computedScores);
+		//Debugging
+		
 		List<List<String>> order = main.savewordstoCSV(computedScores,IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		/***************/
 
@@ -746,14 +757,14 @@ public class DriverMain {
 	 * @param semanticDir
 	 * @param semanticOutputDirectory
 	 * @param queryWordScores
-	 * @return
+	 * @return4
 	 * @throws IOException
 	 */
 	public static List<String[]> mapQueryToLSASpace(String semanticDir,
 			String semanticOutputDirectory, List<Map<String, Double[]>> queryWordScores) throws IOException {
 		File semanticFileDirObj = new File(semanticDir);
 		File[] semanticFiles = semanticFileDirObj.listFiles();
-		Arrays.sort(semanticFiles, new NumberedFileComparator());
+		Arrays.sort(semanticFiles, new NumberedFileComparator());  //sort by sensor 
 		Iterator<Map<String, Double[]>> queryIt = queryWordScores.iterator();
 		List<String[]> queryTransformList = new ArrayList<String[]>();
 		for(File semanticFile : semanticFiles) {
@@ -779,7 +790,6 @@ public class DriverMain {
 				k++;
 			}
 			queryTransformList.add(xyz);
-
 		}
 		CSVWriter csvWriter = new CSVWriter(new FileWriter(semanticOutputDirectory + File.separator +  IConstants.QUERY_MAPPED + ".csv"), ',',
 				CSVWriter.NO_QUOTE_CHARACTER,
@@ -814,7 +824,7 @@ public class DriverMain {
 	 * @param tfidfSimilarScores
 	 * @param files
 	 */
-	private static void displayMapResults(HashMap<Integer, Double> tfidfSimilarScores, File[] files) {
+	public static void displayMapResults(HashMap<Integer, Double> tfidfSimilarScores, File[] files) {
 		int counter = 0;
 		for (Entry<Integer, Double> entry : tfidfSimilarScores.entrySet()) { 
 			Integer key = entry.getKey();		    

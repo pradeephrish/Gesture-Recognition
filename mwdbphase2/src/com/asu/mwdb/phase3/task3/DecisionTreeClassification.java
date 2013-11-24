@@ -7,15 +7,14 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import matlabcontrol.MatlabInvocationException;
+import matlabcontrol.MatlabProxy;
+
 import org.apache.commons.io.FileUtils;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
 import com.asu.mwdb.utils.IConstants;
-import com.asu.mwdb.utils.Utils;
-
-import matlabcontrol.MatlabInvocationException;
-import matlabcontrol.MatlabProxy;
 
 public class DecisionTreeClassification {
 

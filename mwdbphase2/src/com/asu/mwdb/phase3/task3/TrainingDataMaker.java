@@ -37,7 +37,13 @@ public class TrainingDataMaker {
 			int index = Utils.getFileIndex(fileNames, line[0]);
 			labels[count++] = line[1];
 			if(index != -1) {
-				trainingData.add(ggFileData.get(index));
+				String str[] = ggFileData.get(index);
+				String str1[] = new String [str.length+1];
+				str1[0] = line[0];
+				for(int i=0;i<str.length;i++){
+					str1[i+1]=str[i];
+				}
+				trainingData.add(str1);
 			}
 		}
 		
@@ -60,7 +66,13 @@ public class TrainingDataMaker {
 		for(int i=0; i < testFileNames.size(); i++) {
 			int index = Utils.getFileIndex(fileNames, testFileNames.get(i));
 			if(index != -1) {
-				testingData.add(ggFileData.get(index));
+				String str[] = ggFileData.get(index);
+				String str1[] = new String [str.length+1];
+				str1[0] = testFileNames.get(i);
+				for(int j=0;j<str.length;j++){
+					str1[j+1]=str[j];
+				}
+				testingData.add(str1);
 			}
 		}
 		csvWriter = new CSVWriter(new OutputStreamWriter(new FileOutputStream(testingFile)), ',', CSVWriter.NO_QUOTE_CHARACTER);

@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -486,4 +487,22 @@ public class Utils {
 		return fileNames;
 	}
 	
+	
+	public static String [][] sortStringArray(String [][] arrayStr){
+		Arrays.sort(arrayStr, new Comparator<String[]>() {
+			@Override
+			public int compare(final String[] entry1, final String[] entry2) {
+				final double value1 = Double.parseDouble(entry1[1]);
+				final double value2 = Double.parseDouble(entry2[1]);
+				if (value1 < value2) {
+					return -1;
+				} else if (value1 > value2) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+		return arrayStr;
+	}
 }

@@ -228,7 +228,7 @@ public class DriverMain {
 		File[] fileNames = Utils.getFileOrder(databaseDirectory);
 		List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gesturesLabels);
 		KNNClassification.knnClassifyMatlab(proxy, databaseDirectory, gesturesLabels, kValue, fileNames, testDataFiles);
-		DecisionTreeClassification.dtClassify(proxy, databaseDirectory, gesturesLabels, fileNames, testDataFiles);
+		DecisionTreeClassification.dtClassifyMatlab(proxy, databaseDirectory, gesturesLabels, fileNames, testDataFiles);
 	}
 
 	//ggDirectory = IConstants.PCA_DIR_GG or SVD_DIR_GG

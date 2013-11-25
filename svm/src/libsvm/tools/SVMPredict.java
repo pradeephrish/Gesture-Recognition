@@ -115,9 +115,14 @@ public class SVMPredict
 				 ((total*sumvv-sumv*sumv)*(total*sumyy-sumy*sumy))+
 				 " (regression)\n");
 		}
-		else
+		else{
 			System.out.print("Accuracy = "+(double)correct/total*100+
 				 "% ("+correct+"/"+total+") (classification)\n");
+			
+			//our code
+			output.writeBytes("Accuracy = "+(double)correct/total*100+
+					 "% ("+correct+"/"+total+") (classification)\n");
+		}	
 	}
 
 	private static void print(FeatureNode[] nodes)

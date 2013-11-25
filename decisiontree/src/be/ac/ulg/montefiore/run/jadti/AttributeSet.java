@@ -116,6 +116,19 @@ public class AttributeSet {
 	
 	return null;
     }
+    
+	public List<Attribute> addByName(String name) {
+		List<Attribute> attributeList= new ArrayList<Attribute>();
+	for (int i = 0; i < attributes.size(); i++) {
+	    Attribute attribute = (Attribute) attributes.elementAt(i);
+	 
+	    if (attribute.name().contains(name)){
+	    	attributeList.add(attribute);
+	    }
+	}
+	
+	return attributeList;
+    }
 
     
     /**

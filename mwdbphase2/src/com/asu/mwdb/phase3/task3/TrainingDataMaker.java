@@ -3,6 +3,7 @@ package com.asu.mwdb.phase3.task3;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -78,6 +79,65 @@ public class TrainingDataMaker {
 		csvWriter = new CSVWriter(new OutputStreamWriter(new FileOutputStream(testingFile)), ',', CSVWriter.NO_QUOTE_CHARACTER);
 		csvWriter.writeAll(testingData);
 		csvWriter.close();
+		
+		// making decision tree data training file
+		FileWriter writerDecisionTree = new FileWriter(new File(IConstants.DATA + File.separator + "traindb.db"));
+		writerDecisionTree.write("trainingdata" + "\n");
+		
+		int size = trainingData.get(0).length - 1;
+		
+		String headerLine = new String("");
+		for(int i=1; i<=size; i++) {
+			headerLine = headerLine + "attr" + i + " " + "numerical ";
+		}
+		headerLine = headerLine + "label " + "symbolic";
+		writerDecisionTree.write(headerLine + "\n");
+		
+		int labelCount = 0;
+		for(String[] line : trainingData) {
+			String finalLine = "";
+			for(int j=1; j<line.length; j++) {
+				if(line[j].contains("E")) {
+					finalLine = finalLine + "0" + " ";
+				} else {
+					finalLine = finalLine + line[j] + " ";
+				}
+				
+			}
+			finalLine = finalLine + labels[labelCount++] + "\n";
+			writerDecisionTree.write(finalLine);
+		}
+		writerDecisionTree.close();
+		// ***********************************************************
+		// make decision tree data for testing file
+		writerDecisionTree = new FileWriter(new File(IConstants.DATA + File.separator + "testdb.db"));
+		writerDecisionTree.write("testingdata" + "\n");
+		
+		size = testingData.get(0).length - 1;
+		headerLine = new String("");
+		for(int i=1; i<=size; i++) {
+			headerLine = headerLine + "attr" + i + " " + "numerical ";
+		}
+		headerLine = headerLine + "label " + "symbolic";
+		writerDecisionTree.write(headerLine + "\n");
+		labelCount = 0;
+		for(String[] line : testingData) {
+			String finalLine = "";
+			for(int j=1; j<line.length; j++) {
+				if(line[j].contains("E")) {
+					finalLine = finalLine + "0" + " ";
+				} else {
+					finalLine = finalLine + line[j] + " ";
+				}
+				
+			}
+			finalLine = finalLine + "?" + "\n";
+			writerDecisionTree.write(finalLine);
+		}
+		writerDecisionTree.close();
+		
+		
+		
 		return testFileNames;
 	}
 	

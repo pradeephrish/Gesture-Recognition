@@ -446,9 +446,6 @@ public class DriverMain {
 		List<Map<String, Double[]>> computedScores = main
 				.createSensorWordScores(variable1, getDictionary,3);
 		
-		//Debugging
-		SerializeData.serialize("E:\\"+componentDir, computedScores);
-		//Debugging
 		
 		List<List<String>> order = main.savewordstoCSV(computedScores,IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		/***************/

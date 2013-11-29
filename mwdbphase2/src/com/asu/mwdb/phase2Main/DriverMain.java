@@ -31,6 +31,7 @@ import com.asu.mwdb.phase3.task2.QueryMapper;
 import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
 import com.asu.mwdb.phase3.task3.KNNClassification;
 import com.asu.mwdb.phase3.task3.TrainingDataMaker;
+import com.asu.mwdb.phase3.task5.RelevanceBasedDecisionTreeImpl;
 import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.NumberedFileComparator;
@@ -150,9 +151,10 @@ public class DriverMain {
 				System.out.println("5. Task2b - Create Gesture-Gesture Matrix and Run PCA");
 				System.out.println("6. Task2c - Create Gesture-Gesture Matrix and Run SVD");
 				System.out.println("7. Task3a - Partition Gestures into 3 Groups");
-				System.out.println("8. Exit");
+				System.out.println("8. Phase 3 - Task5 -Relevance based decision tree");
+				System.out.println("9. Exit");
 				choice = in.readLine();
-			} while(!choice.equalsIgnoreCase("8"));
+			} while(!choice.equalsIgnoreCase("9"));
 
 
 			//excecutePhase3Task3();  ,  to be tested later --- Pradeep
@@ -172,6 +174,21 @@ public class DriverMain {
 		}
 
 	}
+	
+	private static void executePhase3Task5(double[][] rBandValueRange, String sampleInputDirectory) throws IOException {
+		// TODO Auto-generated method stub
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Please enter gesture input directory:");
+		String gestureInputDirectory = br.readLine();
+
+		cleanData(gestureInputDirectory);
+
+		RelevanceBasedDecisionTreeImpl queryMapper = new RelevanceBasedDecisionTreeImpl(dictMap,wordLength, shiftLength, matlabScriptLoc, rBandValueRange, proxy, gestureInputDirectory, sampleInputDirectory);
+		System.out.println("Finish !");
+	}
+	
+	
 
 	private static void executePhase3Task2(double[][] rBandValueRange, String sampleInputDirectory) throws IOException {
 		// TODO Auto-generated method stub

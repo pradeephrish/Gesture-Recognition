@@ -35,7 +35,9 @@ public class Phase3DriverMain {
 		File[] fileNames = Utils.getFileOrder(databaseDirectory);
 		List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gesturesLabels);
 		KNNClassification.knnClassify(gesturesLabels,testDataFiles, kValue);
-		DecisionTreeClassification.dtClassify(IConstants.DATA + File.separator + IConstants.TESTDB_FOR_DT, IConstants.DATA + File.separator + IConstants.TRAININGDB_FOR_DT);
+		String testdbFile = IConstants.DATA + File.separator + IConstants.TESTDB_FOR_DT;
+		String traindbFile = IConstants.DATA + File.separator + IConstants.TRAININGDB_FOR_DT;
+		DecisionTreeClassification.dtClassify(testdbFile, traindbFile, testDataFiles);
 	}
 	
 

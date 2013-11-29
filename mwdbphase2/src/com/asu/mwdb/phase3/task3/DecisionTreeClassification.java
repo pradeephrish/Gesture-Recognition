@@ -70,7 +70,7 @@ public class DecisionTreeClassification {
 
 	}
 
-	public static void dtClassify(String testDatFile, String trainingDataFile)
+	public static void dtClassify(String testDatFile, String trainingDataFile, List<String> testDataFiles)
 			throws FileFormatException, IOException {
 		ItemSet learningSet = null;
 		ItemSet testSet = null;
@@ -105,10 +105,13 @@ public class DecisionTreeClassification {
 		DecisionTree tree = buildTree(learningSet, testAttributes,
 				goalAttribute);
 		System.out.println("Decision tree constructed is as follows:");
-		printDot(tree);
+		//printDot(tree);
 		System.out.println("Labels guessed by decision tree are as followed:");
+		String str = null;
 		for (double i = 0; i < testSet.size(); i++) {
-			printGuess(testSet.item((int) i), tree);
+			str = "File Name: " + testDataFiles.get((int) i) + ", Label:";
+			printGuess(str, testSet.item((int) i), tree);
+			
 		}
 	}
 
@@ -133,14 +136,14 @@ public class DecisionTreeClassification {
 	/*
 	 * Prints an item's guessed goal attribute value.
 	 */
-	static private void printGuess(Item item, DecisionTree tree) {
+	static private void printGuess(String str, Item item, DecisionTree tree) {
 		AttributeSet itemAttributes = tree.getAttributeSet();
 		SymbolicAttribute goalAttribute = tree.getGoalAttribute();
 
 		KnownSymbolicValue guessedGoalAttributeValue = tree
 				.guessGoalAttribute(item);
 
-		String s = "The value guessed by the tree is "
+		String s = str 
 				+ tree.getGoalAttribute().valueToString(
 						guessedGoalAttributeValue);
 

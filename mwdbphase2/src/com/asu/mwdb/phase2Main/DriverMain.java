@@ -157,12 +157,12 @@ public class DriverMain {
 
 			//excecutePhase3Task3();  ,  to be tested later --- Pradeep
 			//			while(true){
-			try{
-				executePhase3Task2(rBandValueRange,databaseDirectory); 
-			}catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-			}
+//			try{
+//				executePhase3Task2(rBandValueRange,databaseDirectory); 
+//			}catch (Exception e) {
+//				// TODO: handle exception
+//				e.printStackTrace();
+//			}
 			//			}
 			Phase3DriverMain.phase3DriverMainRun(databaseDirectory);
 		} catch (Exception e) {

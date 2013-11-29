@@ -72,7 +72,7 @@ public class KNNClassification {
 				new FileInputStream(testingFile)));
 		List<String[]> testingData = csvReader.readAll();
 		csvReader.close();
-		
+		System.out.println("Labels after applying K-Nearest Neighbour are as follows:");
 		for(String [] testRowData : testingData){
 			String [][] score = new String[trainingData.size()][2];
 			int i=0;
@@ -82,8 +82,7 @@ public class KNNClassification {
 				i++;
 			}
 			score = Utils.sortStringArray(score);
-			
-			System.out.println("File Name :"+ testRowData[0]+" label : "+labelDecider(score, labelsData, k));
+			System.out.println("File Name:"+ testRowData[0]+", Label: "+labelDecider(score, labelsData, k));
 		}
 		
 		

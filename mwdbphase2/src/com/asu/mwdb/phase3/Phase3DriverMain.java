@@ -10,14 +10,12 @@ import com.asu.mwdb.phase3.task2.QueryMapper;
 import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
 import com.asu.mwdb.phase3.task3.KNNClassification;
 import com.asu.mwdb.phase3.task3.TrainingDataMaker;
+import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.Utils;
 
 public class Phase3DriverMain {
 
 	public static void phase3DriverMainRun(String databaseDirectory) throws IOException {
-		
-		
-		
 		phase3Task3(databaseDirectory);
 	}
 	
@@ -37,7 +35,7 @@ public class Phase3DriverMain {
 		File[] fileNames = Utils.getFileOrder(databaseDirectory);
 		List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gesturesLabels);
 		KNNClassification.knnClassify(gesturesLabels,testDataFiles, kValue);
-		//DecisionTreeClassification.dtClassify("", "");
+		DecisionTreeClassification.dtClassify(IConstants.DATA + File.separator + IConstants.TESTDB_FOR_DT, IConstants.DATA + File.separator + IConstants.TRAININGDB_FOR_DT);
 	}
 	
 

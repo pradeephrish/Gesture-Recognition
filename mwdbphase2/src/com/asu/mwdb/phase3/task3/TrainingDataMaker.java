@@ -81,7 +81,7 @@ public class TrainingDataMaker {
 		csvWriter.close();
 		
 		// making decision tree data training file
-		FileWriter writerDecisionTree = new FileWriter(new File(IConstants.DATA + File.separator + "traindb.db"));
+		FileWriter writerDecisionTree = new FileWriter(new File(IConstants.DATA + File.separator + IConstants.TRAININGDB_FOR_DT));
 		writerDecisionTree.write("trainingdata" + "\n");
 		
 		int size = trainingData.get(0).length - 1;
@@ -110,7 +110,7 @@ public class TrainingDataMaker {
 		writerDecisionTree.close();
 		// ***********************************************************
 		// make decision tree data for testing file
-		writerDecisionTree = new FileWriter(new File(IConstants.DATA + File.separator + "testdb.db"));
+		writerDecisionTree = new FileWriter(new File(IConstants.DATA + File.separator + IConstants.TESTDB_FOR_DT));
 		writerDecisionTree.write("testingdata" + "\n");
 		
 		size = testingData.get(0).length - 1;
@@ -131,7 +131,7 @@ public class TrainingDataMaker {
 				}
 				
 			}
-			finalLine = finalLine + "?" + "\n";
+			finalLine = finalLine + "0" + "\n";
 			writerDecisionTree.write(finalLine);
 		}
 		writerDecisionTree.close();

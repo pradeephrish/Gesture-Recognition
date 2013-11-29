@@ -104,7 +104,9 @@ public class DecisionTreeClassification {
 
 		DecisionTree tree = buildTree(learningSet, testAttributes,
 				goalAttribute);
+		System.out.println("Decision tree constructed is as follows:");
 		printDot(tree);
+		System.out.println("Labels guessed by decision tree are as followed:");
 		for (double i = 0; i < testSet.size(); i++) {
 			printGuess(testSet.item((int) i), tree);
 		}

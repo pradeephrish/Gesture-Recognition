@@ -63,5 +63,7 @@ public interface IConstants {
 		public static String DATA_PHASE3 = "dataPhase3";
 		public static String TASK2 = "task2";
 		public static String QUERY_GESTURE = "combinedQueryGesture.csv"; //phase3 task2
+		public static String TESTDB_FOR_DT		 = "testdb.db";
+		public static String TRAININGDB_FOR_DT	 = "traindb.db";
 		
 }

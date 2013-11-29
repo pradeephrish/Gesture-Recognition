@@ -19,7 +19,7 @@ import com.asu.mwdb.utils.Utils;
 
 public class TrainingDataMaker {
 	public List<String> buildTrainingData(File[] fileNames, String gestureLabels) throws IOException {
-		String ggFilePath  = IConstants.DATA + File.separator + IConstants.PCA_GG_COMBINED + File.separator + IConstants.GG_PCA_FILE_NAME;
+		String ggFilePath  = IConstants.DATA + File.separator + IConstants.SVD_GG_COMBINED + File.separator + IConstants.GG_SVD_FILE_NAME;
 		
 		CSVReader csvReader = new CSVReader(new InputStreamReader(
 				new FileInputStream(gestureLabels)));
@@ -82,7 +82,7 @@ public class TrainingDataMaker {
 		
 		// making decision tree data training file
 		FileWriter writerDecisionTree = new FileWriter(new File(IConstants.DATA + File.separator + IConstants.TRAININGDB_FOR_DT));
-		writerDecisionTree.write("trainingdata" + "\n");
+		//writerDecisionTree.write("trainingdata" + "\n");
 		
 		int size = trainingData.get(0).length - 1;
 		
@@ -111,7 +111,7 @@ public class TrainingDataMaker {
 		// ***********************************************************
 		// make decision tree data for testing file
 		writerDecisionTree = new FileWriter(new File(IConstants.DATA + File.separator + IConstants.TESTDB_FOR_DT));
-		writerDecisionTree.write("testingdata" + "\n");
+		//writerDecisionTree.write("testingdata" + "\n");
 		
 		size = testingData.get(0).length - 1;
 		headerLine = new String("");

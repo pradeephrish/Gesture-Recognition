@@ -3,6 +3,7 @@ package com.asu.mwdb.phase3.task3;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -73,6 +74,12 @@ public class KNNClassification {
 		List<String[]> testingData = csvReader.readAll();
 		csvReader.close();
 		System.out.println("Labels after applying K-Nearest Neighbour are as follows:");
+		String knnOutputDir = IConstants.DATA + File.separator + IConstants.KNN_OP_DIR;
+		if(!Utils.isDirectoryCreated(knnOutputDir)) {
+			System.out.println("Error while creating output directory for KNN");
+			return;
+		}
+		FileWriter knnWriter = new FileWriter(new File(knnOutputDir + File.separator + IConstants.KNN_OP_FILE));
 		for(String [] testRowData : testingData){
 			String [][] score = new String[trainingData.size()][2];
 			int i=0;
@@ -82,9 +89,10 @@ public class KNNClassification {
 				i++;
 			}
 			score = Utils.sortStringArray(score);
-			System.out.println("File Name:"+ testRowData[0]+", Label: "+labelDecider(score, labelsData, k));
+			String outputString = "File Name: "+ testRowData[0]+", Label: "+labelDecider(score, labelsData, k);
+			knnWriter.write(outputString + "\n");
 		}
-		
+		knnWriter.close();
 		
 	}
 	

@@ -33,7 +33,7 @@ public class Phase3Task3Driver {
 		File[] fileNames = Utils.getFileOrder(databaseDirectory);
 		List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gesturesLabels);
 		KNNClassification.knnClassify(gesturesLabels,testDataFiles, kValue);
-		DecisionTreeClassification.dtClassify("", "");
+//		/DecisionTreeClassification.dtClassify("", "");
 		
 
 	}

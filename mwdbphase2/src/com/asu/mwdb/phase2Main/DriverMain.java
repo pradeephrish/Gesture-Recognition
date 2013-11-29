@@ -16,42 +16,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
-
-
-
-
-
-
-
-
-
-
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
 import matlabcontrol.MatlabProxy;
 import matlabcontrol.MatlabProxyFactory;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.math3.exception.DimensionMismatchException;
-import org.apache.commons.math3.exception.MaxCountExceededException;
-import org.apache.commons.math3.ode.MainStateJacobianProvider;
-import org.omg.CORBA.OMGVMCID;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-
-
-
-
-
-
-
-
-
-
-
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
+import com.asu.mwdb.phase3.Phase3DriverMain;
 import com.asu.mwdb.phase3.task2.QueryMapper;
 import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
 import com.asu.mwdb.phase3.task3.KNNClassification;
@@ -60,7 +35,6 @@ import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.NumberedFileComparator;
 import com.asu.mwdb.utils.Phase2Utils;
-import com.asu.mwdb.utils.SerializeData;
 import com.asu.mwdb.utils.Utils;
 
 public class DriverMain {
@@ -94,7 +68,7 @@ public class DriverMain {
 			// Create a Gaussian bands of size r
 			GaussianBands gb = new GaussianBands();
 			double rBandValueRange[][] = gb.getGaussianBands(rValue, mean,stdDeviation);
-			
+
 			// Read the database directory
 			System.out.println("Enter database directory:");
 			String databaseDirectory = br.readLine();
@@ -109,12 +83,12 @@ public class DriverMain {
 			// Read shift length s
 			System.out.println("Enter value of shift length (s):");
 			shiftLength = Integer.parseInt(br.readLine());
-			
+
 			// Index files based on TF, IDF, IDF2, TF-IDF, TF-IDF2
 			List<String> componentList = indexFiles(rBandValueRange, databaseDirectory);
 
 			// Options to run the tasks in Phase 2
-			
+
 			System.out.println("Please enter choice for task you want to execute:");
 			System.out.println("1. Task1a - Identify Top 3 Latent Semantics");
 			System.out.println("2. Task1a - Run Task 1a On All Components");
@@ -136,33 +110,33 @@ public class DriverMain {
 					String inputDirectory1a = in.readLine();
 					executeTask1a(inputDirectory1a,false);
 					break;
-				// Task1a- for all components					
+					// Task1a- for all components					
 				case 2:
 					for (int i = 0; i < componentList.size(); i++) {
 						executeTask1a(componentList.get(i),true);
 					}
 					break;
-				// Task1b
+					// Task1b
 				case 3:
 					System.out.println("Enter component folder for Task 1b:");
 					String inputDirectory = br.readLine();
 					executeTask1b(rBandValueRange, inputDirectory);
 					break;
-					
-				// Task1c
+
+					// Task1c
 				case 4:
 					String inputDirectory1c = databaseDirectory + File.separator + IConstants.ALL;
 					executeTask1b(rBandValueRange, inputDirectory1c);
 					break;
-				// Task2b
+					// Task2b
 				case 5:
 					executeTask2b(componentList);
 					break;
-				// Task2c
+					// Task2c
 				case 6: 
 					executeTask2c(componentList);
 					break;
-				// Task3a
+					// Task3a
 				case 7: 
 					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG, componentList);
 					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
@@ -179,17 +153,18 @@ public class DriverMain {
 				System.out.println("8. Exit");
 				choice = in.readLine();
 			} while(!choice.equalsIgnoreCase("8"));
-			
-			
+
+
 			//excecutePhase3Task3();  ,  to be tested later --- Pradeep
-			while(true){
+			//			while(true){
 			try{
-				 executePhase3Task2(rBandValueRange,databaseDirectory); 
+				executePhase3Task2(rBandValueRange,databaseDirectory); 
 			}catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();
 			}
-			}
+			//			}
+			Phase3DriverMain.phase3DriverMainRun(databaseDirectory);
 		} catch (Exception e) {
 			// print the stack trace so that it will be easy to debug
 			e.printStackTrace();
@@ -197,16 +172,16 @@ public class DriverMain {
 		}
 
 	}
-	
+
 	private static void executePhase3Task2(double[][] rBandValueRange, String sampleInputDirectory) throws IOException {
 		// TODO Auto-generated method stub
-		
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Please enter gesture input directory:");
 		String gestureInputDirectory = br.readLine();
-		
+
 		cleanData(gestureInputDirectory);
-	
+
 		QueryMapper queryMapper = new QueryMapper(dictMap,wordLength, shiftLength, matlabScriptLoc, rBandValueRange, proxy, gestureInputDirectory, sampleInputDirectory);
 		System.out.println("Succesfully mapped");
 	}
@@ -234,7 +209,7 @@ public class DriverMain {
 	//ggDirectory = IConstants.PCA_DIR_GG or SVD_DIR_GG
 	private static void executeTask2bForCombinedData(List<String> inputDirectoryKey,String ggDirectory) throws IOException, MatlabConnectionException, MatlabInvocationException{
 		System.out.println("Executing task2b combination  .....  ");
-		
+
 		File[] fileNames = dictMap.get(inputDirectoryKey.get(0)).getFileNames();
 		Integer documentSize = fileNames.length;
 		Double[][] tfidfCombined = new Double[documentSize][documentSize];
@@ -242,16 +217,16 @@ public class DriverMain {
 		Double [][] pcaCombined = new Double[documentSize][documentSize];
 		Double [][] svdCombined = new Double[documentSize][documentSize];
 		Double [][] ldaCombined = new Double[documentSize][documentSize];
-		
+
 		String path = null;
-		
+
 		for (int i = 0; i < inputDirectoryKey.size(); i++) {
 			if(!inputDirectoryKey.get(i).contains(IConstants.ALL)){
 
 				String componentDir = inputDirectoryKey.get(i).substring(inputDirectoryKey.get(i).lastIndexOf(File.separator) + 1);
 				File file = new File(IConstants.DATA+File.separator+ggDirectory+File.separator+componentDir);
 				path = file.getAbsolutePath();
-				
+
 				tfidfCombined=Utils.addMatrix(tfidfCombined, Utils.getMatrix(path+File.separator+"ggTFIDF.csv",0));
 				tfidf2Combined=Utils.addMatrix(tfidf2Combined, Utils.getMatrix(path+File.separator+"ggTFIDF2.csv",0));
 				pcaCombined=Utils.addMatrix(pcaCombined, Utils.getMatrix(path+File.separator+"ggPCA.csv",0));
@@ -259,7 +234,7 @@ public class DriverMain {
 				ldaCombined=Utils.addMatrix(ldaCombined, Utils.getMatrix(path+File.separator+"ggLDA.csv",0));
 			}
 		}
-		
+
 		String parentPath = new File(path).getParentFile().getParentFile()+File.separator+ggDirectory+"-combined";
 		int scalingFactor = inputDirectoryKey.size() - 1;
 		Utils.saveMatrixFile(Utils.scaleDownMatrix(tfidfCombined,scalingFactor), parentPath+File.separator,"ggTFIDF.csv");
@@ -267,7 +242,7 @@ public class DriverMain {
 		Utils.saveMatrixFile(Utils.scaleDownMatrix(pcaCombined,scalingFactor), parentPath+File.separator,"ggPCA.csv");
 		Utils.saveMatrixFile(Utils.scaleDownMatrix(svdCombined,scalingFactor), parentPath+File.separator,"ggSVD.csv");
 		Utils.saveMatrixFile(Utils.scaleDownMatrix(ldaCombined,scalingFactor), parentPath+File.separator,"ggLDA.csv");
-		
+
 		Phase2Utils mainWindow = new Phase2Utils();
 		if(ggDirectory.equals(IConstants.PCA_DIR_GG)){
 			mainWindow.executePCAGGCombined(parentPath+File.separator+"ggTFIDF.csv", Utils.convertList(fileNames), proxy);
@@ -284,7 +259,7 @@ public class DriverMain {
 		}
 
 	}
-	
+
 
 	/**
 	 * Task 2b execution
@@ -314,7 +289,7 @@ public class DriverMain {
 					double[][] outputtfidf = Utils.computeSimilarilty(currentDictionary, UserChoice.TFIDF);
 					double[][] outputtfidf2 = Utils.computeSimilarilty(currentDictionary, UserChoice.TFIDF2);
 					//now implemented it for PCA, SVD, LDA latent semantics
-					
+
 					//pca latent semantic
 					List<List<String[]>> out = Utils.convertDataForComparison(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+File.separator+componentDir, dictionaryHolder.getFileNames());
 					double[][] pcaGGLS = Utils.getGestureGestureMatrixLSA(out);
@@ -342,10 +317,10 @@ public class DriverMain {
 			}
 		}
 
-		
+
 		System.out.println("Comibing data for task2b");
 		executeTask2bForCombinedData(inputDirectoryKey,IConstants.PCA_DIR_GG);
-		
+
 		System.out.println("Succefully executed task2b");
 	}
 
@@ -412,7 +387,7 @@ public class DriverMain {
 			}
 		}
 		System.out.println("Comibing data for task2c");
-		
+
 		executeTask2bForCombinedData(inputDirectoryKey,IConstants.SVD_DIR_GG);
 
 		System.out.println("Succefully executed task2c");
@@ -445,8 +420,8 @@ public class DriverMain {
 		/**************/ //for PCA and SVD
 		List<Map<String, Double[]>> computedScores = main
 				.createSensorWordScores(variable1, getDictionary,3);
-		
-		
+
+
 		List<List<String>> order = main.savewordstoCSV(computedScores,IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir);
 		/***************/
 
@@ -721,8 +696,8 @@ public class DriverMain {
 		File pcaTransformedDirFile = new File(pcaTransformDirectory);
 		File svdTransformedDirFile = new File(svdTransformDirectory);
 		File ldaTransformedDirFile = new File(ldaTransformDirectory);
-		
-		
+
+
 
 		List<List<String[]>> pcaTrasnsformData = Utils.convertDataForComparison(pcaTransformDirectory, pcaTransformedDirFile.listFiles());
 		List<List<String[]>> svdTrasnsformData = Utils.convertDataForComparison(svdTransformDirectory, svdTransformedDirFile.listFiles());

@@ -505,4 +505,43 @@ public class Utils {
 		});
 		return arrayStr;
 	}
+	
+	
+	/**
+	 * Clean data from data base folder
+	 * @param inputDirectory
+	 * @throws IOException
+	 */
+	public static void cleanData(String inputDirectory)
+			throws IOException {
+		File fileObj = new File(inputDirectory);
+		File[] files = fileObj.listFiles();
+		for (File file : files) {
+			String fileName = file.getName();
+			if (fileName.contains(IConstants.GAUSSIAN_FILE)
+					|| fileName.contains(IConstants.NORMALIZED_FILE)
+					|| fileName.contains(IConstants.LETTERS_FILE)
+					|| fileName.contains(IConstants.TASK1_OUTPUT)
+					|| fileName.contains(IConstants.TASK1_OUTPUT_ALL)
+					|| fileName.contains(IConstants.TASK3_OUTPUT)
+					|| fileName.contains(IConstants.TASK3_OUTPUT_ALL)
+					|| fileName.contains(IConstants.RANGED_BAND)
+					|| fileName.contains(IConstants.ALL)
+					) {
+				FileIOHelper.delete(file);
+			}
+			else if(fileName.contains("W")) {
+				cleanData(inputDirectory + File.separator + "W");
+			} 
+			else if(fileName.contains("X")) {
+				cleanData(inputDirectory + File.separator + "X");
+			} 
+			else if(fileName.contains("Y")) {
+				cleanData(inputDirectory + File.separator + "Y");
+			} 
+			else if(fileName.contains("Z")) {
+				cleanData(inputDirectory + File.separator + "Z");
+			} 
+		}
+	}
 }

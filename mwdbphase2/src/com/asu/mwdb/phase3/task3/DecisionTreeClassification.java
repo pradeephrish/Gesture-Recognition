@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import com.asu.mwdb.phase3.task3.decisiontree.misc.ItemSet;
 import com.asu.mwdb.phase3.task3.decisiontree.misc.KnownSymbolicValue;
 import com.asu.mwdb.phase3.task3.decisiontree.misc.SymbolicAttribute;
 import com.asu.mwdb.utils.IConstants;
+import com.asu.mwdb.utils.Utils;
 
 public class DecisionTreeClassification {
 
@@ -72,25 +74,24 @@ public class DecisionTreeClassification {
 
 	public static void dtClassify(String testDatFile, String trainingDataFile, List<String> testDataFiles)
 			throws FileFormatException, IOException {
-		ItemSet learningSet = null;
+		ItemSet trainingSet = null;
 		ItemSet testSet = null;
-		
+		// read the training data 
 		try {
-			learningSet = ItemSetReader.read(new FileReader(trainingDataFile));
+			trainingSet = ItemSetReader.read(new FileReader(trainingDataFile));
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found : " + trainingDataFile + ".");
 			System.exit(-1);
 		}
-
+		// Read the testing data
 		try {
 			testSet = ItemSetReader.read(new FileReader(testDatFile));
-
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found : " + testDatFile + ".");
 			System.exit(-1);
 		}
 
-		AttributeSet attributes = learningSet.attributeSet();
+		AttributeSet attributes = trainingSet.attributeSet();
 
 		Vector testAttributesVector = new Vector();
 		List<Attribute> attributeList = attributes.addByName("attr");
@@ -99,20 +100,27 @@ public class DecisionTreeClassification {
 		}
 
 		AttributeSet testAttributes = new AttributeSet(testAttributesVector);
-		SymbolicAttribute goalAttribute = (SymbolicAttribute) learningSet
+		SymbolicAttribute goalAttribute = (SymbolicAttribute) trainingSet
 				.attributeSet().findByName("label");
 
-		DecisionTree tree = buildTree(learningSet, testAttributes,
+		DecisionTree tree = buildTree(trainingSet, testAttributes,
 				goalAttribute);
-		System.out.println("Decision tree constructed is as follows:");
+		//System.out.println("Decision tree constructed is as follows:");
 		//printDot(tree);
 		System.out.println("Labels guessed by decision tree are as followed:");
 		String str = null;
-		for (double i = 0; i < testSet.size(); i++) {
-			str = "File Name: " + testDataFiles.get((int) i) + ", Label:";
-			printGuess(str, testSet.item((int) i), tree);
-			
+		String dtOutputDirectory = IConstants.DATA + File.separator + IConstants.DT_OP_DIR;
+		if(!Utils.isDirectoryCreated(dtOutputDirectory)) {
+			System.out.println("Error while creating output directory for DT");
+			return;
 		}
+		FileWriter dtWriter = new FileWriter(new File(dtOutputDirectory + File.separator + IConstants.DT_OP_FILE));
+		for (double i = 0; i < testSet.size(); i++) {
+			str = "File Name: " + testDataFiles.get((int) i) + ", Label: ";
+			str = printGuess(str, testSet.item((int) i), tree);
+			dtWriter.write(str + "\n");
+		}
+		dtWriter.close();
 	}
 
 	/*
@@ -136,7 +144,7 @@ public class DecisionTreeClassification {
 	/*
 	 * Prints an item's guessed goal attribute value.
 	 */
-	static private void printGuess(String str, Item item, DecisionTree tree) {
+	static private String printGuess(String str, Item item, DecisionTree tree) {
 		AttributeSet itemAttributes = tree.getAttributeSet();
 		SymbolicAttribute goalAttribute = tree.getGoalAttribute();
 
@@ -147,7 +155,7 @@ public class DecisionTreeClassification {
 				+ tree.getGoalAttribute().valueToString(
 						guessedGoalAttributeValue);
 
-		System.out.println(s);
+		return s;
 	}
 
 }

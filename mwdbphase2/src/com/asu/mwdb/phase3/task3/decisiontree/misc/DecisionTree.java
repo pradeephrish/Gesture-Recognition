@@ -5,25 +5,7 @@ package com.asu.mwdb.phase3.task3.decisiontree.misc;
 import java.util.*;
 
 
-/**
- * This class implements a decision tree.<p>
- * A decision tree is a tree where a test has been assigned to non-leaf
- * nodes.  Its aim is to guess the value of an {@link Item item}'s attribute
- * (called the 'goal' attribute) thanks to tests over other attributes.<p>
- * If the topology of the tree is changed, take must be taken to create a
- * valid tree, i.e. an acyclic graph where all the sons of one node are
- * different.<p>
- * The tree is composed of 3 types of nodes:
- * <ul>
- * <li> TestNodes: They are associated to a test over items' attributes.  A
- *      test node has as many sons as the test's number of different outcomes.
- * <li> LeafNodes: They have no sons.  A leaf node is associated a goal
- *      attribute value.
- * <li> OpenNode: A node whose purpose has not been found yet.  It can be
- *      replaced by a test/leaf node later on.  The tree's open nodes can be
- *      efficiently (in log(nbNodes) on average) retreived.
- * </ul>
- **/
+
 public class DecisionTree {
     
     private final AnchorNode anchor;

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import com.asu.mwdb.phase3.svmlib.tools.RunSVM;
 import com.asu.mwdb.phase3.task2.QueryMapper;
 import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
 import com.asu.mwdb.phase3.task3.KNNClassification;
@@ -38,6 +39,7 @@ public class Phase3DriverMain {
 		String testdbFile = IConstants.DATA + File.separator + IConstants.TESTDB_FOR_DT;
 		String traindbFile = IConstants.DATA + File.separator + IConstants.TRAININGDB_FOR_DT;
 		DecisionTreeClassification.dtClassify(testdbFile, traindbFile, testDataFiles);
+		RunSVM.classifySVM(testDataFiles);
 	}
 	
 

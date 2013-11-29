@@ -77,12 +77,11 @@ public class ItemSetReader {
 
 			st.pushBack();
 
-			if (lineNumber == 1)
-				readFirstLine(st); /* The database name is forgotten */
-			else if (lineNumber == 2) {
+			if (lineNumber == 1) {
 				attributes = readAttributesLine(st);
-			} else
+			} else{
 				items.add(readLine(st, named, attributes, lineNumber));
+			}
 
 			lineNumber++;
 		}

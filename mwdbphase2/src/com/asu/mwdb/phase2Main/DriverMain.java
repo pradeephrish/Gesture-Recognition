@@ -186,26 +186,6 @@ public class DriverMain {
 		System.out.println("Succesfully mapped");
 	}
 
-	private static void excecutePhase3Task3(String databaseDirectory) throws IOException, MatlabInvocationException {
-		// TODO Auto-generated method stub
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Enter the file for gestures and labels:");
-		String gesturesLabels = br.readLine();
-		while(!Utils.isFilePresent(gesturesLabels)) {
-			System.out.println("File not found, please check the input");
-			gesturesLabels = br.readLine();
-		}
-		System.out.println("Enter value of K for KNN Classification:");
-		int kValue = Integer.parseInt(br.readLine());
-		TrainingDataMaker trainingDataMaker = new TrainingDataMaker();
-		// return the test data files just to display results in output file in the following format
-		// filename - label
-		File[] fileNames = Utils.getFileOrder(databaseDirectory);
-		List<String> testDataFiles = trainingDataMaker.buildTrainingData(fileNames, gesturesLabels);
-		KNNClassification.knnClassifyMatlab(proxy, databaseDirectory, gesturesLabels, kValue, fileNames, testDataFiles);
-		DecisionTreeClassification.dtClassifyMatlab(proxy, databaseDirectory, gesturesLabels, fileNames, testDataFiles);
-	}
-
 	//ggDirectory = IConstants.PCA_DIR_GG or SVD_DIR_GG
 	private static void executeTask2bForCombinedData(List<String> inputDirectoryKey,String ggDirectory) throws IOException, MatlabConnectionException, MatlabInvocationException{
 		System.out.println("Executing task2b combination  .....  ");

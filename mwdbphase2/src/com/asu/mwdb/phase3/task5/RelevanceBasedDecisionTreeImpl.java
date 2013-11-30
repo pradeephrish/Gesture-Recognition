@@ -84,8 +84,9 @@ public class RelevanceBasedDecisionTreeImpl {
 			List<LinkedHashMap<Integer, Double>> scoresPerQueryComponent = tranform(); //this will transform all query documents using SVD principle components
 			LinkedHashMap<Integer, Double> sum = addAll(scoresPerQueryComponent);
 			
-			//sort by value
-			sum=SearchDatabaseForSimilarity.sortHashMapByValuesD(sum);
+			//sort by value 
+//			sum=SearchDatabaseForSimilarity.sortHashMapByValuesD(sum);			
+			//above line commented because,   -- //don't sort by value - let it be random - or they are clustered correctly -kmeans
 			
 			System.out.println("On Summed Data");
 			DriverMain.displayMapResults(sum,Utils.getCSVFiles(new File(sampleInputDirectory+File.separator+"X")));
@@ -115,7 +116,6 @@ public class RelevanceBasedDecisionTreeImpl {
 			List<LinkedHashMap<Integer, Double>> scoresPerQueryComponent,File[] files,List<Integer> trainingfileOrder) {
 		// TODO Auto-generated method stub
 		//show top k results
-		int counter = 0;
 		if(labels==null)
 			labels = getRelevancyInput(sum,files,k);
 

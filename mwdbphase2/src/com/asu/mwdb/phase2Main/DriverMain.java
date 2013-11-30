@@ -805,9 +805,9 @@ public class DriverMain implements Serializable {
 			File file = files[key];		    
 			System.out.println((counter + 1) + " - " + file.getAbsolutePath() + "        " + entry.getValue());
 			counter = counter + 1;
-			if(counter == 5) {
-				break;
-			}
+			//if(counter == 5) {
+			//	break;
+		//	}
 		}
 		System.out.println("******************************************************************");
 	}

@@ -29,10 +29,9 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
 import com.asu.mwdb.phase3.Phase3DriverMain;
 import com.asu.mwdb.phase3.task2.QueryMapper;
-import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
-import com.asu.mwdb.phase3.task3.KNNClassification;
-import com.asu.mwdb.phase3.task3.TrainingDataMaker;
 import com.asu.mwdb.phase3.task5.RelevanceBasedDecisionTreeImpl;
+import com.asu.mwdb.phase3.task6.MwdbPhase3Task6;
+import com.asu.mwdb.phase3.task6.RelevanceBasedDecisionTreeImplUI;
 import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.NumberedFileComparator;
@@ -100,7 +99,8 @@ public class DriverMain implements Serializable {
 			System.out.println("6. Task2c - Create Gesture-Gesture Matrix and Run SVD");
 			System.out.println("7. Task3a - Partition Gestures into 3 Groups");
 			System.out.println("8. Phase 3 - Task5 -Relevance based decision tree");
-			System.out.println("9. Exit");
+			System.out.println("9. Phase 3 - Task6 -Relevance based decision tree - UI");
+			System.out.println("10. Exit");
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String choice = in.readLine();
@@ -147,6 +147,9 @@ public class DriverMain implements Serializable {
 				case 8:
 					executePhase3Task5(rBandValueRange,databaseDirectory);
 					break;
+				case 9:
+					executePhase3Task6(rBandValueRange,databaseDirectory);
+					break;
 				}
 				System.out.println("Please enter choice for task you want to execute:");
 				System.out.println("1. Task1a - Identify Top 3 Latent Semantics");
@@ -157,9 +160,10 @@ public class DriverMain implements Serializable {
 				System.out.println("6. Task2c - Create Gesture-Gesture Matrix and Run SVD");
 				System.out.println("7. Task3a - Partition Gestures into 3 Groups");
 				System.out.println("8. Phase 3 - Task5 -Relevance based decision tree");
-				System.out.println("9. Exit");
+				System.out.println("9. Phase 3 - Task6 -Relevance based decision tree - UI");
+				System.out.println("10. Exit");
 				choice = in.readLine();
-			} while(!choice.equalsIgnoreCase("9"));
+			} while(!choice.equalsIgnoreCase("10"));
 
 
 			//excecutePhase3Task3();  ,  to be tested later --- Pradeep
@@ -180,6 +184,13 @@ public class DriverMain implements Serializable {
 
 	}
 	
+	private static void executePhase3Task6(double[][] rBandValueRange,
+			String databaseDirectory) {
+		//all nulls set using UI
+		RelevanceBasedDecisionTreeImplUI relevanceBasedDecisionTreeImplUI = new RelevanceBasedDecisionTreeImplUI(dictMap, wordLength, shiftLength, databaseDirectory, rBandValueRange, proxy, null, databaseDirectory, null);
+		MwdbPhase3Task6 mwdbPhase3Task6 = new MwdbPhase3Task6(relevanceBasedDecisionTreeImplUI);
+	}
+
 	private static void executePhase3Task5(double[][] rBandValueRange, String sampleInputDirectory) throws IOException {
 		// TODO Auto-generated method stub
 

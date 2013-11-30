@@ -61,17 +61,3 @@ File Name: 532.csv, Label: n
 File Name: 533.csv, Label: n
 File Name: 534.csv, Label: n
 File Name: 535.csv, Label: n
-File Name: 563.csv, Label: n
-File Name: 564.csv, Label: n
-File Name: 565.csv, Label: n
-File Name: 566.csv, Label: n
-File Name: 594.csv, Label: n
-File Name: 595.csv, Label: n
-File Name: 596.csv, Label: n
-File Name: 597.csv, Label: n
-File Name: 6.csv, Label: n
-File Name: 67.csv, Label: n
-File Name: 68.csv, Label: n
-File Name: 69.csv, Label: n
-File Name: 7.csv, Label: n
-File Name: 70.csv, Label: n

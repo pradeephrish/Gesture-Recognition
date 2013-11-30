@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.commons.io.FileUtils;
 
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
@@ -29,9 +33,11 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.asu.mwdb.phase2Main.AssignBandValues;
 import com.asu.mwdb.phase2Main.DictionaryBuilderPhase2;
 import com.asu.mwdb.phase2Main.DriverMain;
+import com.asu.mwdb.phase2Main.FileIOHelper;
 import com.asu.mwdb.phase2Main.NormalizeData;
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity;
 import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
+import com.asu.mwdb.phase3.task3.TrainingDataMaker;
 import com.asu.mwdb.phase3.task3.decisiontree.io.ItemSetReader;
 import com.asu.mwdb.phase3.task3.decisiontree.misc.Attribute;
 import com.asu.mwdb.phase3.task3.decisiontree.misc.AttributeSet;
@@ -89,7 +95,7 @@ public class RelevanceBasedDecisionTreeImpl {
 			System.out.println("Enter k :");
 			Integer k = Integer.valueOf(br.readLine());
 			
-			relvanceFeedbackDecisionTree(k,sum,scoresPerQueryComponent,Utils.getCSVFiles(new File(sampleInputDirectory+File.separator+"X")),null,new ArrayList<Integer>());
+			relvanceFeedbackDecisionTree(k,sum,scoresPerQueryComponent,Utils.getCSVFiles(new File(sampleInputDirectory+File.separator+"X")),new ArrayList<Integer>());
 			
 			
 		} catch (IOException e) {
@@ -102,10 +108,11 @@ public class RelevanceBasedDecisionTreeImpl {
 		}
 	}
 
+	static HashMap<Integer,String> labels = null;  //same in all recursive calls
 	
 	private void relvanceFeedbackDecisionTree(Integer k,
 			LinkedHashMap<Integer, Double> sum,
-			List<LinkedHashMap<Integer, Double>> scoresPerQueryComponent,File[] files,HashMap<Integer,String> labels,List<Integer> trainingfileOrder) {
+			List<LinkedHashMap<Integer, Double>> scoresPerQueryComponent,File[] files,List<Integer> trainingfileOrder) {
 		// TODO Auto-generated method stub
 		//show top k results
 		int counter = 0;
@@ -135,7 +142,8 @@ public class RelevanceBasedDecisionTreeImpl {
 		input[i+1]=" symbolic";
 		listInput.add(input);
 		
-		Iterator<Entry<Integer, Double>> iterator = sum.entrySet().iterator();
+		if(trainingfileOrder.size() == 0){  //first time
+		Iterator<Entry<Integer, Double>> iterator = sum.entrySet().iterator(); //take top k
 		int count = 0;
 		while(iterator.hasNext()){
 			if(count < k){
@@ -161,6 +169,19 @@ public class RelevanceBasedDecisionTreeImpl {
 			}else{
 				break;
 			}
+			++count;
+		}
+		}else  //take it from training file order
+		{
+			for (int j = 0; j < trainingfileOrder.size(); j++) {
+				String inputRow[]=new String[scoresPerQueryComponent.size()+1];
+				int p = 0;
+				for (; p < scoresPerQueryComponent.size(); p++) {  //iterate over components
+						inputRow[p]=Double.toString(scoresPerQueryComponent.get(p).get(trainingfileOrder.get(j))); 
+					}
+					inputRow[p]= labels.get(trainingfileOrder.get(j));
+					listInput.add(inputRow);
+				}
 		}
 		csvWriter.writeAll(listInput);	
 		try {
@@ -176,11 +197,11 @@ public class RelevanceBasedDecisionTreeImpl {
 		try {
 			labels = performDTClassification(inputDTTest, inputDT, files,labels,trainingfileOrder,testingFileOrder);
 		
-			labels=showKResults(labels,sum,k,files);
+			trainingfileOrder=showKResults(sum,k,files,trainingfileOrder);
 			//show new result sort by score and relevancy
 			if(userChoiceContinue)
 			{
-				relvanceFeedbackDecisionTree(k,sum,scoresPerQueryComponent,files,labels,trainingfileOrder);
+				relvanceFeedbackDecisionTree(k,sum,scoresPerQueryComponent,files,trainingfileOrder);
 			}else
 			{
 				System.out.println("Thank you !");
@@ -198,9 +219,7 @@ public class RelevanceBasedDecisionTreeImpl {
 		
 	}
 
-	private HashMap<Integer, String> showKResults(
-			HashMap<Integer, String> labels,
-			LinkedHashMap<Integer, Double> sum, Integer k,File files[]) {
+	private List<Integer> showKResults(LinkedHashMap<Integer, Double> sum, Integer k,File files[], List<Integer> trainingfileOrder) {
 		// TODO Auto-generated method stub
 	
 		LinkedHashMap<Integer,Double> yLabelFiles = new LinkedHashMap<Integer, Double>();
@@ -222,9 +241,11 @@ public class RelevanceBasedDecisionTreeImpl {
 		int j=0;
 		Iterator<Entry<Integer, Double>> yIterator = yLabelFiles.entrySet().iterator();
 		while(yIterator.hasNext()){
-			
-			if(j < k){
 			Entry<Integer, Double> entry = yIterator.next();
+			if(j < k){
+				
+			trainingfileOrder.add(entry.getKey());  //add for new training	
+			
 			System.out.println("FileName "+files[entry.getKey()]+"Score : "+entry.getValue());
 			System.out.println("Relevant ?");
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -243,12 +264,14 @@ public class RelevanceBasedDecisionTreeImpl {
 			++j;
 			}
 		}
-		
+
 		if(j < k){
 			Iterator<Entry<Integer, Double>> nIterator = nLabelFiles.entrySet().iterator();
-			while(yIterator.hasNext()){
-				if(j < k){
+			while(nIterator.hasNext()){
 				Entry<Integer, Double> entry = nIterator.next();
+				if(j < k){
+				trainingfileOrder.add(entry.getKey());  //add for new training
+				
 				System.out.println("FileName "+files[entry.getKey()]+"Score : "+entry.getValue());
 				System.out.println("Relevant ?");
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -269,6 +292,10 @@ public class RelevanceBasedDecisionTreeImpl {
 			}
 			
 		}
+		
+		//remove duplicates from training file order
+		trainingfileOrder=removeDuplicates(trainingfileOrder);
+		
 		System.out.println("Do you want to continue(y/n)?");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
@@ -284,17 +311,50 @@ public class RelevanceBasedDecisionTreeImpl {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return labels;
+		return trainingfileOrder;
 	}
 
 
-	public List<Integer> createTestingData(List<LinkedHashMap<Integer, Double>> scoresPerQueryComponent,File[] files, List<Integer> fileOrder){
+	private static List<Integer> removeDuplicates(List<Integer> trainingIndexes) {
+		//TODO Auto-generated method stub
+		if(trainingIndexes.size()!=0){
+			Collections.sort(trainingIndexes);
+			Integer old = trainingIndexes.get(0);
+			List<Integer> copy = new ArrayList<Integer>();
+			copy.add(old);
+		for (int i = 1; i < trainingIndexes.size(); i++) {
+			if(old != trainingIndexes.get(i)){
+				copy.add(trainingIndexes.get(i));
+				old=trainingIndexes.get(i);
+			}
+			else
+				old = trainingIndexes.get(i);
+		}
+		return copy;
+		}else
+		return trainingIndexes;
+	}
+
+	public List<Integer> createTestingData(List<LinkedHashMap<Integer, Double>> scoresPerQueryComponent,File[] files, List<Integer> trainingFileOrder){ 
 		
 		//testing file order
 		List<Integer> testingFileOrder = new ArrayList<Integer>();
+		String inputDT = IConstants.DATA + File.separator + IConstants.DT_OP_DIR + File.separator +"task5testing.db";
+		
+		//check if training data is full , make testing and training same
+		if(trainingFileOrder.size()==files.length) // if equal, full
+		{
+			try {
+				FileUtils.copyFile(new File(IConstants.DATA + File.separator + IConstants.DT_OP_DIR + File.separator+"task5train.db"), new File(inputDT));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return trainingFileOrder;
+		}
+		
 		
 		CSVWriter csvWriter = null;
-		String inputDT = IConstants.DATA + File.separator + IConstants.DT_OP_DIR + File.separator +"task5testing.db";
 		try {
 			csvWriter = new CSVWriter(new FileWriter(inputDT), ' ',CSVWriter.NO_QUOTE_CHARACTER);
 		} catch (IOException e) {
@@ -316,11 +376,15 @@ public class RelevanceBasedDecisionTreeImpl {
 		listInput.add(input);
 		
 		
-			Set<Integer> keys = scoresPerQueryComponent.get(0).keySet();
+			Set<Integer> akeys = scoresPerQueryComponent.get(0).keySet();
+			
+			Set<Integer> keys = new HashSet<Integer>();
+			
+			keys.addAll(akeys);
 			
 			//remove training key order
-			for (int j = 0; j < fileOrder.size(); j++) {
-				keys.remove(fileOrder.get(j)); 
+			for (int j = 0; j < trainingFileOrder.size(); j++) {
+				keys.remove(trainingFileOrder.get(j)); 				
 			}
 			
 			Integer[] keyArray = keys.toArray(new Integer[0]);  // this will not contain training keys
@@ -555,7 +619,16 @@ public class RelevanceBasedDecisionTreeImpl {
 	
 	public static void main(String[] args) throws MatlabConnectionException, MatlabInvocationException, IOException {	
 //		performDTClassification("C:\\Users\\paddy\\git\\mwdb\\mwdbphase2\\data\\DT\\task5testing.db", "C:\\Users\\paddy\\git\\mwdb\\mwdbphase2\\data\\DT\\task5train.db",Utils.getFileOrder("C:\\Users\\paddy\\Desktop\\sampleData\\X"));
-			
+		List<Integer> list =new ArrayList<Integer>();
+		list.add(2);
+		list.add(21);
+		list.add(2);
+		list.add(1);
+		list.add(1);
+		list.add(2);
+		removeDuplicates(list); 
+		System.out.println(list.toString());
+		System.out.println(removeDuplicates(list));
 	}
 	
 	private LinkedHashMap<Integer, Double> addAll(List<LinkedHashMap<Integer, Double>> scoresPerQueryComponent) {

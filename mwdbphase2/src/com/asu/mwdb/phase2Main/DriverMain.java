@@ -6,6 +6,7 @@ import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ import com.asu.mwdb.utils.NumberedFileComparator;
 import com.asu.mwdb.utils.Phase2Utils;
 import com.asu.mwdb.utils.Utils;
 
-public class DriverMain {
+public class DriverMain implements Serializable {
 
 	private static MatlabProxy proxy;
 	private static Integer wordLength = 0;
@@ -98,7 +99,8 @@ public class DriverMain {
 			System.out.println("5. Task2b - Create Gesture-Gesture Matrix and Run PCA");
 			System.out.println("6. Task2c - Create Gesture-Gesture Matrix and Run SVD");
 			System.out.println("7. Task3a - Partition Gestures into 3 Groups");
-			System.out.println("8. Exit");
+			System.out.println("8. Phase 3 - Task5 -Relevance based decision tree");
+			System.out.println("9. Exit");
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String choice = in.readLine();
@@ -141,6 +143,9 @@ public class DriverMain {
 				case 7: 
 					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG, componentList);
 					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
+					break;
+				case 8:
+					executePhase3Task5(rBandValueRange,databaseDirectory);
 					break;
 				}
 				System.out.println("Please enter choice for task you want to execute:");

@@ -62,10 +62,10 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 
 		
 		tableModel = new javax.swing.table.DefaultTableModel(
-				new Object[][] { { null, null, true ,true,null}, { null, null, true ,true,null},
-						{ null, null, true ,true,null}, { null, null, true ,true,null},
-						{ null, null, true ,true,null}, { null, null, true ,true,null},
-						{ null, null, true ,true,null}, { null, null, true ,true,null}},
+				new Object[][] { { null, null, true ,true,null},
+						{ null, null, true ,true,null},
+						{ null, null, true ,true,null},
+						{ null, null, true ,true,null}},
 				columnIdentifiers);
 		
 		jTable1 = new JTable(tableModel){
@@ -210,7 +210,7 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 		if (filePicker != null && filePicker.getjFileChooser1() != null)
 			queryGesturePath = filePicker.getjFileChooser1().getSelectedFile()
 					.getAbsolutePath();
-
+		else
 		queryGesturePath = jTextField1.getText();
 
 		if (queryGesturePath == null || queryGesturePath.length() == 0) {
@@ -246,6 +246,7 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 			trainingIndexes=relevanceBasedDecisionTreeImplUI.initData();
 			data=relevanceBasedDecisionTreeImplUI.results;
 			tableModel.setDataVector(data, columnIdentifiers);
+			jTable1.setModel(tableModel);
 			tableModel.fireTableDataChanged();
 		}
 		

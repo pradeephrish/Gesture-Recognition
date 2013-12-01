@@ -256,10 +256,14 @@ public class RelevanceBasedDecisionTreeImplUI {
 				if(j < k){
 				trainingfileOrder.add(entry.getKey());  //add for new training
 				
+				results[j][0]=files[entry.getKey()];
+				results[j][1]=entry.getValue();
 				if(labels.get(entry.getKey()).equalsIgnoreCase("y"))
-					results[j][1]=true;
+					results[j][2]=true;
 				else
-					results[j][2]=false;
+					results[j][3]=false;
+				
+				results[j][4]=entry.getKey();  //stroing index at 4
 				
 				/*System.out.println("FileName "+files[entry.getKey()]+"Score : "+entry.getValue());
 				System.out.println("Relevant ?");

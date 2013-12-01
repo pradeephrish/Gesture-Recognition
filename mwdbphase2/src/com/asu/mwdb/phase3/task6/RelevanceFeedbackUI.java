@@ -23,7 +23,7 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 	private FilePickerForm filePicker;
 	RelevanceBasedDecisionTreeImplUI relevanceBasedDecisionTreeImplUI;
 	private DefaultTableModel tableModel;
-	private Object[] columnIdentifiers = new String[] { "Gesture", "Score", "Relevant", "Irrelevant", "HIndex" }; 
+	private Object[] columnIdentifiers = new String[] { "Gesture", "Score", "Relevant", "Irrelevant" }; 
 	private Object[][] data;
 	/**
 	 * Creates new form RelevanceFeedbackUI
@@ -62,10 +62,10 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 
 		
 		tableModel = new javax.swing.table.DefaultTableModel(
-				new Object[][] { { null, null, true ,true,null},
-						{ null, null, true ,true,null},
-						{ null, null, true ,true,null},
-						{ null, null, true ,true,null}},
+				new Object[][] { { null, null, true ,true},
+						{ null, null, true ,true},
+						{ null, null, true ,true},
+						{ null, null, true ,true}},
 				columnIdentifiers);
 		
 		jTable1 = new JTable(tableModel){
@@ -77,7 +77,6 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 				case 1: return String.class;
 				case 2: return Boolean.class;
 				case 3: return Boolean.class;
-				case 4: return String.class;
 				default: return Boolean.class;
 				}
 			}
@@ -234,8 +233,6 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 			jTextField2.setText("");
 			return;
 		}
-		System.out.println(k);
-		
 		//everything fine, 
 		
 		relevanceBasedDecisionTreeImplUI.setK(k);
@@ -248,12 +245,12 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 			tableModel.setDataVector(data, columnIdentifiers);
 			jTable1.setModel(tableModel);
 			tableModel.fireTableDataChanged();
+			return ;
 		}
 		
 		//check feedback given on this data
 		if(checkFeedBackIsGiven(relevanceBasedDecisionTreeImplUI.labels,data)){
 			trainingIndexes=relevanceBasedDecisionTreeImplUI.relvanceFeedbackDecisionTree(trainingIndexes);
-			System.out.println();
 			data=relevanceBasedDecisionTreeImplUI.results;			
 			tableModel.setDataVector(data, columnIdentifiers);
 			jTable1.setModel(tableModel);
@@ -273,8 +270,17 @@ public class RelevanceFeedbackUI extends javax.swing.JFrame {
 		for (int i = 0; i < data.length; i++) {
 			documentIndex[i]=(Integer) data[i][4]; //get document index at 4
 		}
+		
+		DefaultTableModel tmodel = (DefaultTableModel) jTable1.getModel();
+		Vector<Vector> vector = tmodel.getDataVector();
 		for (int i = 0; i < documentIndex.length; i++) {
-			boolean relevant = (Boolean) jTable1.getCellEditor(i, 2).getCellEditorValue();
+			Vector innerVector=vector.get(i);
+			boolean relevant =false;
+			if(innerVector.get(2)!=null)
+				relevant = (Boolean) innerVector.get(2);
+			else
+				relevant = false;
+			
 			if(relevant)
 				labels.put(documentIndex[i], "y");
 			else

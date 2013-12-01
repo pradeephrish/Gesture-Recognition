@@ -220,12 +220,10 @@ public class RelevanceBasedDecisionTreeImplUI {
 				
 			trainingfileOrder.add(entry.getKey());  //add for new training	
 			
-			results[j][0]=files[entry.getKey()];
+			results[j][0]=files[entry.getKey()].getName();
 			results[j][1]=entry.getValue();
-			if(labels.get(entry.getKey()).equalsIgnoreCase("y"))
-				results[j][2]=true;
-			else
-				results[j][3]=false;
+			results[j][2]=true;
+			results[j][3]=false;
 			
 			results[j][4]=entry.getKey();  //stroing index at 4
 			
@@ -256,12 +254,10 @@ public class RelevanceBasedDecisionTreeImplUI {
 				if(j < k){
 				trainingfileOrder.add(entry.getKey());  //add for new training
 				
-				results[j][0]=files[entry.getKey()];
+				results[j][0]=files[entry.getKey()].getName();
 				results[j][1]=entry.getValue();
-				if(labels.get(entry.getKey()).equalsIgnoreCase("y"))
-					results[j][2]=true;
-				else
-					results[j][3]=false;
+				results[j][2]=false;
+				results[j][3]=true;
 				
 				results[j][4]=entry.getKey();  //stroing index at 4
 				
@@ -413,14 +409,14 @@ public class RelevanceBasedDecisionTreeImplUI {
 			trainingSet = ItemSetReader.read(new FileReader(trainingdatafile));
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found : " + trainingdatafile + ".");
-			System.exit(-1);
+//			System.exit(-1);
 		}
 		// Read the testing data
 		try {
 			testSet = ItemSetReader.read(new FileReader(testdatafile));
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found : " + testdatafile + ".");
-			System.exit(-1);
+//			System.exit(-1);
 		}
 
 		AttributeSet attributes = trainingSet.attributeSet();
@@ -506,10 +502,10 @@ public class RelevanceBasedDecisionTreeImplUI {
 			
 			File file = files[key];		    
 			System.out.println((counter + 1) + " - " + file.getAbsolutePath() + "        " + entry.getValue());
-			data[counter][0]=file.getAbsolutePath();
+			data[counter][0]=file.getName();
 			data[counter][1]=entry.getValue();
 			data[counter][2]=false;  //intially it will be false
-			data[counter][3]=true;
+			data[counter][3]=false;
 			
 			data[counter][4]=key; //index at 5 or ( 5-1)
 			

@@ -124,6 +124,7 @@ public class DriverMain implements Serializable {
 				System.out.println("3. Task 5 - Decision Tree Based Relevance Feedback");
 				System.out.println("4. Task 6 - Interface for Task 5");
 				System.out.println("5. Exit");
+				choice = br.readLine();
 			} while(!choice.equalsIgnoreCase("5"));
 	
 			
@@ -457,10 +458,13 @@ public class DriverMain implements Serializable {
 				return;
 			Utils.correctSvdFileContent(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir);
 			Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
-			main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
-			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))
-				return;
-			Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir);
+			
+			if(!componentDir.contains(IConstants.ALL)){
+				main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
+				if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))
+					return;
+				Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir);
+			}
 		}
 	}
 

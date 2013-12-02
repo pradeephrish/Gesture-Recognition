@@ -52,6 +52,7 @@ public class DriverMain implements Serializable {
 
 	public static void main(String args[]) throws MatlabInvocationException {
 
+
 		try {
 			// Initialize connection to Matlab. Place the Matlab script files in
 			// current directory.
@@ -89,14 +90,14 @@ public class DriverMain implements Serializable {
 			List<String> componentList = indexFiles(rBandValueRange, databaseDirectory);
 			
 
-//			// Phase2 Task1b- for all components	
-//			for (int i = 0; i < componentList.size(); i++) {
-//				executeTask1a(componentList.get(i),true);
-//			}
-//			// Phase2 Task 2b
-//			executeTask2b(componentList);
-//			// Phase2 Task 2c
-//			executeTask2c(componentList);
+			// Phase2 Task1b- for all components	
+			for (int i = 0; i < componentList.size(); i++) {
+				executeTask1a(componentList.get(i),true);
+			}
+			// Phase2 Task 2b
+			executeTask2b(componentList);
+			// Phase2 Task 2c
+			executeTask2c(componentList);
 			
 			System.out.println("Please enter choice for task you want to execute:");
 			System.out.println("1. Task 2 - Locality Sensetive Hashing");
@@ -427,7 +428,7 @@ public class DriverMain implements Serializable {
 					//Directory creation
 					if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir))
 						return;
-
+					Utils.correctSvdFileContent(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir);
 					Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
 					break;
 				case 3:
@@ -454,6 +455,7 @@ public class DriverMain implements Serializable {
 			main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy);
 			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir))
 				return;
+			Utils.correctSvdFileContent(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir);
 			Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
 			main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
 			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))

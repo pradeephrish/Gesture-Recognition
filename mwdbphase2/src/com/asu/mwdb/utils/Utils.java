@@ -3,6 +3,7 @@ package com.asu.mwdb.utils;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -575,6 +576,41 @@ public class Utils {
 			else if(fileName.contains("Z")) {
 				cleanData(inputDirectory + File.separator + "Z");
 			} 
+		}
+	}
+	
+	public static void correctSvdFileContent(String folderLoc) throws IOException{
+		File file = new File(folderLoc);
+		File[] files = new File(folderLoc).listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File pathname) {
+				String name = pathname.getName().toLowerCase();
+				return name.endsWith(".csv") && pathname.isFile();
+			}
+		});
+		
+		for(int i=0;i<files.length;i++){
+			
+			CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(files[i].getAbsolutePath())));
+			List<String[]> temp = csvReader.readAll();
+			csvReader.close();
+			if(temp.size() < 4){
+				int size = 4 - temp.size();
+				int col = temp.get(0).length;
+				String dummy [] = new String[col];
+				for(int k =0 ; k<col;k++){
+					dummy[k]="0";
+				}
+				for(int j=0;j<size ; j++ ){
+					temp.add(dummy);
+				}
+//				System.out.println(files[i].getName());
+				FileIOHelper.delete(files[i].getAbsoluteFile());
+				CSVWriter writer = new CSVWriter(new FileWriter(new File(files[i].getAbsolutePath())), ',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+				writer.writeAll(temp);
+				writer.close();
+			}
 		}
 	}
 }

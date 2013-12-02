@@ -118,6 +118,7 @@ public class DecisionTreeClassification {
 		for (double i = 0; i < testSet.size(); i++) {
 			str = "File Name: " + testDataFiles.get((int) i) + ", Label: ";
 			str = printGuess(str, testSet.item((int) i), tree);
+			System.out.println(str);
 			dtWriter.write(str + "\n");
 		}
 		dtWriter.close();

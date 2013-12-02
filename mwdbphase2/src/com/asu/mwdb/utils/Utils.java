@@ -28,8 +28,8 @@ import com.asu.mwdb.phase2Main.FileIOHelper;
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
 
 public class Utils {
-	
-	
+
+
 	public static Double[][] addMatrix(Double[][] matrixOne,Double[][] matrixTwo){
 		for (int i = 0; i < matrixOne.length; i++) {
 			for (int j = 0; j < matrixOne[i].length; j++) {
@@ -37,12 +37,12 @@ public class Utils {
 					matrixOne[i][j] = 0.0;
 				}
 				matrixOne[i][j]=matrixOne[i][j]+matrixTwo[i][j];
-//				matrixOne[i][j]=matrixOne[i][j]/normalizeFactor;
+				//				matrixOne[i][j]=matrixOne[i][j]/normalizeFactor;
 			}
 		}
 		return matrixOne;
 	}
-	
+
 
 	/**
 	 * Get matrix from the file
@@ -68,8 +68,8 @@ public class Utils {
 		csvReader.close();
 		return matrix;
 	}
-	
-	
+
+
 
 
 	/**
@@ -160,7 +160,7 @@ public class Utils {
 
 		return C;
 	}
-	
+
 	/**
 	 * Print results
 	 * @param results
@@ -174,7 +174,7 @@ public class Utils {
 			System.out.println();
 		}
 	}
-	
+
 
 
 	/**
@@ -228,10 +228,10 @@ public class Utils {
 			}
 		}
 		return allFileData;
-		
+
 	}
 
-	
+
 	/**
 	 * Once the gesture-gesture matrix is created, write the matrix into file 
 	 * for future reference
@@ -241,23 +241,23 @@ public class Utils {
 	public static void writeGestureGestureToFile(UserChoice entity,String folderPath,double[][] doubleValues) throws IOException {
 		String fileName = folderPath+ File.separator;
 		switch(entity) {
-			case TFIDF:
-						fileName = fileName + "ggTFIDF.csv";
-						break;
-			case TFIDF2:
-						fileName = fileName + "ggTFIDF2.csv";
-						break;
-			case PCA_LSA:
-						fileName = fileName + "ggPCA.csv";
-						break;
-			case SVD_LSA:
-					fileName = fileName + "ggSVD.csv";
-						break;
-			case LDA_LSA:
-					fileName = fileName + "ggLDA.csv";
-						break;
-			default:	
-					    break;
+		case TFIDF:
+			fileName = fileName + "ggTFIDF.csv";
+			break;
+		case TFIDF2:
+			fileName = fileName + "ggTFIDF2.csv";
+			break;
+		case PCA_LSA:
+			fileName = fileName + "ggPCA.csv";
+			break;
+		case SVD_LSA:
+			fileName = fileName + "ggSVD.csv";
+			break;
+		case LDA_LSA:
+			fileName = fileName + "ggLDA.csv";
+			break;
+		default:	
+			break;
 		} 
 		CSVWriter writer = new CSVWriter(new FileWriter(new File(fileName)), ',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 		for (int rowCount = 0; rowCount < doubleValues.length; rowCount++) {
@@ -270,7 +270,7 @@ public class Utils {
 		}
 		writer.close();
 	}
-	
+
 	/**
 	 * COmpute similarity for TF-IDF and TF-IDF2
 	 * @param dictionary
@@ -303,7 +303,7 @@ public class Utils {
 		}
 		return doubleValues;
 	}
-	
+
 	/**
 	 * Convert map into single dimension
 	 * @param map
@@ -312,16 +312,16 @@ public class Utils {
 	 */
 	private static Map<String, Double> convertMap(Map<String, List<Double>> map,
 			UserChoice entity) {
-			Map<String,Double> values = new HashMap<String, Double>(); 
-			Iterator<Entry<String, List<Double>>> iterator = map.entrySet().iterator();
-			while(iterator.hasNext()){
-				Entry<String, List<Double>> entry = iterator.next();
-				values.put(entry.getKey(), entry.getValue().get(entity.ordinal()));
-			}
-			
+		Map<String,Double> values = new HashMap<String, Double>(); 
+		Iterator<Entry<String, List<Double>>> iterator = map.entrySet().iterator();
+		while(iterator.hasNext()){
+			Entry<String, List<Double>> entry = iterator.next();
+			values.put(entry.getKey(), entry.getValue().get(entity.ordinal()));
+		}
+
 		return values;
 	}
-	
+
 	/**
 	 * Convert file to required format
 	 */
@@ -332,7 +332,7 @@ public class Utils {
 		}
 		return documentOrder;
 	}
-	
+
 	/**
 	 * Check if its a directory
 	 * @param path
@@ -340,14 +340,14 @@ public class Utils {
 	 */
 	public static boolean isDirectoryCreated(String path){
 		try {
-		File file = new File(path);
-		if(file.exists()){
-			FileIOHelper.delete(file);
+			File file = new File(path);
+			if(file.exists()){
+				FileIOHelper.delete(file);
 			}
-		if(!file.mkdir()){
-			System.out.println("File creation failed "+file.getAbsolutePath());
-			return false;
-		}
+			if(!file.mkdir()){
+				System.out.println("File creation failed "+file.getAbsolutePath());
+				return false;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -370,7 +370,7 @@ public class Utils {
 		}
 		return output;
 	}
-	
+
 	/**
 	 * Write a List<List<String[]>> type data to disk
 	 * @param listOfList
@@ -393,7 +393,7 @@ public class Utils {
 			csvWriter.close();
 		}
 	}
-	
+
 	/**
 	 * Function to read the latent semantic file and return it 
 	 * in a format required by the program
@@ -408,9 +408,17 @@ public class Utils {
 				new FileInputStream(semanticFile.getAbsolutePath())));
 		String[] words = csvReader.readNext();
 		// read next 3 lines which have values and populate our map
+		int columns = 0;
 		for(int i=0; i<3; i++) {
 			Map<String, Double> vectorMap = new HashMap<String, Double>();
 			String[] vectorValuesStr = csvReader.readNext();
+			if(vectorValuesStr == null && i <3) {
+				vectorValuesStr = new String[columns];
+				for(int p = 0; p <columns; p++) {
+					vectorValuesStr[p] = "0";
+				}
+			}
+			columns = vectorValuesStr.length;
 			for(int j=0; j < words.length; j++) {
 				vectorMap.put(words[j], Double.parseDouble(vectorValuesStr[j]));
 			}
@@ -420,7 +428,32 @@ public class Utils {
 		csvReader.close();
 		return semanticData;
 	}
-	
+
+	public static List<Map<String, Double>> getSemanticFileData1(
+			File semanticFile) throws IOException {
+		List<Map<String, Double>> semanticData = new ArrayList<Map<String,Double>>();
+		CSVReader csvReader = new CSVReader(new InputStreamReader(
+				new FileInputStream(semanticFile.getAbsolutePath())));
+		//		String[] words = csvReader.readNext();
+		List<String[]> words = csvReader.readAll();
+		if(words.size()<3){
+			
+		}else{
+			// read next 3 lines which have values and populate our map
+			for(int i=0; i<3; i++) {
+				Map<String, Double> vectorMap = new HashMap<String, Double>();
+				String[] vectorValuesStr = csvReader.readNext();
+				for(int j=0; j < words.size(); j++) {
+					vectorMap.put(words.get(i)[j], Double.parseDouble(vectorValuesStr[j]));
+				}
+				semanticData.add(vectorMap);
+
+			}
+		}
+		csvReader.close();
+		return semanticData;
+	}
+
 	/**
 	 * Get only csv files from the directory
 	 * @param dirFile
@@ -436,7 +469,7 @@ public class Utils {
 		});
 		return fileList;
 	}
-	
+
 	public static Double[][] scaleDownMatrix(Double[][] inputMatrix, int scaleDownFactor) {
 		Double[][] scaledDownMatrix = new Double[inputMatrix.length][inputMatrix.length]; 
 		for(int i = 0; i < inputMatrix.length; i++) {
@@ -447,7 +480,7 @@ public class Utils {
 		}
 		return scaledDownMatrix;
 	}
-	
+
 	public static boolean isFilePresent(String filePath) {
 		File file = new File(filePath);
 		if(file.exists()) {
@@ -456,7 +489,7 @@ public class Utils {
 			return false;
 		}
 	}
-	
+
 	public static int getFileIndex(File[] fileNames, String fileName) {
 		for(int i=0 ; i < fileNames.length; i++) {
 			if(fileNames[i].getName().equals(fileName)) {
@@ -465,7 +498,7 @@ public class Utils {
 		}
 		return -1;
 	}
-	
+
 	public static File[] getFileOrder(String databaseDirectoy) {
 		// just go to any component folder and get the file name order
 		File[] dirs = new File(databaseDirectoy).listFiles(new FileFilter() {
@@ -486,8 +519,8 @@ public class Utils {
 		});
 		return fileNames;
 	}
-	
-	
+
+
 	public static String [][] sortStringArray(String [][] arrayStr){
 		Arrays.sort(arrayStr, new Comparator<String[]>() {
 			@Override
@@ -505,8 +538,8 @@ public class Utils {
 		});
 		return arrayStr;
 	}
-	
-	
+
+
 	/**
 	 * Clean data from data base folder
 	 * @param inputDirectory

@@ -60,6 +60,14 @@ public class SearchDatabaseForSimilarity {
 		LDA_LSA;
 	}
 	
+	/**
+	 * Storage for all IDF values
+	 */
+	private  List<Double> idfValues = new ArrayList<Double>();
+	/**
+	 * Storage for all IDF2 values
+	 */
+	private  List<Double> idf2Values = new ArrayList<Double>();
 	
 	/**
 	 * This constructor will make a call similar to Task 1 to calculate TF IDF etc 
@@ -200,6 +208,8 @@ public class SearchDatabaseForSimilarity {
 			//Compute IDF2 , First Create Local Dictionary Per Document then Compute IDF2
 			calculateIDF2(inputDictionary,mapPerGestureFile);
 			//save first element in the list
+			
+			normalizeDictionary();
 			writeToFile(inputDictionary.get(0),currentDirectory);
 			
 			
@@ -388,15 +398,17 @@ public class SearchDatabaseForSimilarity {
 			Iterator<Entry<String, List<Double>>> iterator = mapForRow.entrySet().iterator();
 			while(iterator.hasNext()){
 				Map.Entry<String, List<Double>> pair = iterator.next();
-				Double inverse = new Double(( oneFile.size())/ idf2PerDocument.get(pair.getKey()));
-				Double expression = 0.5 * (pair.getValue().get(0));  //from Sallen & Buckley tfidf formula
+				Double inverse = new Double(( oneFile.size())/(double) idf2PerDocument.get(pair.getKey()));
+			//	Double expression = 0.5 * (pair.getValue().get(0));  //from Sallen & Buckley tfidf formula
+				Double expression = (pair.getValue().get(0));  
 				if(maxTF>0.0) {
-					expression=0.5 + expression/maxTF;
+					//expression=0.5 + expression/maxTF;
 				}
 				else {
 					expression = 0.0;
 				}
 				pair.getValue().set(2,Math.log(inverse));
+				idf2Values.add(Math.log(inverse));
 				pair.getValue().add(pair.getValue().get(0)*pair.getValue().get(2));
 			}
 		}		
@@ -422,15 +434,17 @@ public class SearchDatabaseForSimilarity {
 				if(globalMapCount==null)
 					globalMapCount = 1;
 				
-				Double inverse = new Double(( currentFile.size() * dictionary.size())/ globalMapCount ) ; // tf value at 0 , size is now N, because pushing input tfidfs to new dictionary
-				Double expression = 0.5 * (pair.getValue().get(0));  //from Sallen & Buckley tfidf formula
+				Double inverse = new Double(( currentFile.size() * dictionary.size())/(double) globalMapCount ) ; // tf value at 0 , size is now N, because pushing input tfidfs to new dictionary
+				//Double expression = 0.5 * (pair.getValue().get(0));  //from Sallen & Buckley tfidf formula
+				Double expression = (pair.getValue().get(0));  
 				if(maxTF > 0.0) {
-					expression=0.5 + expression/maxTF;
+					//expression=0.5 + expression/maxTF;
 				}
 				else {
 					expression = 0.0;
 				}
 				pair.getValue().add(Math.log(inverse)); // idf
+				idfValues.add(Math.log(inverse));
 				pair.getValue().add(0.0); // temporary value idf2,  will be added by processIDF2
 				pair.getValue().add(Math.log(inverse)*expression); // tf-idf
 			}
@@ -469,5 +483,25 @@ public class SearchDatabaseForSimilarity {
 		return sortedMap;
 		}
 	
+	private void normalizeDictionary() {
 		
+		Collections.sort(idfValues, Collections.reverseOrder());
+		Collections.sort(idf2Values, Collections.reverseOrder());
+		Double maxIDF=idfValues.get(0)==0.0?1.0:idfValues.get(0);
+		Double maxIDF2=idf2Values.get(0)==0.0?1.0:idf2Values.get(0);	
+		for (int i = 0; i < getInputDictionary().size(); i++) {
+			List<Map<String,List<Double>>> gestureDocument = getInputDictionary().get(i);
+			for (int j = 0; j < gestureDocument.size(); j++) {
+				Map<String,List<Double>> tempMap = gestureDocument.get(j);
+				Iterator<Entry<String, List<Double>>> it = tempMap.entrySet().iterator();
+				  while (it.hasNext()) {
+				        Map.Entry<String,List<Double>> pairs = (Map.Entry)it.next();
+				        	//normalize tf-idf
+				        	pairs.getValue().set(3, pairs.getValue().get(3)/maxIDF);
+				        	//normalize tf-idf2
+				        	pairs.getValue().set(4, pairs.getValue().get(4)/maxIDF2);
+				  }
+			}
+		}
+	}		
 }

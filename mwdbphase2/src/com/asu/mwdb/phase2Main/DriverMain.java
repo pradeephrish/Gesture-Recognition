@@ -6,6 +6,7 @@ import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,16 +29,16 @@ import au.com.bytecode.opencsv.CSVWriter;
 import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
 import com.asu.mwdb.phase3.Phase3DriverMain;
 import com.asu.mwdb.phase3.task2.QueryMapper;
-import com.asu.mwdb.phase3.task3.DecisionTreeClassification;
-import com.asu.mwdb.phase3.task3.KNNClassification;
-import com.asu.mwdb.phase3.task3.TrainingDataMaker;
+import com.asu.mwdb.phase3.task5.RelevanceBasedDecisionTreeImpl;
+import com.asu.mwdb.phase3.task6.MwdbPhase3Task6;
+import com.asu.mwdb.phase3.task6.RelevanceBasedDecisionTreeImplUI;
 import com.asu.mwdb.task3a.Task3a;
 import com.asu.mwdb.utils.IConstants;
 import com.asu.mwdb.utils.NumberedFileComparator;
 import com.asu.mwdb.utils.Phase2Utils;
 import com.asu.mwdb.utils.Utils;
 
-public class DriverMain {
+public class DriverMain implements Serializable {
 
 	private static MatlabProxy proxy;
 	private static Integer wordLength = 0;
@@ -49,7 +50,8 @@ public class DriverMain {
 	private static Map<String, DictionaryBuilderPhase2> dictMap = new HashMap<String, DictionaryBuilderPhase2>();
 	private static DictionaryBuilderPhase2 dictionary = null;
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws MatlabInvocationException {
+
 
 		try {
 			// Initialize connection to Matlab. Place the Matlab script files in
@@ -86,92 +88,77 @@ public class DriverMain {
 
 			// Index files based on TF, IDF, IDF2, TF-IDF, TF-IDF2
 			List<String> componentList = indexFiles(rBandValueRange, databaseDirectory);
+			
 
-			// Options to run the tasks in Phase 2
-
+			// Phase2 Task1b- for all components	
+			for (int i = 0; i < componentList.size(); i++) {
+				executeTask1a(componentList.get(i),true);
+			}
+			// Phase2 Task 2b
+			executeTask2b(componentList);
+			// Phase2 Task 2c
+			executeTask2c(componentList);
+			
 			System.out.println("Please enter choice for task you want to execute:");
-			System.out.println("1. Task1a - Identify Top 3 Latent Semantics");
-			System.out.println("2. Task1a - Run Task 1a On All Components");
-			System.out.println("3. Task1b - Search Similar Gestures For Given Component");
-			System.out.println("4. Task1c - Search Similar Gestures In Entire Database");
-			System.out.println("5. Task2b - Create Gesture-Gesture Matrix and Run PCA");
-			System.out.println("6. Task2c - Create Gesture-Gesture Matrix and Run SVD");
-			System.out.println("7. Task3a - Partition Gestures into 3 Groups");
-			System.out.println("8. Exit");
-
+			System.out.println("1. Task 2 - Locality Sensetive Hashing");
+			System.out.println("2. Task 3 - Classification using KNN, Decision Tree and SVM");
+			System.out.println("3. Task 5 - Decision Tree Based Relevance Feedback");
+			System.out.println("4. Task 6 - Interface for Task 5");
+			System.out.println("5. Exit");
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String choice = in.readLine();
-
 			do{
 				switch (Integer.parseInt(choice)) {
-				// Task1a
-				case 1:
-					System.out.println("Enter component folder for Task 1a:");
-					String inputDirectory1a = in.readLine();
-					executeTask1a(inputDirectory1a,false);
-					break;
-					// Task1a- for all components					
-				case 2:
-					for (int i = 0; i < componentList.size(); i++) {
-						executeTask1a(componentList.get(i),true);
-					}
-					break;
-					// Task1b
-				case 3:
-					System.out.println("Enter component folder for Task 1b:");
-					String inputDirectory = br.readLine();
-					executeTask1b(rBandValueRange, inputDirectory);
-					break;
-
-					// Task1c
-				case 4:
-					String inputDirectory1c = databaseDirectory + File.separator + IConstants.ALL;
-					executeTask1b(rBandValueRange, inputDirectory1c);
-					break;
-					// Task2b
-				case 5:
-					executeTask2b(componentList);
-					break;
-					// Task2c
-				case 6: 
-					executeTask2c(componentList);
-					break;
-					// Task3a
-				case 7: 
-					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.PCA_DIR_GG, componentList);
-					Task3a.executeTask3a(proxy, IConstants.DATA+File.separator+IConstants.SVD_DIR_GG, componentList);
-					break;
+				case 1: executePhase3Task2(rBandValueRange,databaseDirectory); 
+						break;
+				case 2: Phase3DriverMain.phase3DriverMainRun(databaseDirectory);
+						break;
+				case 3: executePhase3Task5(rBandValueRange,databaseDirectory);
+						break;
+				case 4: executePhase3Task6(rBandValueRange,databaseDirectory);
+						break;			
 				}
 				System.out.println("Please enter choice for task you want to execute:");
-				System.out.println("1. Task1a - Identify Top 3 Latent Semantics");
-				System.out.println("2. Task1a - Run Task 1a On All Components");
-				System.out.println("3. Task1b - Search Similar Gestures For Given Component");
-				System.out.println("4. Task1c - Search Similar Gestures In Entire Database");
-				System.out.println("5. Task2b - Create Gesture-Gesture Matrix and Run PCA");
-				System.out.println("6. Task2c - Create Gesture-Gesture Matrix and Run SVD");
-				System.out.println("7. Task3a - Partition Gestures into 3 Groups");
-				System.out.println("8. Exit");
-				choice = in.readLine();
-			} while(!choice.equalsIgnoreCase("8"));
-
-
-			//excecutePhase3Task3();  ,  to be tested later --- Pradeep
-			//			while(true){
-//			try{
-//				executePhase3Task2(rBandValueRange,databaseDirectory); 
-//			}catch (Exception e) {
-//				// TODO: handle exception
-//				e.printStackTrace();
-//			}
-			//			}
-			Phase3DriverMain.phase3DriverMainRun(databaseDirectory);
+				System.out.println("1. Task 2 - Locality Sensetive Hashing");
+				System.out.println("2. Task 3 - Classification using KNN, Decision Tree and SVM");
+				System.out.println("3. Task 5 - Decision Tree Based Relevance Feedback");
+				System.out.println("4. Task 6 - Interface for Task 5");
+				System.out.println("5. Exit");
+				choice = br.readLine();
+			} while(!choice.equalsIgnoreCase("5"));
+	
+			
 		} catch (Exception e) {
 			// print the stack trace so that it will be easy to debug
 			e.printStackTrace();
 			System.out.println("Error while processing - " + e);
 		}
-
+		proxy.exit();
+		proxy.disconnect();
+		
 	}
+	
+	private static void executePhase3Task6(double[][] rBandValueRange,
+			String databaseDirectory) {
+		//all nulls set using UI
+		RelevanceBasedDecisionTreeImplUI relevanceBasedDecisionTreeImplUI = new RelevanceBasedDecisionTreeImplUI(dictMap, wordLength, shiftLength, databaseDirectory, rBandValueRange, proxy, null, databaseDirectory, null);
+		MwdbPhase3Task6 mwdbPhase3Task6 = new MwdbPhase3Task6(relevanceBasedDecisionTreeImplUI);
+	}
+
+	private static void executePhase3Task5(double[][] rBandValueRange, String sampleInputDirectory) throws IOException {
+		// TODO Auto-generated method stub
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Please enter gesture input directory:");
+		String gestureInputDirectory = br.readLine();
+
+		cleanData(gestureInputDirectory);
+
+		RelevanceBasedDecisionTreeImpl queryMapper = new RelevanceBasedDecisionTreeImpl(dictMap,wordLength, shiftLength, matlabScriptLoc, rBandValueRange, proxy, gestureInputDirectory, sampleInputDirectory);
+		System.out.println("Finish !");
+	}
+	
+	
 
 	private static void executePhase3Task2(double[][] rBandValueRange, String sampleInputDirectory) throws IOException {
 		// TODO Auto-generated method stub
@@ -430,6 +417,7 @@ public class DriverMain {
 				case 1:
 					main.executePCA(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy); // 1a
 					//Directory creation
+					
 					if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.PCA_TRANSFORM+ File.separator + componentDir))
 						return;
 					// end
@@ -437,11 +425,11 @@ public class DriverMain {
 					break;
 				case 2:
 					main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy);
-
+					
 					//Directory creation
 					if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir))
 						return;
-
+					Utils.correctSvdFileContent(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir);
 					Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
 					break;
 				case 3:
@@ -468,11 +456,15 @@ public class DriverMain {
 			main.executeSVD(IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, order,proxy);
 			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir))
 				return;
+			Utils.correctSvdFileContent(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir);
 			Utils.tranformData(IConstants.DATA+File.separator+IConstants.SVD_SEMANTICS+ File.separator + componentDir, IConstants.DATA+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.SVD_TRANSFORM+ File.separator + componentDir);
-			main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
-			if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))
-				return;
-			Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir);
+			
+			if(!componentDir.contains(IConstants.ALL)){
+				main.exectuteLDA(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.INPUT_DIR+File.separator+componentDir, orderLDA, 3,proxy); // 3 latent semantics
+				if(!Utils.isDirectoryCreated(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir))
+					return;
+				Utils.tranformData(IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_SEMANTICS+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.BASE_DATA+File.separator+componentDir, IConstants.DATA+File.separator+IConstants.LDA_DIR+File.separator+IConstants.LDA_TRANSFORM+File.separator+componentDir);
+			}
 		}
 	}
 
@@ -783,9 +775,9 @@ public class DriverMain {
 			File file = files[key];		    
 			System.out.println((counter + 1) + " - " + file.getAbsolutePath() + "        " + entry.getValue());
 			counter = counter + 1;
-			if(counter == 5) {
-				break;
-			}
+			//if(counter == 5) {
+			//	break;
+		//	}
 		}
 		System.out.println("******************************************************************");
 	}

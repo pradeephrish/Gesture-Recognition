@@ -159,9 +159,6 @@ public class QueryMapper {
 			//this will 1 * N  for the query  where N = no of words, and 1 for only one query document
 			List<Map<String, Double[]>> queryWordScores = main.createSensorWordScores(queryWordMap, queryDictionary , 3); // 3 for TF-IDF
 			
-			//Debugging
-			SerializeData.serialize("E:\\"+component+"Query", queryWordScores);
-			//Debugging
 
 			String svdSematicDir  = IConstants.DATA + File.separator + IConstants.SVD_SEMANTICS + File.separator + component;
 			String svdSemanticOpDir = IConstants.DATA_PHASE3 + File.separator+IConstants.TASK2+ File.separator + IConstants.SVD_MAPPED + File.separator + component;

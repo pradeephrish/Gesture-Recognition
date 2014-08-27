@@ -90,6 +90,7 @@ public class KNNClassification {
 			}
 			score = Utils.sortStringArray(score);
 			String outputString = "File Name: "+ testRowData[0]+", Label: "+labelDecider(score, labelsData, k);
+			System.out.println(outputString);
 			knnWriter.write(outputString + "\n");
 		}
 		knnWriter.close();

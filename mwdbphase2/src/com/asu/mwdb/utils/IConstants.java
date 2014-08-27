@@ -76,5 +76,6 @@ public interface IConstants {
 		public static String KNN_OP_FILE		 = "knn-labels.txt";
 		public static String DT_OP_DIR			 = "DT";
 		public static String DT_OP_FILE 		 = "dt-labels.txt";
+		public static String DT_REL_OP_FILE = "dt-rel-op.txt";
 		
 }

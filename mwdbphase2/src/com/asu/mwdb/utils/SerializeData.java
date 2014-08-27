@@ -1,15 +1,11 @@
 package com.asu.mwdb.utils;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +14,6 @@ import java.util.Set;
 
 import matlabcontrol.MatlabConnectionException;
 import matlabcontrol.MatlabInvocationException;
-import au.com.bytecode.opencsv.CSVWriter;
-
-import com.asu.mwdb.gui.MainWindow;
-import com.asu.mwdb.math.CosineSimilarity;
-import com.asu.mwdb.math.Task3FindSimilarData.Entity;
 
 public class SerializeData {
 	
@@ -54,7 +45,7 @@ public class SerializeData {
 			List<List<Map<String, List<Double>>>> dictionary = (List<List<Map<String, List<Double>>>>) deserialize("object/test.obj");
 			
 			
-			MainWindow main = new MainWindow();
+			Phase2Utils main = new Phase2Utils();
 			
 			
 			Map<Integer, Set<String>> variable1 = main.createWordsPerSensor(dictionary);

@@ -9,21 +9,48 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import matlabcontrol.MatlabInvocationException;
+import matlabcontrol.MatlabProxy;
+
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.asu.mwdb.task1b.CosineSimilarity;
-import com.asu.mwdb.math.Task3FindSimilarData.Entity;
-import com.asu.mwdb.task1b.FileIOHelper;
+import com.asu.mwdb.matlab.MatlabObject;
+import com.asu.mwdb.phase2Main.CosineSimilarity;
+import com.asu.mwdb.phase2Main.FileIOHelper;
+import com.asu.mwdb.phase2Main.SearchDatabaseForSimilarity.UserChoice;
 
 public class Utils {
+	
+	
+	public static Double[][] addMatrix(Double[][] matrixOne,Double[][] matrixTwo){
+		for (int i = 0; i < matrixOne.length; i++) {
+			for (int j = 0; j < matrixOne[i].length; j++) {
+				if(matrixOne[i][j] == null) {
+					matrixOne[i][j] = 0.0;
+				}
+				matrixOne[i][j]=matrixOne[i][j]+matrixTwo[i][j];
+//				matrixOne[i][j]=matrixOne[i][j]/normalizeFactor;
+			}
+		}
+		return matrixOne;
+	}
+	
 
+	/**
+	 * Get matrix from the file
+	 * @param filePath
+	 * @param offset
+	 * @return
+	 * @throws IOException
+	 */
 	public static Double[][]  getMatrix(String filePath,Integer offset) throws IOException //offset to skip first row in case of pca  
 	{
 		CSVReader csvReader = new CSVReader(new InputStreamReader(new FileInputStream(filePath)));
@@ -41,9 +68,18 @@ public class Utils {
 		csvReader.close();
 		return matrix;
 	}
+	
+	
 
 
-	//inputDirectoryOne is always latent semantics 
+	/**
+	 * Transform data 
+	 * inputDirectoryOne is always latent semantics 
+	 * @param inputDirectoryOne
+	 * @param inputDirectoryTwo
+	 * @param outputDirectory
+	 * @throws IOException
+	 */
 	public static void tranformData(String inputDirectoryOne,String inputDirectoryTwo,String outputDirectory) throws IOException{
 		File[] filesOne = new File(inputDirectoryOne).listFiles(new FileFilter() {
 
@@ -74,6 +110,13 @@ public class Utils {
 	}
 
 
+	/**
+	 * Save matrix to file
+	 * @param outputMatrix
+	 * @param outputDirectory
+	 * @param name
+	 * @throws IOException
+	 */
 	public static void saveMatrixFile(Double[][] outputMatrix,
 			String outputDirectory, String name) throws IOException {
 		CSVWriter writer = new CSVWriter(new FileWriter(new File(outputDirectory+File.separator+name)), ',', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
@@ -87,6 +130,12 @@ public class Utils {
 		writer.close();
 	}
 
+	/**
+	 * Multiple two matrix
+	 * @param A
+	 * @param B
+	 * @return
+	 */
 	public static Double[][] multiplicar(Double[][] A, Double[][] B) {
 
 		int aRows = A.length;
@@ -111,6 +160,11 @@ public class Utils {
 
 		return C;
 	}
+	
+	/**
+	 * Print results
+	 * @param results
+	 */
 	public static void print(Double[][] results)
 	{
 		for (int i = 0; i < results.length; i++) {
@@ -120,20 +174,14 @@ public class Utils {
 			System.out.println();
 		}
 	}
-	public static void main(String[] args) throws IOException {
-		Double[][] data1 = Utils.getMatrix("data\\pca-semantic\\X\\13.csv",1);
-		//print(data1);
-		Double[][] data2 = Utils.getMatrix("data\\basedata\\X\\13.csv",0);
-		//sprint(data2);
-
-		//mutliply matrix
-		Double[][] results = Utils.multiplicar(data1, data2);
-//		print(transposeMatrix(results));
-		saveMatrixFile(transposeMatrix(results), "D:\\", "1.csv");
-	}
+	
 
 
-	//tranpose tensor
+	/**
+	 * Transpose a matrix
+	 * @param data2D
+	 * @return
+	 */
 	public static Double[][] transposeMatrix(Double[][] data2D) {
 		Double[][] tranpose2D = new Double[data2D[0].length][data2D.length];
 		for (int j = 0; j < data2D.length; j++) {
@@ -190,7 +238,7 @@ public class Utils {
 	 * @param entity
 	 * @throws IOException
 	 */
-	public static void writeGestureGestureToFile(Entity entity,String folderPath,double[][] doubleValues) throws IOException {
+	public static void writeGestureGestureToFile(UserChoice entity,String folderPath,double[][] doubleValues) throws IOException {
 		String fileName = folderPath+ File.separator;
 		switch(entity) {
 			case TFIDF:
@@ -223,8 +271,13 @@ public class Utils {
 		writer.close();
 	}
 	
-	
-	public static double[][] computeSimilarilty(List<List<Map<String, List<Double>>>> dictionary, Entity entity) {
+	/**
+	 * COmpute similarity for TF-IDF and TF-IDF2
+	 * @param dictionary
+	 * @param entity
+	 * @return
+	 */
+	public static double[][] computeSimilarilty(List<List<Map<String, List<Double>>>> dictionary, UserChoice entity) {
 		double[][] doubleValues= null;
 		doubleValues = new double[dictionary.size()][dictionary.size()];
 		for (int currentFileIndex = 0; currentFileIndex < dictionary.size(); currentFileIndex++) {
@@ -251,8 +304,14 @@ public class Utils {
 		return doubleValues;
 	}
 	
+	/**
+	 * Convert map into single dimension
+	 * @param map
+	 * @param entity
+	 * @return
+	 */
 	private static Map<String, Double> convertMap(Map<String, List<Double>> map,
-			Entity entity) {
+			UserChoice entity) {
 			Map<String,Double> values = new HashMap<String, Double>(); 
 			Iterator<Entry<String, List<Double>>> iterator = map.entrySet().iterator();
 			while(iterator.hasNext()){
@@ -263,6 +322,9 @@ public class Utils {
 		return values;
 	}
 	
+	/**
+	 * Convert file to required format
+	 */
 	public static List<String> convertList(File[] fileList){
 		List<String> documentOrder = new ArrayList<String>();
 		for (int i = 0; i < fileList.length; i++) {
@@ -271,6 +333,11 @@ public class Utils {
 		return documentOrder;
 	}
 	
+	/**
+	 * Check if its a directory
+	 * @param path
+	 * @return
+	 */
 	public static boolean isDirectoryCreated(String path){
 		try {
 		File file = new File(path);
@@ -289,8 +356,12 @@ public class Utils {
 	}
 
 
+	/**
+	 * Prepare Gesture-Gesture matrix LSA
+	 * @param out
+	 * @return
+	 */
 	public static double[][] getGestureGestureMatrixLSA(List<List<String[]>> out) {
-		// TODO Auto-generated method stub
 		double[][] output = new double[out.size()][out.size()];
 		for (int i = 0; i < out.size(); i++) {
 			for (int j = 0; j < out.size();j++) {
@@ -300,6 +371,13 @@ public class Utils {
 		return output;
 	}
 	
+	/**
+	 * Write a List<List<String[]>> type data to disk
+	 * @param listOfList
+	 * @param fileName
+	 * @param fileList
+	 * @throws IOException
+	 */
 	public static void writeListOfListToDir(List<List<String[]>> listOfList, String fileName, File fileList[]) throws IOException{
 		Iterator<List<String[]>> listOfListIterator = listOfList.iterator();
 		File fileNameHandle = new File(fileName);
@@ -343,6 +421,11 @@ public class Utils {
 		return semanticData;
 	}
 	
+	/**
+	 * Get only csv files from the directory
+	 * @param dirFile
+	 * @return
+	 */
 	public static File [] getCSVFiles(File dirFile){
 		File[] fileList = dirFile.listFiles(new FileFilter() {
 			@Override
@@ -354,4 +437,111 @@ public class Utils {
 		return fileList;
 	}
 	
+	public static Double[][] scaleDownMatrix(Double[][] inputMatrix, int scaleDownFactor) {
+		Double[][] scaledDownMatrix = new Double[inputMatrix.length][inputMatrix.length]; 
+		for(int i = 0; i < inputMatrix.length; i++) {
+			for(int j = 0; j < inputMatrix.length; j++) {
+				scaledDownMatrix[i][j] = inputMatrix[i][j] / scaleDownFactor;
+			}
+			scaledDownMatrix[i][i] = 1.0;
+		}
+		return scaledDownMatrix;
+	}
+	
+	public static boolean isFilePresent(String filePath) {
+		File file = new File(filePath);
+		if(file.exists()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static int getFileIndex(File[] fileNames, String fileName) {
+		for(int i=0 ; i < fileNames.length; i++) {
+			if(fileNames[i].getName().equals(fileName)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public static File[] getFileOrder(String databaseDirectoy) {
+		// just go to any component folder and get the file name order
+		File[] dirs = new File(databaseDirectoy).listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				String name = pathname.getName().toLowerCase();
+				return pathname.isDirectory() && !name.contains(IConstants.ALL);
+			}
+		});
+		File componentDir = dirs[0];
+		File[] fileNames = componentDir.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				String name = pathname.getName().toLowerCase();
+				return name.endsWith(".csv") && pathname.isFile() && !name.contains(IConstants.GAUSSIAN_FILE) 
+						&& !name.contains(IConstants.NORMALIZED_FILE);
+			}
+		});
+		return fileNames;
+	}
+	
+	
+	public static String [][] sortStringArray(String [][] arrayStr){
+		Arrays.sort(arrayStr, new Comparator<String[]>() {
+			@Override
+			public int compare(final String[] entry1, final String[] entry2) {
+				final double value1 = Double.parseDouble(entry1[1]);
+				final double value2 = Double.parseDouble(entry2[1]);
+				if (value1 < value2) {
+					return -1;
+				} else if (value1 > value2) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+		return arrayStr;
+	}
+	
+	
+	/**
+	 * Clean data from data base folder
+	 * @param inputDirectory
+	 * @throws IOException
+	 */
+	public static void cleanData(String inputDirectory)
+			throws IOException {
+		File fileObj = new File(inputDirectory);
+		File[] files = fileObj.listFiles();
+		for (File file : files) {
+			String fileName = file.getName();
+			if (fileName.contains(IConstants.GAUSSIAN_FILE)
+					|| fileName.contains(IConstants.NORMALIZED_FILE)
+					|| fileName.contains(IConstants.LETTERS_FILE)
+					|| fileName.contains(IConstants.TASK1_OUTPUT)
+					|| fileName.contains(IConstants.TASK1_OUTPUT_ALL)
+					|| fileName.contains(IConstants.TASK3_OUTPUT)
+					|| fileName.contains(IConstants.TASK3_OUTPUT_ALL)
+					|| fileName.contains(IConstants.RANGED_BAND)
+					|| fileName.contains(IConstants.ALL)
+					) {
+				FileIOHelper.delete(file);
+			}
+			else if(fileName.contains("W")) {
+				cleanData(inputDirectory + File.separator + "W");
+			} 
+			else if(fileName.contains("X")) {
+				cleanData(inputDirectory + File.separator + "X");
+			} 
+			else if(fileName.contains("Y")) {
+				cleanData(inputDirectory + File.separator + "Y");
+			} 
+			else if(fileName.contains("Z")) {
+				cleanData(inputDirectory + File.separator + "Z");
+			} 
+		}
+	}
 }
